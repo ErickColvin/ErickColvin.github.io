@@ -396,6 +396,16 @@
     return '<footer class="proyecto__pie">' + s.join("") + "</footer>";
   }
 
+  // Vista previa del demo dentro de una ventana de navegador. Es decorativa: el enlace accesible es "Ver demo".
+  function htmlCaptura(p) {
+    if (!p.captura || !p.enlaces.demo) return "";
+    var direccion = p.enlaces.demo.replace(/^https?:\/\//, "").replace(/\/$/, "");
+    return '<a class="captura" href="' + p.enlaces.demo + '" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">' +
+      '<span class="captura__barra"><i></i><i></i><i></i><span>' + escapar(direccion) + "</span></span>" +
+      '<span class="captura__vista"><img src="' + p.captura + '" alt="" width="864" height="1440" loading="lazy" decoding="async"></span>' +
+      '<span class="captura__abrir">Abrir demo ' + ICONO_EXTERNO + "</span></a>";
+  }
+
   function htmlProyecto(p) {
     var cab = '<header class="proyecto__cab"><div class="proyecto__icono"><svg viewBox="0 0 24 24" aria-hidden="true">' + (ICONOS[p.icono] || ICONOS.paquete) +
       '</svg></div><div class="proyecto__meta"><span class="proyecto__anio">' + escapar(p.periodo) + "</span>" + htmlInsignias(p) + "</div></header>";
@@ -410,7 +420,7 @@
         '<div class="proyecto__lateral"><div class="proyecto__dato"><strong data-contar="' + p.commits + '">' + p.commits + "</strong><span>commits · el proyecto más grande del portafolio</span></div>" +
         htmlFlujo(p) + htmlLenguajes(p) + chips + "</div></article>";
     }
-    return '<article class="proyecto">' +
+    return '<article class="proyecto">' + htmlCaptura(p) +
       '<div class="proyecto__principal">' + cab + titulo + resumen + puntos + "</div>" +
       '<div class="proyecto__lateral">' + htmlFlujo(p) + htmlLenguajes(p) + chips + "</div>" +
       htmlEnlaces(p) + "</article>";
@@ -498,6 +508,80 @@
       tarjeta.style.setProperty("--ry", "0deg");
     });
   });
+
+  /* ---------- Actividad: commits por día, como el mapa de GitHub ---------- */
+  (function () {
+    var datos = window.ACTIVIDAD;
+    var caja = $("#actividad");
+    if (!datos || !caja || !Object.keys(datos.dias).length) return;
+    caja.hidden = false;
+
+    // A mediodía, para que los cambios de horario no muevan los días
+    function aFecha(clave) { var p = clave.split("-"); return new Date(+p[0], p[1] - 1, +p[2], 12); }
+    function aClave(f) { return f.getFullYear() + "-" + ("0" + (f.getMonth() + 1)).slice(-2) + "-" + ("0" + f.getDate()).slice(-2); }
+    var formatoDia = new Intl.DateTimeFormat("es-CL", { day: "numeric", month: "short", year: "numeric" });
+    var formatoMesCorto = new Intl.DateTimeFormat("es-CL", { month: "short" });
+    var formatoMesLargo = new Intl.DateTimeFormat("es-CL", { month: "long", year: "numeric" });
+
+    // Desde el primer día del mes del primer commit hasta la fecha en que se generaron los datos; las semanas parten el lunes
+    var primero = aFecha(Object.keys(datos.dias).sort()[0]);
+    primero.setDate(1);
+    var fin = aFecha(datos.generado);
+    var dia = new Date(primero);
+    dia.setDate(dia.getDate() - (primero.getDay() + 6) % 7);
+
+    var celdas = [], meses = [], total = 0, activos = 0, racha = 0, mejorRacha = 0, maximo = { n: 0, fecha: null };
+    for (var i = 0; dia <= fin; i++) {
+      var col = Math.floor(i / 7);
+      if (dia < primero) {
+        celdas.push('<span class="vacia"></span>');
+      } else {
+        var n = datos.dias[aClave(dia)] || 0;
+        var nivel = n === 0 ? 0 : n <= 2 ? 1 : n <= 5 ? 2 : n <= 10 ? 3 : 4;
+        var texto = (n ? n + (n === 1 ? " commit" : " commits") : "Sin commits") + " · " + formatoDia.format(dia);
+        celdas.push('<span data-n="' + nivel + '" data-tip="' + texto + '" style="--x:' + col + ";--y:" + (i % 7) + '"></span>');
+        if (dia.getDate() === 1) {
+          var mes = formatoMesCorto.format(dia).replace(".", "");
+          if (dia.getMonth() === 0 || !meses.length) mes += " '" + String(dia.getFullYear()).slice(-2);
+          meses.push('<span style="grid-column:' + (col + 1) + '">' + mes + "</span>");
+        }
+        total += n;
+        if (n) { activos++; racha++; mejorRacha = Math.max(mejorRacha, racha); } else { racha = 0; }
+        if (n > maximo.n) maximo = { n: n, fecha: new Date(dia) };
+      }
+      dia.setDate(dia.getDate() + 1);
+    }
+
+    var grilla = $("#act-grilla");
+    var tabla = $(".actividad__tabla", caja);
+    tabla.style.setProperty("--cols", col + 1);
+    grilla.innerHTML = celdas.join("");
+    $("#act-meses").innerHTML = meses.join("");
+    grilla.setAttribute("aria-label", total + " commits en " + activos + " días, entre " + formatoMesLargo.format(primero) + " y " + formatoMesLargo.format(fin));
+    $("#act-total").dataset.contar = total;
+    $("#act-dias").dataset.contar = activos;
+    $("#act-racha").dataset.contar = mejorRacha;
+    $("#act-max").dataset.contar = maximo.n;
+    $("#act-max-fecha").textContent = "commits el " + formatoDia.format(maximo.fecha) + ", el día más activo";
+    $("#act-generado").textContent = "Actualizado al " + formatoDia.format(fin);
+
+    // Lo más reciente queda a la vista cuando el mapa no cabe completo
+    var desliza = $("#act-desliza");
+    desliza.scrollLeft = desliza.scrollWidth;
+
+    var tip = $("#act-tip");
+    function mostrarTip(celda) {
+      if (!celda || !celda.dataset.tip) { tip.hidden = true; return; }
+      var r = celda.getBoundingClientRect(), rc = caja.getBoundingClientRect();
+      tip.textContent = celda.dataset.tip;
+      tip.style.left = Math.max(70, Math.min(rc.width - 70, r.left + r.width / 2 - rc.left)) + "px";
+      tip.style.top = (r.top - rc.top) + "px";
+      tip.hidden = false;
+    }
+    grilla.addEventListener("pointerover", function (e) { mostrarTip(e.target.closest("[data-tip]")); });
+    grilla.addEventListener("pointerleave", function () { tip.hidden = true; });
+    desliza.addEventListener("scroll", function () { tip.hidden = true; }, { passive: true });
+  })();
 
   /* ---------- Datos en vivo desde GitHub ---------- */
   var tiempoRelativo = new Intl.RelativeTimeFormat("es", { numeric: "auto" });

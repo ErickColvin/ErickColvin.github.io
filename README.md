@@ -7,8 +7,10 @@ Página estática hecha a mano con HTML, CSS y JavaScript, sin dependencias ni p
 ## Qué muestra
 
 - Perfil, experiencia, habilidades y certificaciones (desde el CV).
-- Proyectos publicados en GitHub, con barra de lenguajes, flujo de arquitectura y enlaces a código y demos.
+- Proyectos publicados en GitHub, con barra de lenguajes, flujo de arquitectura y enlaces a código y demos. Los que tienen demo muestran una captura que se recorre al pasar el cursor.
 - Fecha de última actualización de cada repositorio, leída en vivo desde la API pública de GitHub.
+- Mapa de actividad con los commits por día, al estilo de GitHub.
+- CV de una página en `cv.html`, listo para guardar como PDF desde el navegador.
 
 ## Animaciones
 
@@ -22,6 +24,9 @@ Si el sistema tiene activado "reducir movimiento", la página arranca en modo tr
 |---|---|
 | Textos del perfil, experiencia y contacto | `index.html` |
 | Proyectos (agregar, quitar, cambiar textos) | `js/proyectos.js` |
+| Capturas de los demos | `assets/proyectos/` (imagen alta, 864 px de ancho) |
+| CV imprimible | `cv.html` y `css/cv.css` (los proyectos salen de `js/proyectos.js`) |
+| Mapa de actividad | `node scripts/actividad.mjs` regenera `js/actividad.js` (requiere `gh auth login`) |
 | Colores y estilos | variables al inicio de `css/styles.css` |
 | Animaciones y lógica | `js/main.js` |
 

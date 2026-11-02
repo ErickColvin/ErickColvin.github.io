@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="es-CL">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CV · Erick Colvin Córdova</title>
+  <meta name="description" content="Currículum de Erick Alejandro Colvin Córdova, Ingeniero en Computación e Informática: automatización de procesos, Power Platform y desarrollo full-stack.">
+  <meta name="author" content="Erick Alejandro Colvin Córdova">
+  <meta name="theme-color" content="#07080d">
+  <link rel="canonical" href="https://erickcolvin.github.io/cv.html">
+  <meta property="og:type" content="profile">
+  <meta property="og:title" content="CV · Erick Colvin Córdova">
+  <meta property="og:description" content="Automatización de procesos, Power Platform y desarrollo full-stack.">
+  <meta property="og:url" content="https://erickcolvin.github.io/cv.html">
+  <meta property="og:image" content="https://erickcolvin.github.io/assets/og.png">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/cv.css">
+  <script>
+    (function () {
+      var d = document.documentElement, tema, mov;
+      try { tema = localStorage.getItem('tema'); mov = localStorage.getItem('movimiento'); } catch (e) {}
+      if (!tema) tema = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+      if (!mov) mov = matchMedia('(prefers-reduced-motion: reduce)').matches ? 'reducido' : 'completo';
+      d.dataset.theme = tema;
+      d.dataset.motion = mov;
+    })();
+  </script>
+</head>
+<body>
+  <header class="barra">
+    <a class="barra__volver" href="./">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+      Portafolio
+    </a>
+    <p class="barra__ayuda">En el diálogo de impresión elige <strong>Guardar como PDF</strong>.</p>
+    <button class="barra__pdf" type="button" id="btn-pdf">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+      Descargar PDF
+    </button>
+  </header>
+
+  <main class="hoja" id="contenido">
+    <header class="cab">
+      <div>
+        <h1>Erick Alejandro <span>Colvin Córdova</span></h1>
+        <p class="cab__rol">Ingeniero en Computación e Informática · Analista de Innovación</p>
+      </div>
+      <ul class="cab__contacto">
+        <li>Santiago, Chile</li>
+        <li><a href="mailto:erick.a.colvincordova@gmail.com">erick.a.colvincordova@gmail.com</a></li>
+        <li><a href="https://www.linkedin.com/in/erickcolvin">linkedin.com/in/erickcolvin</a></li>
+        <li><a href="https://github.com/ErickColvin">github.com/ErickColvin</a></li>
+        <li><a href="https://erickcolvin.github.io/">erickcolvin.github.io</a></li>
+      </ul>
+    </header>
+
+    <div class="cuerpo">
+      <div class="principal">
+        <section>
+          <h2>Perfil</h2>
+          <p>Profesional enfocado en innovación y automatización de procesos. Lidero la transformación digital de flujos operativos en entornos industriales, con impacto directo en la eficiencia y en la reducción de carga manual. En paralelo construyo productos web completos (APIs, bases de datos, pagos, seguridad e IA local) y los publico en GitHub.</p>
+        </section>
+
+        <section>
+          <h2>Experiencia</h2>
+          <article class="puesto">
+            <header><h3>Analista de Innovación <small>(previamente practicante)</small></h3><time>Sep. 2025 – Actualidad</time></header>
+            <ul>
+              <li>Automaticé las auditorías 5S+ de áreas productivas con Power Apps y Power Automate, integrando 6 fuentes de datos y 5 flujos para gestionar hallazgos y verificables de cumplimiento: <strong>−70% de tiempo</strong> del proceso.</li>
+              <li>Implementé la gestión documental bajo Standard Work, estandarizando el control de versiones y la validación de responsables: el ciclo de aprobación bajó de <strong>25 a 8 días</strong>.</li>
+            </ul>
+          </article>
+          <article class="puesto">
+            <header><h3>Práctica profesional · Automatización de procesos</h3><time>Ene. 2024 – Feb. 2024</time></header>
+            <ul><li>Creé automatizaciones con JavaScript y Node.js que redujeron las tareas manuales y subieron la eficiencia del equipo.</li></ul>
+          </article>
+          <article class="puesto">
+            <header><h3>Técnico en cámaras termográficas FLIR</h3><time>Dic. 2022 – Sep. 2024</time></header>
+            <ul><li>Revisé, reparé y calibré cámaras FLIR, y trabajé junto a un equipo técnico en Brasil para mantener los equipos siempre listos.</li></ul>
+          </article>
+          <article class="puesto">
+            <header><h3>Experiencia hotelera</h3><time>2024 – 2025</time></header>
+            <ul><li>Atendí clientes en español, inglés y portugués, y gané soltura para adaptarme rápido a distintos roles.</li></ul>
+          </article>
+        </section>
+
+        <section>
+          <h2>Proyectos en GitHub</h2>
+          <div class="proyectos" id="cv-proyectos">
+            <p>TraceLink V2, Finanzas Personales, Condominio Santa Marta y Rayo: detalle en erickcolvin.github.io.</p>
+          </div>
+        </section>
+      </div>
+
+      <aside class="lateral">
+        <section>
+          <h2>Formación</h2>
+          <p class="item"><strong>Ingeniería en Computación e Informática</strong><time>Mar. 2023 – Dic. 2025</time></p>
+        </section>
+
+        <section>
+          <h2>Certificaciones</h2>
+          <ul class="lista">
+            <li><strong>Microsoft Learn · Power Platform</strong>38 insignias y 6 trofeos: Power Automate con múltiples orígenes de datos, AI Builder, flujos de aprobación y Power Apps.</li>
+            <li><strong>CCNA: Conmutación, enrutamiento y redes inalámbricas</strong>Cisco · jul. 2025</li>
+            <li><strong>Machine Learning for Data Science Projects</strong>IBM SkillsBuild · jun. 2025</li>
+            <li><strong>Calibración de cuerpos negros</strong>FLIR Brasil · ago. 2024</li>
+            <li><strong>Inglés social y laboral 4 · 94%</strong>Instituto Chileno Británico de Cultura · ene. 2024</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Idiomas</h2>
+          <ul class="idiomas">
+            <li><span>Español</span><b>Nativo</b><i style="--n:5"></i></li>
+            <li><span>Inglés</span><b>B2</b><i style="--n:4"></i></li>
+            <li><span>Portugués</span><b>Básico</b><i style="--n:2"></i></li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Herramientas</h2>
+          <p class="grupo">Automatización</p>
+          <div class="chips"><span>Power Apps</span><span>Power Automate</span><span>SharePoint</span><span>Power BI</span><span>AI Builder</span><span>Excel</span></div>
+          <p class="grupo">Desarrollo</p>
+          <div class="chips"><span>JavaScript</span><span>TypeScript</span><span>Node.js</span><span>React</span><span>Express</span><span>C# · .NET</span><span>Python</span></div>
+          <p class="grupo">Datos e infraestructura</p>
+          <div class="chips"><span>PostgreSQL</span><span>SQLite</span><span>MongoDB</span><span>Prisma</span><span>Docker</span><span>GitHub Actions</span></div>
+        </section>
+      </aside>
+    </div>
+  </main>
+
+  <script src="js/proyectos.js"></script>
+  <script>
+    (function () {
+      // Los proyectos salen de los mismos datos del portafolio: se muestran los cuatro primeros
+      var caja = document.getElementById("cv-proyectos");
+      var lista = (window.PROYECTOS || []).slice(0, 4);
+      if (lista.length) {
+        caja.innerHTML = lista.map(function (p) {
+          var enlace = p.enlaces.demo || p.enlaces.codigo || "";
+          var texto = enlace.replace(/^https?:\/\//, "").replace(/\/$/, "");
+          var esc = function (t) { var d = document.createElement("div"); d.textContent = t; return d.innerHTML; };
+          return '<article class="proyecto"><header><h3>' + esc(p.nombre) + "</h3>" +
+            (enlace ? '<a href="' + enlace + '">' + esc(texto) + "</a>" : "") + "</header>" +
+            "<p>" + esc(p.resumen) + ' <span class="proyecto__tec">' + esc(p.tecnologias.slice(0, 4).join(" · ")) + "</span></p></article>";
+        }).join("");
+      }
+      document.getElementById("btn-pdf").addEventListener("click", function () { window.print(); });
+    })();
+  </script>
+</body>
+</html>

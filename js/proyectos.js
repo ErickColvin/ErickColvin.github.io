@@ -6,6 +6,7 @@
   - categorias: "fullstack", "ia", "frontend", "web" (deben coincidir con los filtros del HTML).
   - lenguajes: bytes por lenguaje, tal como los entrega la API de GitHub (/repos/:dueño/:repo/languages).
   - commits: suma de los repositorios del proyecto.
+  - captura (opcional, solo con demo): imagen alta de la página en assets/proyectos/; en la tarjeta se recorre de arriba abajo al pasar el cursor.
 */
 window.PROYECTOS = [
   {
@@ -74,6 +75,7 @@ window.PROYECTOS = [
     tecnologias: ["JavaScript", "Vite", "Express 5", "SQLite", "TOTP"],
     lenguajes: { JavaScript: 287248, CSS: 60545, HTML: 3781 },
     commits: 12,
+    captura: "assets/proyectos/santa-marta.jpg",
     enlaces: { demo: "https://erickcolvin.github.io/santa-marta-preview/" }
   },
   {
@@ -95,6 +97,7 @@ window.PROYECTOS = [
     tecnologias: ["HTML", "CSS", "JavaScript", "GitHub Pages"],
     lenguajes: { HTML: 61289, CSS: 45997, JavaScript: 13478 },
     commits: 3,
+    captura: "assets/proyectos/rayo.jpg",
     enlaces: { demo: "https://erickcolvin.github.io/rayo-web/", codigo: "https://github.com/ErickColvin/rayo-web" }
   },
   {
