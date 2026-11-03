@@ -1,0 +1,151 @@
+diff --git a/apps/web/src/features/cart/cart-page.tsx b/apps/web/src/features/cart/cart-page.tsx
+index 1bed35c..8e04e5b 100644
+--- a/apps/web/src/features/cart/cart-page.tsx
++++ b/apps/web/src/features/cart/cart-page.tsx
+@@ -32,12 +32,12 @@ export function CartPage() {
+                 <Card key={item.productId}>
+                   <CardContent className="flex flex-col gap-4 pt-5 sm:flex-row sm:items-center sm:pt-6">
+                     <img
+-                      src={item.imageUrl ?? "/assets/ch-market-hero.jpg"}
++                      src={item.imageUrl ?? `${import.meta.env.BASE_URL}assets/ch-market-hero.jpg`}
+                       alt=""
+                       className="h-28 w-full rounded-xl object-cover sm:w-36"
+                       onError={(event) => {
+                         event.currentTarget.onerror = null;
+-                        event.currentTarget.src = "/assets/ch-market-hero.jpg";
++                        event.currentTarget.src = `${import.meta.env.BASE_URL}assets/ch-market-hero.jpg`;
+                       }}
+                     />
+                     <div className="min-w-0 flex-1">
+diff --git a/apps/web/src/features/orders/pages/customer-order-detail-page.tsx b/apps/web/src/features/orders/pages/customer-order-detail-page.tsx
+index e22e736..90b4fe0 100644
+--- a/apps/web/src/features/orders/pages/customer-order-detail-page.tsx
++++ b/apps/web/src/features/orders/pages/customer-order-detail-page.tsx
+@@ -92,12 +92,12 @@ export function CustomerOrderDetailPage() {
+             {order.items.map((item) => (
+               <div key={item.id} className="flex gap-4 py-4 first:pt-0 last:pb-0">
+                 <img
+-                  src={item.imageUrl ?? "/assets/ch-market-hero.jpg"}
++                  src={item.imageUrl ?? `${import.meta.env.BASE_URL}assets/ch-market-hero.jpg`}
+                   alt=""
+                   className="size-20 rounded-xl object-cover"
+                   onError={(event) => {
+                     event.currentTarget.onerror = null;
+-                    event.currentTarget.src = "/assets/ch-market-hero.jpg";
++                    event.currentTarget.src = `${import.meta.env.BASE_URL}assets/ch-market-hero.jpg`;
+                   }}
+                 />
+                 <div className="min-w-0 flex-1"><p className="font-bold">{item.name}</p><p className="mt-1 text-xs text-ink-500">SKU {item.sku} · Cantidad {item.quantity}</p><p className="mt-2 text-sm text-ink-600">{formatClp(item.unitPrice)} c/u</p></div>
+diff --git a/apps/web/src/features/products/components/admin-product-list.tsx b/apps/web/src/features/products/components/admin-product-list.tsx
+index b831ba9..6618fc5 100644
+--- a/apps/web/src/features/products/components/admin-product-list.tsx
++++ b/apps/web/src/features/products/components/admin-product-list.tsx
+@@ -21,10 +21,10 @@ function ProductImage({ product }: Readonly<{ product: Product }>) {
+     <img
+       alt=""
+       className="size-14 shrink-0 rounded-xl bg-ice-100 object-cover"
+-      src={product.imageUrl ?? "/assets/ch-market-hero.jpg"}
++      src={product.imageUrl ?? `${import.meta.env.BASE_URL}assets/ch-market-hero.jpg`}
+       onError={(event) => {
+         event.currentTarget.onerror = null;
+-        event.currentTarget.src = "/assets/ch-market-hero.jpg";
++        event.currentTarget.src = `${import.meta.env.BASE_URL}assets/ch-market-hero.jpg`;
+       }}
+     />
+   );
+diff --git a/apps/web/src/features/products/components/product-card.tsx b/apps/web/src/features/products/components/product-card.tsx
+index 1627cc4..8e15435 100644
+--- a/apps/web/src/features/products/components/product-card.tsx
++++ b/apps/web/src/features/products/components/product-card.tsx
+@@ -37,13 +37,13 @@ export function ProductCard({ categoryName, product }: ProductCardProps) {
+           aria-label={`Ver ${product.name}`}
+         >
+           <img
+-            src={product.imageUrl ?? "/assets/ch-market-hero.jpg"}
++            src={product.imageUrl ?? `${import.meta.env.BASE_URL}assets/ch-market-hero.jpg`}
+             alt={product.name}
+             loading="lazy"
+             className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.04] motion-reduce:transform-none"
+             onError={(event) => {
+               event.currentTarget.onerror = null;
+-              event.currentTarget.src = "/assets/ch-market-hero.jpg";
++              event.currentTarget.src = `${import.meta.env.BASE_URL}assets/ch-market-hero.jpg`;
+             }}
+           />
+           <Badge tone={availability.tone} className="absolute left-3 top-3 bg-white/95 shadow-sm">
+diff --git a/apps/web/src/features/products/pages/admin-product-detail-page.tsx b/apps/web/src/features/products/pages/admin-product-detail-page.tsx
+index b1993b5..b1cbe55 100644
+--- a/apps/web/src/features/products/pages/admin-product-detail-page.tsx
++++ b/apps/web/src/features/products/pages/admin-product-detail-page.tsx
+@@ -182,10 +182,10 @@ export function AdminProductDetailPage() {
+               <img
+                 alt={product.name}
+                 className="aspect-square w-full rounded-2xl bg-ice-100 object-cover"
+-                src={product.imageUrl ?? "/assets/ch-market-hero.jpg"}
++                src={product.imageUrl ?? `${import.meta.env.BASE_URL}assets/ch-market-hero.jpg`}
+                 onError={(event) => {
+                   event.currentTarget.onerror = null;
+-                  event.currentTarget.src = "/assets/ch-market-hero.jpg";
++                  event.currentTarget.src = `${import.meta.env.BASE_URL}assets/ch-market-hero.jpg`;
+                 }}
+               />
+               <div>
+diff --git a/apps/web/src/features/products/pages/home-page.tsx b/apps/web/src/features/products/pages/home-page.tsx
+index 94aab9d..7acf79e 100644
+--- a/apps/web/src/features/products/pages/home-page.tsx
++++ b/apps/web/src/features/products/pages/home-page.tsx
+@@ -48,7 +48,7 @@ export function HomePage() {
+             </div>
+           </div>
+           <div className="relative min-h-80 overflow-hidden rounded-[2rem] border border-white/15 shadow-lifted sm:min-h-[440px]">
+-            <img src="/assets/ch-market-hero.jpg" alt="Salmón, camarones y pescado congelado presentados sobre hielo" className="absolute inset-0 h-full w-full object-cover" />
++            <img src={`${import.meta.env.BASE_URL}assets/ch-market-hero.jpg`} alt="Salmón, camarones y pescado congelado presentados sobre hielo" className="absolute inset-0 h-full w-full object-cover" />
+             <div className="absolute inset-0 bg-gradient-to-t from-brand-950/60 via-transparent to-transparent" />
+             <div className="absolute bottom-5 left-5 right-5 flex items-center justify-between rounded-2xl border border-white/20 bg-brand-950/80 p-4 backdrop-blur sm:p-5">
+               <div><p className="text-xs font-bold uppercase tracking-[0.16em] text-ice-300">Selección de la semana</p><p className="mt-1 font-bold">Productos del mar y congelados</p></div>
+@@ -69,13 +69,13 @@ export function HomePage() {
+             {categoriesQuery.data.map((category) => (
+               <Link key={category.id} to={`/productos?categoria=${category.id}`} className="group relative min-h-64 overflow-hidden rounded-2xl bg-brand-950 shadow-card">
+                 <img
+-                  src={category.imageUrl ?? "/assets/ch-market-hero.jpg"}
++                  src={category.imageUrl ?? `${import.meta.env.BASE_URL}assets/ch-market-hero.jpg`}
+                   alt=""
+                   loading="lazy"
+                   className="absolute inset-0 h-full w-full object-cover opacity-75 transition duration-500 group-hover:scale-105 motion-reduce:transform-none"
+                   onError={(event) => {
+                     event.currentTarget.onerror = null;
+-                    event.currentTarget.src = "/assets/ch-market-hero.jpg";
++                    event.currentTarget.src = `${import.meta.env.BASE_URL}assets/ch-market-hero.jpg`;
+                   }}
+                 />
+                 <div className="absolute inset-0 bg-gradient-to-t from-brand-950 via-brand-950/25 to-transparent" />
+diff --git a/apps/web/src/features/products/pages/product-detail-page.tsx b/apps/web/src/features/products/pages/product-detail-page.tsx
+index 6d1da2f..8c04a01 100644
+--- a/apps/web/src/features/products/pages/product-detail-page.tsx
++++ b/apps/web/src/features/products/pages/product-detail-page.tsx
+@@ -72,10 +72,10 @@ function ProductDetailContent({ slug }: { slug?: string }) {
+         <div className="mt-6 grid gap-8 lg:grid-cols-2 lg:gap-14">
+           <div className="overflow-hidden rounded-3xl bg-ice-100 shadow-card">
+             <img
+-              src={product.imageUrl ?? "/assets/ch-market-hero.jpg"}
++              src={product.imageUrl ?? `${import.meta.env.BASE_URL}assets/ch-market-hero.jpg`}
+               alt={product.name}
+               className="aspect-square h-full w-full object-cover"
+-              onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = "/assets/ch-market-hero.jpg"; }}
++              onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = `${import.meta.env.BASE_URL}assets/ch-market-hero.jpg`; }}
+             />
+           </div>
+ 
+diff --git a/apps/web/src/main.tsx b/apps/web/src/main.tsx
+index 8a903e5..c6bb714 100644
+--- a/apps/web/src/main.tsx
++++ b/apps/web/src/main.tsx
+@@ -14,7 +14,7 @@ if (!rootElement) {
+ 
+ createRoot(rootElement).render(
+   <StrictMode>
+-    <BrowserRouter>
++    <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, "") || "/"}>
+       <RouteFocusManager />
+       <AppProviders>
+         <AppRouter />

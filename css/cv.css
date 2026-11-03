@@ -15,9 +15,9 @@
   --tinta-3: #7a8199;
   --linea: #e4e7f0;
   --panel: #f5f7fb;
-  --c1: #0891b2;
-  --c2: #6366f1;
-  --c3: #db2777;
+  --c1: #0369a1;
+  --c2: #4f46e5;
+  --c3: #be185d;
   --grad: linear-gradient(110deg, var(--c1), var(--c2) 50%, var(--c3));
   --f-titulo: "Space Grotesk", system-ui, sans-serif;
   --f-texto: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -67,6 +67,19 @@ svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width:
 .barra__volver { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; transition: color 0.2s; }
 .barra__volver:hover { color: var(--c1); }
 .barra__ayuda { margin-left: auto; font-size: 12.5px; }
+.barra__idioma {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 11px;
+  border: 1px solid var(--barra-borde);
+  background: transparent;
+  font: 600 12px ui-monospace, "Cascadia Code", monospace;
+  cursor: pointer;
+}
+.barra__idioma span { display: grid; place-items: center; min-width: 30px; height: 28px; border-radius: 8px; color: var(--barra-texto); }
+[data-idioma="es"] .barra__idioma [data-cod="es"],
+[data-idioma="en"] .barra__idioma [data-cod="en"] { color: #fff; background: color-mix(in srgb, var(--c2) 60%, #10131f); }
 .barra__pdf {
   display: inline-flex;
   align-items: center;

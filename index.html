@@ -4,17 +4,21 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Erick Colvin · Ingeniero en Computación e Informática</title>
-  <meta name="description" content="Portafolio de Erick Colvin Córdova: automatización de procesos, Power Platform y desarrollo full-stack. Proyectos publicados en GitHub.">
+  <meta name="description" content="Portafolio de Erick Colvin Córdova: automatización de procesos, Power Platform y desarrollo full-stack. Proyectos con demo en vivo.">
   <meta name="author" content="Erick Alejandro Colvin Córdova">
-  <meta name="theme-color" content="#07080d">
+  <meta name="theme-color" content="#07080c">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Erick Colvin · Ingeniero en Computación e Informática">
-  <meta property="og:description" content="Automatización de procesos, Power Platform y desarrollo full-stack. Mira mis proyectos en GitHub.">
+  <meta property="og:description" content="Automatización de procesos, Power Platform y desarrollo full-stack. Proyectos con demo en vivo.">
   <meta property="og:url" content="https://erickcolvin.github.io/">
   <meta property="og:image" content="https://erickcolvin.github.io/assets/og.png">
   <meta property="og:locale" content="es_CL">
+  <meta property="og:locale:alternate" content="en_US">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="canonical" href="https://erickcolvin.github.io/">
+  <link rel="alternate" hreflang="es" href="https://erickcolvin.github.io/?lang=es">
+  <link rel="alternate" hreflang="en" href="https://erickcolvin.github.io/?lang=en">
+  <link rel="alternate" hreflang="x-default" href="https://erickcolvin.github.io/">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -39,23 +43,29 @@
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
   <script>
-    // Tema y animaciones antes de pintar, para evitar parpadeos.
+    // Tema, animaciones e idioma antes de pintar, para evitar parpadeos.
     (function () {
-      var d = document.documentElement, tema, mov;
-      try { tema = localStorage.getItem('tema'); mov = localStorage.getItem('movimiento'); } catch (e) {}
+      var d = document.documentElement, tema, mov, idioma, param;
+      try { tema = localStorage.getItem('tema'); mov = localStorage.getItem('movimiento'); idioma = localStorage.getItem('idioma'); } catch (e) {}
+      param = (location.search.match(/[?&]lang=(es|en)\b/) || [])[1];
+      if (param) idioma = param;
       if (!tema) tema = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
       if (!mov) mov = matchMedia('(prefers-reduced-motion: reduce)').matches ? 'reducido' : 'completo';
+      d.dataset.idiomaElegido = idioma ? 'si' : 'no';
+      if (!idioma) idioma = /^es\b/i.test(navigator.language || '') ? 'es' : 'en';
       d.dataset.theme = tema;
       d.dataset.motion = mov;
+      d.dataset.idioma = idioma;
+      d.lang = idioma === 'en' ? 'en' : 'es-CL';
       d.classList.add('js');
     })();
   </script>
 </head>
 <body>
-  <a class="saltar" href="#contenido">Saltar al contenido</a>
+  <a class="saltar" href="#contenido" data-i18n="saltar">Saltar al contenido</a>
 
   <!-- Fondo: aurora, rejilla, red de nodos y grano -->
   <div class="fondo" aria-hidden="true">
@@ -67,46 +77,49 @@
   <div class="luz-cursor" aria-hidden="true"></div>
 
   <header class="barra" id="barra">
-    <a class="barra__logo" href="#inicio" data-ir="inicio" aria-label="Erick Colvin, ir al inicio">
+    <a class="barra__logo" href="#inicio" data-ir="inicio" data-i18n-attr="aria-label:logo.etiqueta" aria-label="Erick Colvin, ir al inicio">
       <span class="monograma">EC</span>
       <span class="barra__nombre">Erick Colvin</span>
     </a>
 
-    <nav class="pestanas" aria-label="Secciones">
+    <nav class="pestanas" data-i18n-attr="aria-label:nav.etiqueta" aria-label="Secciones">
       <span class="pestanas__marca" aria-hidden="true"></span>
       <a href="#inicio" data-ir="inicio">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9v11h14V9"/><path d="M10 20v-6h4v6"/></svg>
-        <span>Inicio</span>
+        <span data-i18n="nav.inicio">Inicio</span>
       </a>
       <a href="#trayectoria" data-ir="trayectoria">
         <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-        <span>Trayectoria</span>
+        <span data-i18n="nav.trayectoria">Trayectoria</span>
       </a>
       <a href="#proyectos" data-ir="proyectos">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 10 5-10 5L2 7l10-5Z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/></svg>
-        <span>Proyectos</span>
+        <span data-i18n="nav.proyectos">Proyectos</span>
       </a>
       <a href="#habilidades" data-ir="habilidades">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 5.4L19 10l-5.2 1.6L12 17l-1.8-5.4L5 10l5.2-1.6z"/><path d="M19 15l.7 2.1 2.1.7-2.1.7L19 21l-.7-2.5-2.1-.7 2.1-.7z"/></svg>
-        <span>Habilidades</span>
+        <span data-i18n="nav.habilidades">Habilidades</span>
       </a>
       <a href="#contacto" data-ir="contacto">
         <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>
-        <span>Contacto</span>
+        <span data-i18n="nav.contacto">Contacto</span>
       </a>
     </nav>
 
     <div class="barra__acciones">
-      <button class="icono-btn" id="btn-movimiento" type="button" aria-pressed="true" title="Animaciones activadas">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 5.4L19 10l-5.2 1.6L12 17l-1.8-5.4L5 10l5.2-1.6z"/><path d="M19 15l.7 2.1 2.1.7-2.1.7L19 21l-.7-2.5-2.1-.7 2.1-.7z"/></svg>
-        <span class="sr">Animaciones</span>
+      <button class="idioma-btn" id="btn-idioma" type="button" data-i18n-attr="aria-label:idioma.cambiar" aria-label="Cambiar idioma a inglés">
+        <span data-cod="es">ES</span><span data-cod="en">EN</span>
       </button>
-      <button class="icono-btn" id="btn-tema" type="button" title="Cambiar a tema claro">
+      <button class="icono-btn" id="btn-movimiento" type="button" aria-pressed="true">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 5.4L19 10l-5.2 1.6L12 17l-1.8-5.4L5 10l5.2-1.6z"/><path d="M19 15l.7 2.1 2.1.7-2.1.7L19 21l-.7-2.5-2.1-.7 2.1-.7z"/></svg>
+        <span class="sr" data-i18n="animaciones">Animaciones</span>
+      </button>
+      <button class="icono-btn" id="btn-tema" type="button">
         <svg class="ico-sol" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M6.3 17.7l-1.4 1.4M19.1 4.9l-1.4 1.4"/></svg>
         <svg class="ico-luna" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
-        <span class="sr">Cambiar tema</span>
+        <span class="sr" data-i18n="tema">Cambiar tema</span>
       </button>
-      <a class="btn btn--chico btn--fantasma barra__cv" href="cv.html">
+      <a class="btn btn--chico btn--fantasma barra__cv" href="cv.html" data-cv>
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/></svg>
         CV
       </a>
@@ -116,32 +129,32 @@
   <main class="escenario" id="contenido">
 
     <!-- ============ 01 · INICIO ============ -->
-    <section class="vista" id="inicio" aria-label="Inicio">
+    <section class="vista" id="inicio" data-i18n-attr="aria-label:nav.inicio" aria-label="Inicio">
       <div class="vista__marco">
         <div class="bento">
           <article class="tile bento__hero revelar">
-            <p class="etiqueta"><span class="punto-vivo"></span> Analista de Innovación · Santiago, Chile</p>
-            <h1 class="hero__titulo" aria-label="Erick Colvin Córdova" tabindex="-1">
-              <span class="linea" aria-hidden="true"><span class="letras">Erick Colvin</span></span>
-              <span class="linea degradado" aria-hidden="true"><span class="letras">Córdova</span></span>
+            <p class="etiqueta"><span class="punto-vivo"></span> <span data-i18n="hero.etiqueta">Analista de Innovación · Santiago, Chile</span></p>
+            <h1 class="hero__titulo" aria-label="Erick Alejandro Colvin Córdova" tabindex="-1">
+              <span class="linea" aria-hidden="true"><span class="letras">Erick Alejandro</span></span>
+              <span class="linea degradado serif" aria-hidden="true"><span class="letras">Colvin Córdova</span></span>
             </h1>
             <p class="hero__rol"><span class="mono acento">&gt;</span> <span id="rol">Ingeniero en Computación e Informática</span><span class="cursor" aria-hidden="true"></span></p>
-            <p class="hero__bajada">Automatizo procesos y construyo software que quita carga manual: desde flujos en Power Platform para áreas productivas hasta plataformas web completas con pagos, seguridad e IA local.</p>
+            <p class="hero__bajada" data-i18n="hero.bajada">Automatizo procesos y construyo software que quita carga manual: desde flujos en Power Platform para áreas productivas hasta plataformas web completas con pagos, seguridad e IA local.</p>
             <div class="hero__ctas">
-              <a class="btn btn--primario iman" href="#proyectos" data-ir="proyectos">Ver proyectos
+              <a class="btn btn--primario iman" href="#proyectos" data-ir="proyectos"><span data-i18n="hero.ver">Ver proyectos</span>
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
               </a>
-              <a class="btn btn--fantasma iman" href="cv.html">
+              <a class="btn btn--fantasma iman" href="cv.html" data-cv>
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/></svg>
-                Descargar CV
+                <span data-i18n="hero.cv">Descargar CV</span>
               </a>
-              <a class="btn btn--fantasma btn--icono iman" href="https://github.com/ErickColvin" target="_blank" rel="noopener" aria-label="GitHub">
-                <svg class="relleno" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 0-.8.4-1.3.7-1.6-2.6-.3-5.4-1.3-5.4-5.9 0-1.3.5-2.4 1.2-3.2 0-.3-.5-1.5.2-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.5.4.9 1.1.9 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>
+              <a class="btn btn--fantasma btn--icono iman" href="https://www.linkedin.com/in/erickcolvin" target="_blank" rel="noopener" aria-label="LinkedIn">
+                <svg class="relleno" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.4 20.5h-3.6v-5.6c0-1.3 0-3-1.8-3s-2.1 1.4-2.1 2.9v5.7H9.3V9h3.4v1.6c.5-.9 1.6-1.9 3.4-1.9 3.6 0 4.3 2.4 4.3 5.5v6.3ZM5.3 7.4a2 2 0 1 1 0-4.1 2 2 0 0 1 0 4.1Zm1.8 13.1H3.6V9h3.5v11.5ZM22.2 0H1.8C.8 0 0 .8 0 1.7v20.6c0 .9.8 1.7 1.8 1.7h20.4c1 0 1.8-.8 1.8-1.7V1.7C24 .8 23.2 0 22.2 0Z"/></svg>
               </a>
             </div>
           </article>
 
-          <div class="tile terminal bento__terminal revelar" role="img" aria-label="Terminal decorativa que presenta a Erick y lista sus repositorios públicos">
+          <div class="tile terminal bento__terminal revelar" role="img" data-i18n-attr="aria-label:hero.terminal" aria-label="Terminal decorativa que presenta a Erick y lista sus demos en vivo">
             <div class="terminal__barra">
               <span></span><span></span><span></span>
               <p>erick@colvin: ~</p>
@@ -151,19 +164,19 @@
 
           <div class="tile cifra revelar">
             <strong><span data-contar="70">70</span><small>%</small></strong>
-            <span>menos tiempo en las auditorías 5S+</span>
+            <span data-i18n="cifra.auditorias">menos tiempo en las auditorías 5S+</span>
           </div>
           <div class="tile cifra revelar">
             <strong>25<small class="flecha">→</small><span data-contar="8" data-desde="25">8</span></strong>
-            <span>días de ciclo de aprobación documental</span>
+            <span data-i18n="cifra.aprobacion">días de ciclo de aprobación documental</span>
           </div>
           <div class="tile cifra revelar">
             <strong><span data-contar="38">38</span></strong>
-            <span>insignias Microsoft Learn en Power Platform</span>
+            <span data-i18n="cifra.insignias">insignias Microsoft Learn en Power Platform</span>
           </div>
           <a class="tile cifra cifra--enlace revelar" href="#actividad" data-ir="proyectos" data-panel="actividad">
-            <strong><span data-contar="160" id="cifra-commits">160</span></strong>
-            <span>commits en <span id="cifra-proyectos">7</span> proyectos en GitHub</span>
+            <strong><span data-contar="134" id="cifra-commits">134</span></strong>
+            <span><span data-i18n="cifra.commits">commits en</span> <span id="cifra-proyectos">4</span> <span data-i18n="cifra.proyectos">proyectos con demo en vivo</span></span>
             <svg class="cifra__flecha" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>
           </a>
         </div>
@@ -174,95 +187,95 @@
     <section class="vista" id="trayectoria" aria-labelledby="titulo-trayectoria">
       <div class="vista__marco">
         <header class="cab revelar">
-          <p class="cab__num">02 — Sobre mí y experiencia</p>
-          <h2 id="titulo-trayectoria" tabindex="-1">Trayectoria</h2>
+          <p class="cab__num" data-i18n="tray.num">02 — Sobre mí y experiencia</p>
+          <h2 id="titulo-trayectoria" tabindex="-1" data-i18n="nav.trayectoria">Trayectoria</h2>
         </header>
 
         <div class="trayectoria">
           <article class="tile sobre revelar">
-            <p class="sobre__grande">Profesional enfocado en <em>innovación</em> y <em>automatización de procesos</em>.</p>
-            <p>Lidero la transformación digital de flujos operativos en entornos industriales. En paralelo construyo productos web completos (APIs, bases de datos, pagos, seguridad e IA local) y los publico en GitHub.</p>
+            <p class="sobre__grande" data-i18n-html="sobre.grande">Profesional enfocado en <em>innovación</em> y <em>automatización de procesos</em>.</p>
+            <p data-i18n="sobre.texto">Lidero la transformación digital de flujos operativos en entornos industriales. En paralelo construyo productos web completos (APIs, bases de datos, pagos, seguridad e IA local) con demo en vivo.</p>
             <ul class="datos">
               <li class="dato">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-                <div><span>Ubicación</span><strong>Santiago, Chile</strong></div>
+                <div><span data-i18n="dato.ubicacion">Ubicación</span><strong>Santiago, Chile</strong></div>
               </li>
               <li class="dato">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 10 12 5 2 10l10 5 10-5Z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/><path d="M22 10v6"/></svg>
-                <div><span>Formación</span><strong>Ing. en Computación e Informática</strong></div>
+                <div><span data-i18n="dato.formacion">Formación</span><strong data-i18n="dato.titulo">Ing. en Computación e Informática</strong></div>
               </li>
               <li class="dato">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg>
-                <div><span>Idiomas</span><strong>Español · Inglés B2</strong><small>Portugués básico</small></div>
+                <div><span data-i18n="dato.idiomas">Idiomas</span><strong data-i18n="dato.idiomas.valor">Español · Inglés B2</strong><small data-i18n="dato.idiomas.extra">Portugués básico</small></div>
               </li>
               <li class="dato">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
-                <div><span>Hoy</span><strong>Analista de Innovación</strong><small>Desde sep. 2025</small></div>
+                <div><span data-i18n="dato.hoy">Hoy</span><strong data-i18n="dato.cargo">Analista de Innovación</strong><small data-i18n="dato.desde">Desde sep. 2025</small></div>
               </li>
             </ul>
           </article>
 
           <article class="tile experiencia revelar">
-            <div class="hitos" role="tablist" aria-label="Experiencia" aria-orientation="vertical">
+            <div class="hitos" role="tablist" data-i18n-attr="aria-label:tray.experiencia" aria-label="Experiencia" aria-orientation="vertical">
               <button class="hito activo" type="button" role="tab" id="tab-h1" aria-controls="panel-h1" aria-selected="true">
-                <time>Sep. 2025 — hoy</time><strong>Analista de Innovación</strong>
+                <time data-i18n="h1.corto.fecha">Sep. 2025 — hoy</time><strong data-i18n="h1.titulo">Analista de Innovación</strong>
               </button>
               <button class="hito" type="button" role="tab" id="tab-h2" aria-controls="panel-h2" aria-selected="false" tabindex="-1">
-                <time>2024 — 2025</time><strong>Experiencia hotelera</strong>
+                <time>2024 — 2025</time><strong data-i18n="h2.titulo">Experiencia hotelera</strong>
               </button>
               <button class="hito" type="button" role="tab" id="tab-h3" aria-controls="panel-h3" aria-selected="false" tabindex="-1">
-                <time>Ene. — Feb. 2024</time><strong>Práctica profesional</strong>
+                <time data-i18n="h3.corto.fecha">Ene. — Feb. 2024</time><strong data-i18n="h3.corto">Práctica profesional</strong>
               </button>
               <button class="hito hito--estudio" type="button" role="tab" id="tab-h4" aria-controls="panel-h4" aria-selected="false" tabindex="-1">
-                <time>2023 — 2025</time><strong>Ingeniería</strong>
+                <time>2023 — 2025</time><strong data-i18n="h4.corto">Ingeniería</strong>
               </button>
               <button class="hito" type="button" role="tab" id="tab-h5" aria-controls="panel-h5" aria-selected="false" tabindex="-1">
-                <time>Dic. 2022 — Sep. 2024</time><strong>Técnico FLIR</strong>
+                <time data-i18n="h5.corto.fecha">Dic. 2022 — Sep. 2024</time><strong data-i18n="h5.corto">Técnico FLIR</strong>
               </button>
             </div>
 
             <div class="hito-paneles">
               <div class="hito-panel activo" role="tabpanel" id="panel-h1" aria-labelledby="tab-h1">
-                <p class="hito-panel__fecha">Sep. 2025 — Actualidad</p>
-                <h3>Analista de Innovación</h3>
-                <p class="hito-panel__sub">Previamente practicante</p>
+                <p class="hito-panel__fecha" data-i18n="h1.fecha">Sep. 2025 — Actualidad</p>
+                <h3 data-i18n="h1.titulo">Analista de Innovación</h3>
+                <p class="hito-panel__sub" data-i18n="h1.sub">Previamente practicante</p>
                 <ul>
-                  <li>Automaticé las auditorías 5S+ de áreas productivas con Power Apps y Power Automate, integrando 6 fuentes de datos y 5 flujos para gestionar hallazgos y verificables de cumplimiento: <strong>−70% de tiempo</strong> del proceso.</li>
-                  <li>Implementé la gestión documental bajo Standard Work, estandarizando el control de versiones y la validación de responsables: el ciclo de aprobación bajó de <strong>25 a 8 días</strong>.</li>
+                  <li data-i18n-html="h1.p1">Automaticé las auditorías 5S+ de áreas productivas con Power Apps y Power Automate, integrando 6 fuentes de datos y 5 flujos para gestionar hallazgos y verificables de cumplimiento: <strong>−70% de tiempo</strong> del proceso.</li>
+                  <li data-i18n-html="h1.p2">Implementé la gestión documental bajo Standard Work, estandarizando el control de versiones y la validación de responsables: el ciclo de aprobación bajó de <strong>25 a 8 días</strong>.</li>
                 </ul>
                 <div class="chips"><span>Power Apps</span><span>Power Automate</span><span>Standard Work</span><span>5S+</span></div>
               </div>
               <div class="hito-panel" role="tabpanel" id="panel-h2" aria-labelledby="tab-h2">
                 <p class="hito-panel__fecha">2024 — 2025</p>
-                <h3>Experiencia hotelera</h3>
+                <h3 data-i18n="h2.titulo">Experiencia hotelera</h3>
                 <ul>
-                  <li>Atendí clientes en español, inglés y portugués, y gané soltura para adaptarme rápido a distintos roles.</li>
+                  <li data-i18n="h2.p1">Atendí clientes en español, inglés y portugués, y gané soltura para adaptarme rápido a distintos roles.</li>
                 </ul>
-                <div class="chips"><span>Atención al cliente</span><span>Trilingüe</span></div>
+                <div class="chips"><span data-i18n="h2.c1">Atención al cliente</span><span data-i18n="h2.c2">Trilingüe</span></div>
               </div>
               <div class="hito-panel" role="tabpanel" id="panel-h3" aria-labelledby="tab-h3">
-                <p class="hito-panel__fecha">Ene. 2024 — Feb. 2024</p>
-                <h3>Práctica profesional · Automatización de procesos</h3>
+                <p class="hito-panel__fecha" data-i18n="h3.fecha">Ene. 2024 — Feb. 2024</p>
+                <h3 data-i18n="h3.titulo">Práctica profesional · Automatización de procesos</h3>
                 <ul>
-                  <li>Creé automatizaciones con JavaScript y Node.js que redujeron las tareas manuales y subieron la eficiencia del equipo.</li>
+                  <li data-i18n="h3.p1">Creé automatizaciones con JavaScript y Node.js que redujeron las tareas manuales y subieron la eficiencia del equipo.</li>
                 </ul>
                 <div class="chips"><span>JavaScript</span><span>Node.js</span></div>
               </div>
               <div class="hito-panel" role="tabpanel" id="panel-h4" aria-labelledby="tab-h4">
-                <p class="hito-panel__fecha">Mar. 2023 — Dic. 2025</p>
-                <h3>Ingeniería en Computación e Informática</h3>
+                <p class="hito-panel__fecha" data-i18n="h4.fecha">Mar. 2023 — Dic. 2025</p>
+                <h3 data-i18n="h4.titulo">Ingeniería en Computación e Informática</h3>
                 <ul>
-                  <li>Proyecto de título: plataforma logística con trazabilidad, importación desde Excel y alertas de stock, que después evolucionó en TraceLink.</li>
+                  <li data-i18n="h4.p1">Proyecto de título: plataforma logística con trazabilidad, importación desde Excel y alertas de stock, que después evolucionó en TraceLink.</li>
                 </ul>
-                <div class="chips"><span>Formación</span><span>Proyecto de título</span></div>
+                <div class="chips"><span data-i18n="h4.c1">Formación</span><span data-i18n="h4.c2">Proyecto de título</span></div>
               </div>
               <div class="hito-panel" role="tabpanel" id="panel-h5" aria-labelledby="tab-h5">
-                <p class="hito-panel__fecha">Dic. 2022 — Sep. 2024</p>
-                <h3>Técnico en cámaras termográficas FLIR</h3>
+                <p class="hito-panel__fecha" data-i18n="h5.fecha">Dic. 2022 — Sep. 2024</p>
+                <h3 data-i18n="h5.titulo">Técnico en cámaras termográficas FLIR</h3>
                 <ul>
-                  <li>Revisé, reparé y calibré cámaras FLIR, y trabajé junto a un equipo técnico en Brasil para mantener los equipos siempre listos.</li>
+                  <li data-i18n="h5.p1">Revisé, reparé y calibré cámaras FLIR, y trabajé junto a un equipo técnico en Brasil para mantener los equipos siempre listos.</li>
                 </ul>
-                <div class="chips"><span>Calibración</span><span>Hardware</span><span>Equipo internacional</span></div>
+                <div class="chips"><span data-i18n="h5.c1">Calibración</span><span>Hardware</span><span data-i18n="h5.c3">Equipo internacional</span></div>
               </div>
             </div>
           </article>
@@ -275,61 +288,61 @@
       <div class="vista__marco">
         <header class="cab cab--fila revelar">
           <div>
-            <p class="cab__num">03 — Publicados en GitHub</p>
-            <h2 id="titulo-proyectos" tabindex="-1">Proyectos</h2>
+            <p class="cab__num" data-i18n="proy.num">03 — Con demo en vivo</p>
+            <h2 id="titulo-proyectos" tabindex="-1" data-i18n="nav.proyectos">Proyectos</h2>
           </div>
-          <div class="segmento" role="tablist" aria-label="Ver">
+          <div class="segmento" role="tablist" data-i18n-attr="aria-label:proy.ver" aria-label="Ver">
             <span class="segmento__marca" aria-hidden="true"></span>
-            <button type="button" role="tab" class="activo" aria-selected="true" aria-controls="panel-galeria" id="seg-galeria" data-panel="galeria">Proyectos</button>
-            <button type="button" role="tab" aria-selected="false" aria-controls="panel-actividad" id="seg-actividad" data-panel="actividad" tabindex="-1">Actividad</button>
+            <button type="button" role="tab" class="activo" aria-selected="true" aria-controls="panel-galeria" id="seg-galeria" data-panel="galeria" data-i18n="nav.proyectos">Proyectos</button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="panel-actividad" id="seg-actividad" data-panel="actividad" tabindex="-1" data-i18n="proy.actividad">Actividad</button>
           </div>
         </header>
 
         <div class="panel-proyectos activo" id="panel-galeria" role="tabpanel" aria-labelledby="seg-galeria">
           <div class="galeria">
             <div class="galeria__lado revelar">
-              <ul class="resumen-gh" aria-label="Resumen">
-                <li><strong id="gh-proyectos">4</strong> proyectos</li>
-                <li><strong id="gh-commits">160</strong> commits</li>
-                <li><strong id="gh-lenguajes">8</strong> lenguajes</li>
-                <li><strong id="gh-demos">2</strong> demos</li>
+              <ul class="resumen-gh" data-i18n-attr="aria-label:proy.resumen" aria-label="Resumen">
+                <li><strong id="gh-proyectos">4</strong> <span data-i18n="proy.r.proyectos">proyectos</span></li>
+                <li><strong id="gh-commits">134</strong> commits</li>
+                <li><strong id="gh-lenguajes">8</strong> <span data-i18n="proy.r.lenguajes">lenguajes</span></li>
+                <li><strong id="gh-demos">4</strong> demos</li>
               </ul>
-              <div class="filtros" role="group" aria-label="Filtrar proyectos">
-                <button type="button" class="filtro activo" data-filtro="todos" aria-pressed="true">Todos</button>
+              <div class="filtros" role="group" data-i18n-attr="aria-label:proy.filtrar" aria-label="Filtrar proyectos">
+                <button type="button" class="filtro activo" data-filtro="todos" aria-pressed="true" data-i18n="proy.f.todos">Todos</button>
                 <button type="button" class="filtro" data-filtro="fullstack" aria-pressed="false">Full-stack</button>
-                <button type="button" class="filtro" data-filtro="ia" aria-pressed="false">IA</button>
+                <button type="button" class="filtro" data-filtro="ia" aria-pressed="false" data-i18n="proy.f.ia">IA</button>
                 <button type="button" class="filtro" data-filtro="web" aria-pressed="false">Web</button>
               </div>
-              <div class="lista-proyectos" id="lista-proyectos" role="tablist" aria-label="Proyectos" aria-orientation="vertical"></div>
+              <div class="lista-proyectos" id="lista-proyectos" role="tablist" data-i18n-attr="aria-label:nav.proyectos" aria-label="Proyectos" aria-orientation="vertical"></div>
             </div>
             <div class="detalle-caja" id="detalle" role="tabpanel" aria-live="polite"></div>
           </div>
-          <noscript><p class="cab__num">Activa JavaScript para ver los proyectos, o revísalos en <a href="https://github.com/ErickColvin?tab=repositories">github.com/ErickColvin</a>.</p></noscript>
+          <noscript><p class="cab__num">Activa JavaScript para ver los proyectos.</p></noscript>
         </div>
 
         <div class="panel-proyectos" id="panel-actividad" role="tabpanel" aria-labelledby="seg-actividad">
           <div class="tile actividad" id="actividad">
             <div class="actividad__cab">
-              <h3>Actividad en GitHub</h3>
-              <p class="actividad__nota">Mis commits en los repositorios de estos proyectos. El trabajo en Power Platform no vive en GitHub.</p>
+              <h3 data-i18n="act.titulo">Actividad en GitHub</h3>
+              <p class="actividad__nota" data-i18n="act.nota">Mis commits en los repositorios de estos proyectos. El trabajo en Power Platform no vive en GitHub.</p>
             </div>
             <dl class="actividad__datos">
               <div><dt>commits</dt><dd id="act-total">0</dd></div>
-              <div><dt>días con commits</dt><dd id="act-dias">0</dd></div>
-              <div><dt>días seguidos, la racha más larga</dt><dd id="act-racha">0</dd></div>
+              <div><dt data-i18n="act.dias">días con commits</dt><dd id="act-dias">0</dd></div>
+              <div><dt data-i18n="act.racha">días seguidos, la racha más larga</dt><dd id="act-racha">0</dd></div>
               <div><dt id="act-max-fecha">el día más activo</dt><dd id="act-max">0</dd></div>
             </dl>
             <div class="actividad__desliza" id="act-desliza">
               <div class="actividad__tabla">
                 <span></span>
                 <div class="actividad__meses" id="act-meses" aria-hidden="true"></div>
-                <div class="actividad__semana" aria-hidden="true"><span>lun</span><span></span><span>mié</span><span></span><span>vie</span><span></span><span></span></div>
+                <div class="actividad__semana" id="act-semana" aria-hidden="true"></div>
                 <div class="actividad__grilla" id="act-grilla" role="img"></div>
               </div>
             </div>
             <div class="actividad__pie">
               <p id="act-generado"></p>
-              <p class="actividad__leyenda" aria-hidden="true">Menos <i data-n="0"></i><i data-n="1"></i><i data-n="2"></i><i data-n="3"></i><i data-n="4"></i> Más</p>
+              <p class="actividad__leyenda" aria-hidden="true"><span data-i18n="act.menos">Menos</span> <i data-n="0"></i><i data-n="1"></i><i data-n="2"></i><i data-n="3"></i><i data-n="4"></i> <span data-i18n="act.mas">Más</span></p>
             </div>
             <p class="actividad__tip" id="act-tip" role="status" hidden></p>
           </div>
@@ -341,55 +354,55 @@
     <section class="vista" id="habilidades" aria-labelledby="titulo-habilidades">
       <div class="vista__marco">
         <header class="cab revelar">
-          <p class="cab__num">04 — Herramientas y certificaciones</p>
-          <h2 id="titulo-habilidades" tabindex="-1">Habilidades</h2>
+          <p class="cab__num" data-i18n="hab.num">04 — Herramientas y certificaciones</p>
+          <h2 id="titulo-habilidades" tabindex="-1" data-i18n="nav.habilidades">Habilidades</h2>
         </header>
 
         <div class="grupos">
           <article class="tile grupo revelar">
             <div class="grupo__icono"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
-            <h3>Automatización y Power Platform</h3>
+            <h3 data-i18n="hab.g1">Automatización y Power Platform</h3>
             <div class="chips"><span>Power Apps</span><span>Power Automate</span><span>SharePoint</span><span>Power BI</span><span>AI Builder</span><span>Excel</span></div>
           </article>
           <article class="tile grupo revelar">
             <div class="grupo__icono"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/></svg></div>
-            <h3>Desarrollo</h3>
+            <h3 data-i18n="hab.g2">Desarrollo</h3>
             <div class="chips"><span>JavaScript</span><span>TypeScript</span><span>Node.js</span><span>React</span><span>Express</span><span>C# · .NET</span><span>Python</span></div>
           </article>
           <article class="tile grupo revelar">
             <div class="grupo__icono"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.7 4 3 9 3s9-1.3 9-3V5"/><path d="M3 12c0 1.7 4 3 9 3s9-1.3 9-3"/></svg></div>
-            <h3>Datos e infraestructura</h3>
+            <h3 data-i18n="hab.g3">Datos e infraestructura</h3>
             <div class="chips"><span>PostgreSQL</span><span>SQLite</span><span>MongoDB</span><span>Prisma</span><span>Docker</span><span>GitHub Actions</span></div>
           </article>
           <article class="tile grupo revelar">
             <div class="grupo__icono"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3"/></svg></div>
-            <h3>IA y redes</h3>
-            <div class="chips"><span>LLM local (Ollama)</span><span>Machine Learning</span><span>CCNA</span><span>Seguridad web</span></div>
+            <h3 data-i18n="hab.g4">IA y redes</h3>
+            <div class="chips"><span data-i18n="hab.llm">LLM local (Ollama)</span><span>Machine Learning</span><span>CCNA</span><span data-i18n="hab.seguridad">Seguridad web</span></div>
           </article>
         </div>
 
-        <h3 class="subtitulo revelar">Certificaciones y cursos</h3>
+        <h3 class="subtitulo revelar" data-i18n="hab.certificaciones">Certificaciones y cursos</h3>
         <ul class="certificados">
           <li class="tile certificado certificado--ancho revelar">
             <span class="certificado__fecha">Microsoft Learn</span>
-            <strong>38 insignias y 6 trofeos en Power Platform</strong>
-            <span>Power Automate con múltiples orígenes de datos, AI Builder, flujos de aprobación y diseño de interfaces en Power Apps.</span>
+            <strong data-i18n="cert.ms">38 insignias y 6 trofeos en Power Platform</strong>
+            <span data-i18n="cert.ms.det">Power Automate con múltiples orígenes de datos, AI Builder, flujos de aprobación y diseño de interfaces en Power Apps.</span>
           </li>
           <li class="tile certificado revelar">
-            <span class="certificado__fecha">Jul. 2025 · Cisco</span>
-            <strong>CCNA: Conmutación, enrutamiento y redes inalámbricas</strong>
+            <span class="certificado__fecha" data-i18n="cert.ccna.fecha">Jul. 2025 · Cisco</span>
+            <strong data-i18n="cert.ccna">CCNA: Conmutación, enrutamiento y redes inalámbricas</strong>
           </li>
           <li class="tile certificado revelar">
-            <span class="certificado__fecha">Jun. 2025 · IBM SkillsBuild</span>
+            <span class="certificado__fecha" data-i18n="cert.ibm.fecha">Jun. 2025 · IBM SkillsBuild</span>
             <strong>Machine Learning for Data Science Projects</strong>
           </li>
           <li class="tile certificado revelar">
-            <span class="certificado__fecha">Ago. 2024 · FLIR Brasil</span>
-            <strong>Calibración de cuerpos negros</strong>
+            <span class="certificado__fecha" data-i18n="cert.flir.fecha">Ago. 2024 · FLIR Brasil</span>
+            <strong data-i18n="cert.flir">Calibración de cuerpos negros</strong>
           </li>
           <li class="tile certificado revelar">
-            <span class="certificado__fecha">Ene. 2024 · Chileno Británico</span>
-            <strong>Inglés social y laboral 4 · 94%</strong>
+            <span class="certificado__fecha" data-i18n="cert.ingles.fecha">Ene. 2024 · Chileno Británico</span>
+            <strong data-i18n="cert.ingles">Inglés social y laboral 4 · 94%</strong>
           </li>
         </ul>
 
@@ -410,9 +423,9 @@
     <section class="vista" id="contacto" aria-labelledby="titulo-contacto">
       <div class="vista__marco vista__marco--centro">
         <div class="contacto revelar">
-          <p class="cab__num">05 — Contacto</p>
-          <h2 class="contacto__grande" id="titulo-contacto" tabindex="-1">¿Conversamos?</h2>
-          <p class="contacto__texto">Si tu equipo tiene un proceso manual que quiere automatizar, o una herramienta por construir, escríbeme.</p>
+          <p class="cab__num" data-i18n="contacto.num">05 — Contacto</p>
+          <h2 class="contacto__grande" id="titulo-contacto" tabindex="-1" data-i18n-html="contacto.titulo">¿<em>Conversamos</em>?</h2>
+          <p class="contacto__texto" data-i18n="contacto.texto">Si tu equipo tiene un proceso manual que quiere automatizar, o una herramienta por construir, escríbeme.</p>
           <div class="contacto__acciones">
             <a class="btn btn--primario iman" href="mailto:erick.a.colvincordova@gmail.com">
               <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>
@@ -420,7 +433,7 @@
             </a>
             <button class="btn btn--fantasma" type="button" id="btn-copiar" data-correo="erick.a.colvincordova@gmail.com">
               <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-              <span>Copiar correo</span>
+              <span data-i18n="contacto.copiar">Copiar correo</span>
             </button>
           </div>
           <div class="contacto__redes">
@@ -432,21 +445,21 @@
               <svg class="relleno" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 0-.8.4-1.3.7-1.6-2.6-.3-5.4-1.3-5.4-5.9 0-1.3.5-2.4 1.2-3.2 0-.3-.5-1.5.2-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.5.4.9 1.1.9 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>
               GitHub
             </a>
-            <a href="cv.html" class="red iman">
+            <a href="cv.html" class="red iman" data-cv>
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/></svg>
-              CV en PDF
+              <span data-i18n="contacto.cv">CV en PDF</span>
             </a>
           </div>
-          <p class="contacto__hora"><span class="punto-vivo"></span> Santiago, Chile · <span id="hora-local">--:--</span> hora local</p>
+          <p class="contacto__hora"><span class="punto-vivo"></span> Santiago, Chile · <span id="hora-local">--:--</span> <span data-i18n="contacto.hora">hora local</span></p>
         </div>
       </div>
     </section>
   </main>
 
   <footer class="pie">
-    <p>© <span id="anio">2026</span> Erick Colvin · Hecho a mano, publicado en GitHub Pages</p>
+    <p>© <span id="anio">2026</span> Erick Colvin · <span data-i18n="pie.hecho">Hecho a mano, publicado en GitHub Pages</span></p>
     <div class="paginador">
-      <button class="paginador__btn" type="button" id="btn-anterior" aria-label="Sección anterior">
+      <button class="paginador__btn" type="button" id="btn-anterior" data-i18n-attr="aria-label:pie.anterior" aria-label="Sección anterior">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
       </button>
       <span class="paginador__pos" id="paginador-pos" aria-live="polite">01 / 05</span>
@@ -457,11 +470,33 @@
     </div>
   </footer>
 
+  <!-- Elección de idioma en la primera visita (texto en los dos idiomas a propósito) -->
+  <dialog class="dialogo-idioma" id="dialogo-idioma" aria-labelledby="dialogo-idioma-titulo">
+    <div class="dialogo-idioma__caja">
+      <span class="monograma monograma--grande" aria-hidden="true">EC</span>
+      <h2 id="dialogo-idioma-titulo" class="dialogo-idioma__titulo">¿En qué idioma prefieres verlo?</h2>
+      <p class="dialogo-idioma__sub" lang="en">Which language would you like to browse in?</p>
+      <div class="dialogo-idioma__opciones">
+        <button type="button" class="opcion-idioma" data-idioma="es" lang="es">
+          <span class="opcion-idioma__cod">ES</span>
+          <strong>Español</strong>
+          <small>Ver el portafolio en español</small>
+        </button>
+        <button type="button" class="opcion-idioma" data-idioma="en" lang="en">
+          <span class="opcion-idioma__cod">EN</span>
+          <strong>English</strong>
+          <small>View the portfolio in English</small>
+        </button>
+      </div>
+      <p class="dialogo-idioma__nota">Puedes cambiarlo cuando quieras con <b>ES/EN</b> · <span lang="en">Switch anytime with <b>ES/EN</b></span></p>
+    </div>
+  </dialog>
+
   <div class="aviso" id="aviso-movimiento" role="status" hidden>
-    <p>Tu sistema pide <strong>animaciones reducidas</strong>, así que la página se muestra más quieta.</p>
+    <p data-i18n-html="aviso.texto">Tu sistema pide <strong>animaciones reducidas</strong>, así que la página se muestra más quieta.</p>
     <div class="aviso__acciones">
-      <button type="button" class="btn btn--primario btn--chico" id="aviso-activar">Activar animaciones</button>
-      <button type="button" class="icono-btn" id="aviso-cerrar" aria-label="Cerrar aviso">
+      <button type="button" class="btn btn--primario btn--chico" id="aviso-activar" data-i18n="aviso.activar">Activar animaciones</button>
+      <button type="button" class="icono-btn" id="aviso-cerrar" data-i18n-attr="aria-label:aviso.cerrar" aria-label="Cerrar aviso">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
       </button>
     </div>
@@ -469,6 +504,7 @@
 
   <script src="js/proyectos.js"></script>
   <script src="js/actividad.js"></script>
+  <script src="js/i18n.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

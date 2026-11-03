@@ -1,7 +1,8 @@
 // Demo estática de Finanzas Personales (GitHub Pages, sin servidor).
 // Responde las llamadas a /api y /health con las respuestas grabadas de la API en modo demostración
 // (datos inventados) y replica en el navegador los filtros, el orden y la paginación del backend.
-// Los cambios (editar, crear, borrar) viven solo en memoria: se pierden al recargar.
+// Los cambios (movimientos, reglas, presupuestos, alertas, membresías, nombres, cuentas) viven solo en memoria:
+// se pierden al recargar. Exportar genera el CSV en el navegador con los mismos filtros.
 import datos from './datos-demo.json'
 
 /* ---------- Reloj de la demo ----------
@@ -133,7 +134,7 @@ function responder(metodo, ruta, q, cuerpo) {
 
   if (metodo === 'GET') {
     if (ruta === '/api/movements') return [200, pagina(q)]
-    if (ruta === '/api/movements/export') return [404, { title: 'La exportación no está disponible en la demo en línea.' }]
+    if (ruta === '/api/movements/export') return [404, { title: 'La exportación se descarga desde los botones CSV y Excel.' }]
     if (id) {
       const m = movimientos.find((x) => x.id === id)
       return m ? [200, detalleDe(m)] : [404, { title: 'No existe ese movimiento.' }]
@@ -180,14 +181,194 @@ function responder(metodo, ruta, q, cuerpo) {
     if (i !== -1) movimientos.splice(i, 1)
     return [204, null]
   }
-  if (metodo === 'POST' && /\/remember$/.test(ruta)) return [200, { ruleId: 900 + id, applied: 0 }]
-  if (metodo === 'POST' && ruta === '/api/rules') return [200, { ruleId: 901, applied: 0 }]
+  return responderAjustes(metodo, ruta, q, cuerpo)
+}
+
+/* ---------- Reglas, categorías, cuentas, presupuestos, alertas y comercios (en memoria) ---------- */
+const reglas = datos.respuestas['/api/rules']
+const cuentas = datos.respuestas['/api/accounts']
+const alertas = datos.respuestas['/api/alerts']
+const alias = datos.respuestas['/api/merchant-aliases']
+const compartidos = datos.respuestas['/api/cost-shares']
+const etiquetaOriginal = Object.fromEntries(cuentas.map((c) => [c.id, c.alias ? c.institution : c.label]))
+const nombreOriginal = {}
+for (const m of movimientos) if (m.display && !(m.display.key in nombreOriginal)) nombreOriginal[m.display.key] = m.display.name
+let idNuevo = 5000
+const ahoraIso = () => new FechaDemo().toISOString()
+
+function nuevaRegla(match, pattern, categoryId) {
+  const c = categorias.find((x) => x.id === categoryId)
+  const regla = { id: idNuevo++, match, pattern, categoryId, categoryName: c ? c.name : '', origin: 'Ui', hits: 0, createdAtUtc: ahoraIso(), lastUsedAtUtc: null }
+  // La regla se aplica a los movimientos sin categoría elegida por el usuario
+  let aplicados = 0
+  for (const m of movimientos) {
+    const texto = (m.merchant ?? m.counterparty ?? '').toLowerCase()
+    const coincide = match === 'Exact' ? texto === pattern.toLowerCase() : texto.includes(pattern.toLowerCase())
+    if (coincide && m.categorySource !== 'User') { aplicarCambios(m, { categoryId }); m.categorySource = 'Rule'; aplicados++ }
+  }
+  regla.hits = aplicados
+  reglas.push(regla)
+  return { ruleId: regla.id, applied: aplicados }
+}
+
+function estadoPresupuesto(linea) {
+  if (linea.budgetMinor === null) return null
+  if (linea.spentMinor > linea.budgetMinor) return 'Over'
+  return linea.spentMinor >= linea.budgetMinor * 0.8 ? 'Warning' : 'Ok'
+}
+function recalcularPresupuesto(vista) {
+  for (const l of vista.lines) l.state = estadoPresupuesto(l)
+  const con = vista.lines.filter((l) => l.budgetMinor !== null)
+  vista.totalBudgetMinor = con.reduce((s, l) => s + l.budgetMinor, 0)
+  vista.spentInBudgetedMinor = con.reduce((s, l) => s + l.spentMinor, 0)
+}
+// month = null cambia el presupuesto de todos los meses (salvo los ajustados a mano)
+function fijarPresupuesto(categoryId, monto, mes) {
+  for (const [m, vista] of Object.entries(datos.presupuestos)) {
+    const linea = vista.lines.find((l) => l.categoryId === categoryId)
+    if (!linea) continue
+    if (mes === null) {
+      linea.defaultBudgetMinor = monto
+      if (!linea.isMonthOverride) linea.budgetMinor = monto
+    } else if (m === mes) {
+      linea.budgetMinor = monto ?? linea.defaultBudgetMinor
+      linea.isMonthOverride = monto !== null
+    }
+    recalcularPresupuesto(vista)
+  }
+}
+
+function aplicarCompartido(clave, compartido) {
+  for (const m of movimientos) {
+    if (m.display?.key !== clave) continue
+    m.share = compartido ? { id: compartido.id, numerator: compartido.numerator, denominator: compartido.denominator, amountMinor: Math.round(m.amountMinor * compartido.numerator / compartido.denominator) } : null
+  }
+}
+
+function mensual(item) { return item.cycle === 'Annual' ? Math.round(item.amountMinor / 12) : item.amountMinor }
+
+function responderAjustes(metodo, ruta, q, cuerpo) {
+  const c = cuerpo || {}
+  const idRuta = Number((ruta.match(/\/(\d+)$/) || [])[1])
+
+  if (metodo === 'POST' && /^\/api\/movements\/\d+\/remember$/.test(ruta)) {
+    const m = movimientos.find((x) => x.id === Number(ruta.split('/')[3]))
+    return [200, m ? nuevaRegla('Exact', m.merchant ?? m.counterparty ?? '', c.categoryId) : { ruleId: 0, applied: 0 }]
+  }
+  if (metodo === 'POST' && ruta === '/api/rules') return [200, nuevaRegla(c.match, c.pattern, c.categoryId)]
+  if (metodo === 'DELETE' && ruta.startsWith('/api/rules/')) { reglas.splice(reglas.findIndex((r) => r.id === idRuta) >>> 0, 1); return [204, null] }
   if (metodo === 'POST' && ruta === '/api/categorize') return [200, { byRule: 0, byAi: 0, doubtful: 0, unmatched: 0, aiUnavailable: true }]
-  if (metodo === 'POST' && /^\/api\/(categories|memberships)$/.test(ruta)) return [200, { id: 900 }]
-  if (metodo === 'PUT' && ruta === '/api/cost-shares') return [200, { id: 900 }]
-  // El resto de los cambios (presupuestos, alertas, nombres, cuentas) se aceptan sin guardarse
+
+  if (metodo === 'POST' && ruta === '/api/categories') {
+    const nueva = { id: idNuevo++, name: c.name, kind: c.kind, parentId: null, archived: false, color: c.color ?? null, icon: c.icon ?? null }
+    categorias.push(nueva)
+    return [200, { id: nueva.id }]
+  }
+  if (metodo === 'PATCH' && ruta.startsWith('/api/categories/')) {
+    const cat = categorias.find((x) => x.id === idRuta)
+    if (cat) Object.assign(cat, c)
+    return [204, null]
+  }
+  if (metodo === 'PATCH' && ruta.startsWith('/api/accounts/')) {
+    const cuenta = cuentas.find((x) => x.id === idRuta)
+    if (cuenta) {
+      cuenta.alias = c.alias || null
+      cuenta.label = cuenta.alias || etiquetaOriginal[cuenta.id]
+      for (const m of movimientos) if (m.accountId === cuenta.id) m.accountLabel = cuenta.label
+    }
+    return [204, null]
+  }
+
+  if (metodo === 'PUT' && ruta.startsWith('/api/budgets/')) { fijarPresupuesto(idRuta, c.amountMinor, c.month ?? null); return [204, null] }
+  if (metodo === 'DELETE' && ruta.startsWith('/api/budgets/')) { fijarPresupuesto(idRuta, null, q.get('month')); return [204, null] }
+
+  if (metodo === 'POST' && ruta === '/api/alerts/decisions') {
+    if (c.decision === 'Reported') {
+      for (const a of alertas.suspicious) if (a.key === c.key) a.reported = true
+    } else {
+      for (const lista of ['suspicious', 'membershipAlerts', 'recurring']) alertas[lista] = alertas[lista].filter((a) => a.key !== c.key)
+    }
+    alertas.pending = alertas.suspicious.filter((a) => !a.reported).length + alertas.membershipAlerts.length
+    return [204, null]
+  }
+  if (metodo === 'POST' && ruta === '/api/memberships') {
+    const item = { id: idNuevo++, merchantKey: c.merchantKey, name: c.name, cycle: c.cycle, amountMinor: c.amountMinor, currency: c.currency, active: true,
+      monthlyMinor: 0, lastChargeAt: null, lastChargeMinor: null, nextExpected: null, charges: 0, share: null, myMonthlyMinor: null }
+    item.monthlyMinor = mensual(item)
+    const recurrente = alertas.recurring.find((r) => r.merchantKey === c.merchantKey)
+    if (recurrente) Object.assign(item, { lastChargeAt: recurrente.lastAt, lastChargeMinor: recurrente.lastAmountMinor, nextExpected: recurrente.nextExpected, charges: recurrente.count })
+    alertas.recurring = alertas.recurring.filter((r) => r.merchantKey !== c.merchantKey)
+    alertas.memberships.push(item)
+    return [200, { id: item.id }]
+  }
+  if (metodo === 'PATCH' && ruta.startsWith('/api/memberships/')) {
+    const item = alertas.memberships.find((x) => x.id === idRuta)
+    if (item) { Object.assign(item, c); item.monthlyMinor = mensual(item) }
+    return [204, null]
+  }
+  if (metodo === 'DELETE' && ruta.startsWith('/api/memberships/')) { alertas.memberships = alertas.memberships.filter((x) => x.id !== idRuta); return [204, null] }
+
+  if (metodo === 'PUT' && ruta === '/api/merchant-aliases') {
+    const nombre = (c.name || '').trim()
+    const i = alias.findIndex((a) => a.key === c.key)
+    if (!nombre) { if (i !== -1) alias.splice(i, 1) } else if (i !== -1) Object.assign(alias[i], { name: nombre, updatedAtUtc: ahoraIso() })
+    else alias.push({ id: idNuevo++, key: c.key, name: nombre, updatedAtUtc: ahoraIso() })
+    for (const m of movimientos) if (m.display?.key === c.key) Object.assign(m.display, { name: nombre || nombreOriginal[c.key], renamed: Boolean(nombre) })
+    return [204, null]
+  }
+  if (metodo === 'DELETE' && ruta.startsWith('/api/merchant-aliases/')) {
+    const i = alias.findIndex((a) => a.id === idRuta)
+    if (i !== -1) {
+      const clave = alias[i].key
+      alias.splice(i, 1)
+      for (const m of movimientos) if (m.display?.key === clave) Object.assign(m.display, { name: nombreOriginal[clave], renamed: false })
+    }
+    return [204, null]
+  }
+  if (metodo === 'PUT' && ruta === '/api/cost-shares') {
+    let item = compartidos.find((x) => x.merchantKey === c.merchantKey)
+    if (item) Object.assign(item, { numerator: c.numerator, denominator: c.denominator })
+    else {
+      item = { id: idNuevo++, merchantKey: c.merchantKey, name: nombreOriginal[c.merchantKey] ?? c.merchantKey, numerator: c.numerator, denominator: c.denominator, movements: movimientos.filter((m) => m.display?.key === c.merchantKey).length }
+      compartidos.push(item)
+    }
+    aplicarCompartido(c.merchantKey, item)
+    return [200, { id: item.id }]
+  }
+  if (metodo === 'DELETE' && ruta.startsWith('/api/cost-shares/')) {
+    const i = compartidos.findIndex((x) => x.id === idRuta)
+    if (i !== -1) { aplicarCompartido(compartidos[i].merchantKey, null); compartidos.splice(i, 1) }
+    return [204, null]
+  }
+  // Cerrar sesión y lo demás: se acepta (la demo no tiene usuarios)
   return [204, null]
 }
+
+/* ---------- Exportar: CSV generado en el navegador con los mismos filtros de la lista ---------- */
+function celda(v) { const t = String(v ?? ''); return /[";\n]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t }
+function exportar(q) {
+  const lista = ordenar(filtrar(q), q.get('sort') || 'date_desc')
+  const filas = [['Fecha', 'Detalle', 'Categoría', 'Cuenta', 'Moneda', 'Monto', 'Sentido', 'Tipo', 'Estado', 'Notas']]
+  for (const m of lista) {
+    const monto = m.currency === 'USD' ? (m.amountMinor / 100).toFixed(2) : String(m.amountMinor)
+    filas.push([m.occurredAt.slice(0, 16).replace('T', ' '), m.display?.name ?? m.merchant ?? m.counterparty ?? '', m.categoryName ?? '', m.accountLabel ?? '',
+      m.currency, (m.direction === 'Out' ? '-' : '') + monto, m.direction === 'Out' ? 'Egreso' : 'Ingreso', m.type, m.status === 'Confirmed' ? 'Confirmado' : 'Por revisar', m.notes ?? ''])
+  }
+  // Punto y coma y BOM: así Excel en español lo abre bien con doble clic
+  const csv = '﻿' + filas.map((f) => f.map(celda).join(';')).join('\r\n')
+  const a = document.createElement('a')
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }))
+  a.download = `movimientos-demo-${new FechaDemo().toISOString().slice(0, 10)}.csv`
+  document.body.appendChild(a)
+  a.click()
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove() }, 1000)
+}
+document.addEventListener('click', (e) => {
+  const enlace = e.target.closest && e.target.closest('a[href*="/api/movements/export"]')
+  if (!enlace) return
+  e.preventDefault()
+  exportar(new URL(enlace.getAttribute('href'), location.origin).searchParams)
+}, true)
 
 const fetchReal = globalThis.fetch.bind(globalThis)
 globalThis.fetch = async (entrada, opciones = {}) => {

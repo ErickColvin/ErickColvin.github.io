@@ -4,10 +4,9 @@
   var raiz = document.documentElement;
   var USUARIO_GH = "ErickColvin";
   var PROYECTOS = window.PROYECTOS || [];
-  var TITULO = document.title;
+  var TEXTOS_EN = window.TEXTOS_EN || {};
 
   var VISTAS = ["inicio", "trayectoria", "proyectos", "habilidades", "contacto"];
-  var NOMBRES = { inicio: "Inicio", trayectoria: "Trayectoria", proyectos: "Proyectos", habilidades: "Habilidades", contacto: "Contacto" };
   // Enlaces de la versión anterior de la página, para que sigan funcionando
   var ALIAS = { "sobre-mi": "trayectoria", experiencia: "trayectoria", actividad: "proyectos" };
 
@@ -29,9 +28,9 @@
     edificio: '<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01M16 6h.01M12 6h.01M12 10h.01M12 14h.01M16 10h.01M16 14h.01M8 10h.01M8 14h.01"/>',
     rayo: '<path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/>'
   };
-  var ICONO_GITHUB = '<svg class="relleno" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 0-.8.4-1.3.7-1.6-2.6-.3-5.4-1.3-5.4-5.9 0-1.3.5-2.4 1.2-3.2 0-.3-.5-1.5.2-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.5.4.9 1.1.9 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>';
   var ICONO_EXTERNO = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>';
   var ICONO_CANDADO = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
+  var ICONO_MUNDO = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20"/></svg>';
   var ICONO_FLECHA = '<svg class="item-proyecto__flecha" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>';
 
   /* ---------- Utilidades ---------- */
@@ -68,13 +67,68 @@
     });
   }
 
+  /* ---------- Idioma ---------- */
+  var idioma = raiz.dataset.idioma === "en" ? "en" : "es";
+  // Un enlace con ?lang= es una elección explícita: se recuerda
+  var idiomaUrl = (location.search.match(/[?&]lang=(es|en)\b/) || [])[1];
+  if (idiomaUrl) guardar("idioma", idiomaUrl);
+  function t(es, en) { return idioma === "en" ? en : es; }
+  function campo(p, nombre) { return idioma === "en" && p.en && p.en[nombre] !== undefined ? p.en[nombre] : p[nombre]; }
+  var LOCALE = { es: "es-CL", en: "en-US" };
+  var alCambiarIdioma = [];
+
+  // El español vive en el HTML: se guarda la primera vez para poder volver a él
+  var originales = new WeakMap();
+  function original(el) {
+    var o = originales.get(el);
+    if (!o) { o = { texto: el.textContent, html: el.innerHTML, attrs: {} }; originales.set(el, o); }
+    return o;
+  }
+  function aplicarTextos() {
+    var en = idioma === "en";
+    $$("[data-i18n]").forEach(function (el) {
+      var o = original(el);
+      el.textContent = (en && TEXTOS_EN[el.dataset.i18n]) || o.texto;
+    });
+    $$("[data-i18n-html]").forEach(function (el) {
+      var o = original(el);
+      el.innerHTML = (en && TEXTOS_EN[el.dataset.i18nHtml]) || o.html;
+    });
+    $$("[data-i18n-attr]").forEach(function (el) {
+      var o = original(el);
+      el.dataset.i18nAttr.split(";").forEach(function (par) {
+        var partes = par.split(":"), attr = partes[0], clave = partes[1];
+        if (!(attr in o.attrs)) o.attrs[attr] = el.getAttribute(attr);
+        el.setAttribute(attr, (en && TEXTOS_EN[clave]) || o.attrs[attr]);
+      });
+    });
+    // El CV se abre en el mismo idioma
+    $$("[data-cv]").forEach(function (a) { a.setAttribute("href", "cv.html?lang=" + idioma); });
+  }
+
+  function cambiarIdioma(nuevo) {
+    if (nuevo !== "es" && nuevo !== "en") return;
+    var cambia = nuevo !== idioma;
+    idioma = nuevo;
+    raiz.dataset.idioma = nuevo;
+    raiz.lang = nuevo === "en" ? "en" : "es-CL";
+    aplicarTextos();
+    if (cambia) alCambiarIdioma.forEach(function (fn) { fn(); });
+  }
+
+  $("#btn-idioma").addEventListener("click", function () {
+    var nuevo = idioma === "es" ? "en" : "es";
+    guardar("idioma", nuevo);
+    cambiarIdioma(nuevo);
+  });
+
   /* ---------- Tema ---------- */
   var btnTema = $("#btn-tema");
   function pintarTema() {
     var claro = raiz.dataset.theme === "light";
-    btnTema.title = claro ? "Cambiar a tema oscuro" : "Cambiar a tema claro";
+    btnTema.title = claro ? t("Cambiar a tema oscuro", "Switch to dark theme") : t("Cambiar a tema claro", "Switch to light theme");
     var meta = $('meta[name="theme-color"]');
-    if (meta) meta.content = claro ? "#f3f4f9" : "#06070c";
+    if (meta) meta.content = claro ? "#f4f4f7" : "#07080c";
   }
   btnTema.addEventListener("click", function () {
     raiz.dataset.theme = raiz.dataset.theme === "light" ? "dark" : "light";
@@ -82,15 +136,16 @@
     pintarTema();
     red.colores();
   });
-  pintarTema();
+  alCambiarIdioma.push(pintarTema);
 
   /* ---------- Animaciones: completo / reducido ---------- */
   var btnMov = $("#btn-movimiento");
   var aviso = $("#aviso-movimiento");
+  var avisoPendiente = false;
   function pintarMovimiento() {
     var on = movimientoCompleto();
     btnMov.setAttribute("aria-pressed", String(on));
-    btnMov.title = on ? "Animaciones activadas (clic para reducir)" : "Animaciones reducidas (clic para activar)";
+    btnMov.title = on ? t("Animaciones activadas (clic para reducir)", "Animations on (click to reduce)") : t("Animaciones reducidas (clic para activar)", "Animations reduced (click to turn on)");
   }
   function cambiarMovimiento(valor) {
     raiz.dataset.motion = valor;
@@ -104,12 +159,15 @@
     cambiarMovimiento(movimientoCompleto() ? "reducido" : "completo");
     aviso.hidden = true;
   });
-  pintarMovimiento();
+  alCambiarIdioma.push(pintarMovimiento);
 
   // Si el sistema pide menos movimiento, se avisa una vez con la opción de activarlas aquí.
-  if (!leer("movimiento") && !movimientoCompleto() && leer("aviso-movimiento") !== "visto") {
-    setTimeout(function () { aviso.hidden = false; }, 1400);
+  function mostrarAviso() {
+    if (!avisoPendiente) return;
+    avisoPendiente = false;
+    setTimeout(function () { aviso.hidden = false; }, 900);
   }
+  if (!leer("movimiento") && !movimientoCompleto() && leer("aviso-movimiento") !== "visto") avisoPendiente = true;
   $("#aviso-activar").addEventListener("click", function () {
     aviso.hidden = true;
     guardar("aviso-movimiento", "visto");
@@ -129,22 +187,21 @@
   });
 
   /* ---------- Rol que se escribe y borra ---------- */
-  var ROLES = [
-    "Ingeniero en Computación e Informática",
-    "Automatización de procesos",
-    "Power Apps · Power Automate",
-    "Desarrollo full-stack",
-    "IA local y datos"
-  ];
+  var ROLES = {
+    es: ["Ingeniero en Computación e Informática", "Automatización de procesos", "Power Apps · Power Automate", "Desarrollo full-stack", "IA local y datos"],
+    en: ["Computer Engineer", "Process automation", "Power Apps · Power Automate", "Full-stack development", "Local AI and data"]
+  };
   var elRol = $("#rol");
   var temporizadorRol = null;
   function rotarRol() {
     clearTimeout(temporizadorRol);
-    if (!movimientoCompleto()) { elRol.textContent = ROLES[0]; return; }
-    var indice = 0, texto = ROLES[0], borrando = false;
+    var roles = ROLES[idioma];
+    if (!movimientoCompleto()) { elRol.textContent = roles[0]; return; }
+    var indice = 0, texto = roles[0], borrando = false;
+    elRol.textContent = texto;
     function paso() {
-      if (!movimientoCompleto()) { elRol.textContent = ROLES[0]; return; }
-      var objetivo = ROLES[indice];
+      if (!movimientoCompleto()) { elRol.textContent = roles[0]; return; }
+      var objetivo = roles[indice];
       if (!borrando) {
         texto = objetivo.slice(0, texto.length + 1);
         elRol.textContent = texto;
@@ -153,31 +210,33 @@
       } else {
         texto = texto.slice(0, -1);
         elRol.textContent = texto;
-        if (!texto) { borrando = false; indice = (indice + 1) % ROLES.length; temporizadorRol = setTimeout(paso, 300); return; }
+        if (!texto) { borrando = false; indice = (indice + 1) % roles.length; temporizadorRol = setTimeout(paso, 300); return; }
         temporizadorRol = setTimeout(paso, 28);
       }
     }
     borrando = true;
     temporizadorRol = setTimeout(paso, 3200);
   }
-  rotarRol();
+  alCambiarIdioma.push(rotarRol);
 
   /* ---------- Terminal ---------- */
-  var LINEAS_TERMINAL = [
-    { cmd: "whoami" },
-    { sal: '<span class="t-ok">erick-colvin</span>' },
-    { cmd: "cat perfil.txt" },
-    { sal: "Ingeniero en Computación e Informática" },
-    { sal: '<span class="t-acento">Power Platform · Full-stack · IA local</span>' },
-    { cmd: "ls demos/ --en-vivo" },
-    { sal: 'tracelink-preview     <span class="t-ts">TypeScript</span>' },
-    { sal: 'finanzas-preview      <span class="t-cs">C# · React</span>' },
-    { sal: 'santa-marta-preview   <span class="t-js">JavaScript</span>' },
-    { sal: 'rayo-web              <span class="t-html">HTML</span>' },
-    { cmd: "./impacto --resumen" },
-    { sal: '<span class="t-ok">✓</span> auditorías 5S+       <span class="t-acento">−70% tiempo</span>' },
-    { sal: '<span class="t-ok">✓</span> aprobación docs      <span class="t-acento">25 → 8 días</span>' }
-  ];
+  function lineasTerminal() {
+    return [
+      { cmd: "whoami" },
+      { sal: '<span class="t-ok">erick-colvin</span>' },
+      { cmd: t("cat perfil.txt", "cat profile.txt") },
+      { sal: t("Ingeniero en Computación e Informática", "Computer Engineer · Santiago, Chile") },
+      { sal: '<span class="t-acento">' + t("Power Platform · Full-stack · IA local", "Power Platform · Full-stack · Local AI") + "</span>" },
+      { cmd: t("ls demos/ --en-vivo", "ls demos/ --live") },
+      { sal: 'tracelink-preview     <span class="t-ts">TypeScript</span>' },
+      { sal: 'finanzas-preview      <span class="t-cs">C# · React</span>' },
+      { sal: 'santa-marta-preview   <span class="t-js">JavaScript</span>' },
+      { sal: 'rayo-web              <span class="t-html">HTML</span>' },
+      { cmd: t("./impacto --resumen", "./impact --summary") },
+      { sal: '<span class="t-ok">✓</span> ' + t("auditorías 5S+       ", "5S+ audits           ") + '<span class="t-acento">' + t("−70% tiempo", "−70% time") + "</span>" },
+      { sal: '<span class="t-ok">✓</span> ' + t("aprobación docs      ", "doc approvals        ") + '<span class="t-acento">' + t("25 → 8 días", "25 → 8 days") + "</span>" }
+    ];
+  }
   var PROMPT = '<span class="t-prompt">$</span> ';
   var CURSOR = '<span class="t-cursor"></span>';
   var elTerminal = $("#terminal");
@@ -187,25 +246,26 @@
     elTerminal.innerHTML = html;
     elTerminal.scrollTop = elTerminal.scrollHeight;
   }
-  function terminalCompleta() {
-    return LINEAS_TERMINAL.map(function (l) {
-      return l.cmd ? PROMPT + '<span class="t-cmd">' + l.cmd + "</span>" : '<span class="t-sal">' + l.sal + "</span>";
-    }).join("\n") + "\n" + PROMPT + CURSOR;
-  }
   function tipearTerminal(reiniciar) {
     var corrida = ++corridaTerminal;
-    if (!movimientoCompleto()) { pintarTerminal(terminalCompleta()); return; }
+    var lineas = lineasTerminal();
+    if (!movimientoCompleto()) {
+      pintarTerminal(lineas.map(function (l) {
+        return l.cmd ? PROMPT + '<span class="t-cmd">' + l.cmd + "</span>" : '<span class="t-sal">' + l.sal + "</span>";
+      }).join("\n") + "\n" + PROMPT + CURSOR);
+      return;
+    }
     if (!reiniciar && elTerminal.dataset.listo) return;
     var hecho = "";
     var n = 0;
     function siguiente() {
       if (corrida !== corridaTerminal) return;
-      if (n >= LINEAS_TERMINAL.length) {
+      if (n >= lineas.length) {
         pintarTerminal(hecho + PROMPT + CURSOR);
         elTerminal.dataset.listo = "1";
         return;
       }
-      var linea = LINEAS_TERMINAL[n++];
+      var linea = lineas[n++];
       if (linea.sal) {
         hecho += '<span class="t-sal">' + linea.sal + "</span>\n";
         pintarTerminal(hecho + CURSOR);
@@ -225,14 +285,14 @@
     pintarTerminal(PROMPT + CURSOR);
     setTimeout(siguiente, 900);
   }
-  tipearTerminal(false);
+  alCambiarIdioma.push(function () { tipearTerminal(true); });
 
   /* ---------- Red de nodos del fondo (canvas) ---------- */
   var red = (function () {
     var lienzo = $("#red");
     var ctx = lienzo.getContext("2d");
     var puntos = [], ancho = 0, alto = 0, dpr = 1, raton = { x: -9999, y: -9999 };
-    var colorPunto = "129,140,248", colorLinea = "34,211,238";
+    var colorPunto = "165,180,252", colorLinea = "125,211,252";
     var cuadro = null;
 
     function colores() {
@@ -249,22 +309,23 @@
       lienzo.width = ancho * dpr;
       lienzo.height = alto * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      var cantidad = Math.min(90, Math.round((ancho * alto) / 16000));
+      // Menos nodos que antes: el fondo acompaña, no compite con el contenido
+      var cantidad = Math.min(60, Math.round((ancho * alto) / 24000));
       puntos = [];
       for (var i = 0; i < cantidad; i++) {
         puntos.push({
           x: Math.random() * ancho,
           y: Math.random() * alto,
-          vx: (Math.random() - 0.5) * 0.3,
-          vy: (Math.random() - 0.5) * 0.3,
-          r: Math.random() * 1.5 + 0.7
+          vx: (Math.random() - 0.5) * 0.25,
+          vy: (Math.random() - 0.5) * 0.25,
+          r: Math.random() * 1.3 + 0.6
         });
       }
     }
 
     function dibujar() {
       ctx.clearRect(0, 0, ancho, alto);
-      var DIST = 130, DIST_RATON = 180;
+      var DIST = 140, DIST_RATON = 180;
       for (var i = 0; i < puntos.length; i++) {
         var p = puntos[i];
         for (var j = i + 1; j < puntos.length; j++) {
@@ -272,7 +333,7 @@
           var dx = p.x - q.x, dy = p.y - q.y;
           var d2 = dx * dx + dy * dy;
           if (d2 < DIST * DIST) {
-            ctx.strokeStyle = "rgba(" + colorLinea + "," + (1 - Math.sqrt(d2) / DIST) * 0.18 + ")";
+            ctx.strokeStyle = "rgba(" + colorLinea + "," + (1 - Math.sqrt(d2) / DIST) * 0.14 + ")";
             ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.moveTo(p.x, p.y);
@@ -283,13 +344,13 @@
         var mx = p.x - raton.x, my = p.y - raton.y;
         var dm = Math.sqrt(mx * mx + my * my);
         if (dm < DIST_RATON) {
-          ctx.strokeStyle = "rgba(" + colorPunto + "," + (1 - dm / DIST_RATON) * 0.45 + ")";
+          ctx.strokeStyle = "rgba(" + colorPunto + "," + (1 - dm / DIST_RATON) * 0.35 + ")";
           ctx.beginPath();
           ctx.moveTo(p.x, p.y);
           ctx.lineTo(raton.x, raton.y);
           ctx.stroke();
         }
-        ctx.fillStyle = "rgba(" + colorPunto + ",0.7)";
+        ctx.fillStyle = "rgba(" + colorPunto + ",0.55)";
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
         ctx.fill();
@@ -302,10 +363,10 @@
         // El ratón atrae suavemente a los nodos cercanos
         var dx = raton.x - p.x, dy = raton.y - p.y;
         var d = Math.sqrt(dx * dx + dy * dy);
-        if (d < 180 && d > 1) { p.vx += (dx / d) * 0.01; p.vy += (dy / d) * 0.01; }
+        if (d < 180 && d > 1) { p.vx += (dx / d) * 0.008; p.vy += (dy / d) * 0.008; }
         p.vx *= 0.992; p.vy *= 0.992;
         var vel = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
-        if (vel < 0.1) { p.vx += (Math.random() - 0.5) * 0.04; p.vy += (Math.random() - 0.5) * 0.04; }
+        if (vel < 0.08) { p.vx += (Math.random() - 0.5) * 0.03; p.vy += (Math.random() - 0.5) * 0.03; }
         p.x += p.vx; p.y += p.vy;
         if (p.x < 0 || p.x > ancho) p.vx *= -1;
         if (p.y < 0 || p.y > alto) p.vy *= -1;
@@ -357,9 +418,9 @@
     var inicio = el.dataset.desde ? parseFloat(el.dataset.desde) : 0;
     if (!movimientoCompleto()) { el.textContent = fin; return; }
     var dur = 1500, t0 = null;
-    function paso(t) {
-      if (t0 === null) t0 = t;
-      var k = Math.min(1, (t - t0) / dur);
+    function paso(tiempo) {
+      if (t0 === null) t0 = tiempo;
+      var k = Math.min(1, (tiempo - t0) / dur);
       var suave = 1 - Math.pow(1 - k, 3);
       el.textContent = Math.round(inicio + (fin - inicio) * suave);
       if (k < 1) requestAnimationFrame(paso);
@@ -368,7 +429,7 @@
     requestAnimationFrame(paso);
   }
 
-  /* ---------- Proyectos: lista y detalle ---------- */
+  /* ---------- Proyectos: lista y ficha ---------- */
   function porcentajes(lenguajes) {
     var total = 0, lista = [], otros = 0;
     Object.keys(lenguajes).forEach(function (k) { total += lenguajes[k]; });
@@ -383,29 +444,33 @@
 
   function htmlLenguajes(p) {
     var lista = porcentajes(p.lenguajes);
+    var nombre = function (n) { return n === "Otros" ? t("Otros", "Other") : n; };
+    var decimal = function (n) { return idioma === "en" ? n.toFixed(1) : n.toFixed(1).replace(".", ","); };
     var barra = lista.map(function (l, i) {
-      return '<span style="--w:' + l.pct.toFixed(2) + "%;--c:" + (COLORES_LENGUAJE[l.nombre] || COLORES_LENGUAJE.Otros) + ";--i:" + i + '" title="' + escapar(l.nombre) + " " + l.pct.toFixed(1) + '%"></span>';
+      return '<span style="--w:' + l.pct.toFixed(2) + "%;--c:" + (COLORES_LENGUAJE[l.nombre] || COLORES_LENGUAJE.Otros) + ";--i:" + i + '" title="' + escapar(nombre(l.nombre)) + " " + decimal(l.pct) + '%"></span>';
     }).join("");
     var leyenda = lista.map(function (l) {
-      return '<li><i style="--c:' + (COLORES_LENGUAJE[l.nombre] || COLORES_LENGUAJE.Otros) + '"></i>' + escapar(l.nombre) + " <b>" + (l.pct < 1 ? "<1" : l.pct.toFixed(1).replace(".", ",")) + "%</b></li>";
+      return '<li><i style="--c:' + (COLORES_LENGUAJE[l.nombre] || COLORES_LENGUAJE.Otros) + '"></i>' + escapar(nombre(l.nombre)) + " <b>" + (l.pct < 1 ? "<1" : decimal(l.pct)) + "%</b></li>";
     }).join("");
-    return '<div><p class="mini-titulo">Lenguajes</p><div class="lenguajes__barra" role="img" aria-label="' +
-      escapar(lista.map(function (l) { return l.nombre + " " + Math.round(l.pct) + "%"; }).join(", ")) + '">' + barra +
+    return '<div><p class="mini-titulo">' + t("Lenguajes", "Languages") + '</p><div class="lenguajes__barra" role="img" aria-label="' +
+      escapar(lista.map(function (l) { return nombre(l.nombre) + " " + Math.round(l.pct) + "%"; }).join(", ")) + '">' + barra +
       '</div><ul class="lenguajes__ley">' + leyenda + "</ul></div>";
   }
 
   function htmlFlujo(p) {
-    if (!p.flujo) return "";
-    var n = p.flujo.length;
-    return '<div><p class="mini-titulo">Cómo funciona</p><ol class="flujo">' + p.flujo.map(function (paso, i) {
+    var flujo = campo(p, "flujo");
+    if (!flujo) return "";
+    var n = flujo.length;
+    return '<div class="detalle__flujo"><p class="mini-titulo">' + t("Cómo funciona", "How it works") + '</p><ol class="flujo">' + flujo.map(function (paso, i) {
       return '<li><span style="--i:' + i + ";--n:" + n + '">' + escapar(paso) + "</span></li>";
     }).join("") + "</ol></div>";
   }
 
   function htmlInsignias(p) {
     var s = [];
-    if (p.enlaces.demo) s.push('<span class="insignia insignia--vivo"><i></i>Demo en vivo</span>');
-    if (p.estado === "privado") s.push('<span class="insignia insignia--privado">' + ICONO_CANDADO + "Código privado</span>");
+    if (p.enlaces.demo) s.push('<span class="insignia insignia--vivo"><i></i>' + t("Demo en vivo", "Live demo") + "</span>");
+    if (p.estado === "privado") s.push('<span class="insignia insignia--privado">' + ICONO_CANDADO + t("Código privado", "Private code") + "</span>");
+    if (p.estado === "sitio") s.push('<span class="insignia">' + ICONO_MUNDO + t("Sitio publicado", "Published site") + "</span>");
     return s.join("");
   }
 
@@ -416,26 +481,46 @@
     return '<a class="captura" href="' + p.enlaces.demo + '" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">' +
       '<span class="captura__barra"><i></i><i></i><i></i><span>' + escapar(direccion) + "</span></span>" +
       '<span class="captura__vista"><img src="' + p.captura + '" alt="" width="864" height="1440" decoding="async"></span>' +
-      '<span class="captura__abrir">Abrir demo ' + ICONO_EXTERNO + "</span></a>";
+      '<span class="captura__abrir">' + t("Abrir demo", "Open demo") + " " + ICONO_EXTERNO + "</span></a>";
   }
 
-  function htmlEnlaces(p) {
+  function htmlPie(p) {
     var s = [];
-    if (p.enlaces.demo) s.push('<a class="enlace enlace--demo" href="' + p.enlaces.demo + '" target="_blank" rel="noopener">' + ICONO_EXTERNO + 'Ver demo<span class="sr"> de ' + escapar(p.nombre) + "</span></a>");
-    if (p.enlaces.codigo && p.estado !== "privado") s.push('<a class="enlace" href="' + p.enlaces.codigo + '" target="_blank" rel="noopener">' + ICONO_GITHUB + 'Código<span class="sr"> de ' + escapar(p.nombre) + "</span></a>");
-    s.push('<span class="detalle__act" id="detalle-act"></span>');
+    if (p.enlaces.demo) s.push('<a class="enlace enlace--demo" href="' + p.enlaces.demo + '" target="_blank" rel="noopener">' + ICONO_EXTERNO + t("Ver demo", "View demo") + '<span class="sr"> ' + t("de", "of") + " " + escapar(campo(p, "nombre")) + "</span></a>");
+    s.push('<span class="detalle__act" data-act></span>');
     return '<div class="detalle__pie">' + s.join("") + "</div>";
   }
 
+  function htmlResumen(p) {
+    var nota = campo(p, "nota");
+    return '<p class="detalle__resumen">' + escapar(campo(p, "resumen")) + "</p>" +
+      (nota ? '<p class="detalle__nota">' + escapar(nota) + "</p>" : "") +
+      '<ul class="puntos">' + campo(p, "puntos").map(function (x) { return "<li>" + escapar(x) + "</li>"; }).join("") + "</ul>";
+  }
+
+  // Caso de estudio: el reto, las decisiones que lo resolvieron y el resultado con cifras verificables
+  function htmlCaso(p) {
+    var caso = campo(p, "caso");
+    if (!caso) return "";
+    return '<div class="caso"><p class="mini-titulo">' + t("El reto", "The challenge") + '</p><p class="caso__reto">' + escapar(caso.reto) + "</p>" +
+      '<p class="mini-titulo">' + t("Decisiones clave", "Key decisions") + '</p><ol class="caso__decisiones">' +
+      caso.decisiones.map(function (d) { return "<li>" + escapar(d) + "</li>"; }).join("") + "</ol>" +
+      '<p class="mini-titulo">' + t("Resultado", "Outcome") + '</p><ul class="caso__cifras">' +
+      caso.cifras.map(function (c) { return "<li><strong>" + escapar(c[0]) + "</strong><span>" + escapar(c[1]) + "</span></li>"; }).join("") +
+      '</ul><p class="caso__resultado">' + escapar(caso.resultado) + "</p></div>";
+  }
+
+  var modoFicha = "resumen";
   function htmlDetalle(p) {
     var cab = '<header class="detalle__cab"><div class="detalle__icono"><svg viewBox="0 0 24 24" aria-hidden="true">' + (ICONOS[p.icono] || ICONOS.paquete) + "</svg></div>" +
-      '<div class="detalle__titulo"><h3>' + escapar(p.nombre) + '</h3><p class="detalle__meta"><span>' + escapar(p.periodo) + "</span><span>" + p.commits + " commits</span>" + htmlInsignias(p) + "</p></div></header>";
-    var texto = '<div class="detalle__texto"><p class="detalle__resumen">' + escapar(p.resumen) + "</p>" +
-      (p.nota ? '<p class="detalle__nota">' + escapar(p.nota) + "</p>" : "") +
-      '<ul class="puntos">' + p.puntos.map(function (t) { return "<li>" + escapar(t) + "</li>"; }).join("") + "</ul>" +
-      htmlEnlaces(p) + "</div>";
+      '<div class="detalle__titulo"><h3>' + escapar(campo(p, "nombre")) + '</h3><p class="detalle__meta"><span>' + escapar(p.periodo) + "</span><span>" + p.commits + " commits</span>" + htmlInsignias(p) + "</p></div>" +
+      '<div class="segmento segmento--chico" role="tablist" aria-label="' + t("Contenido de la ficha", "Card content") + '">' +
+      '<button type="button" role="tab" data-modo="resumen" aria-selected="' + (modoFicha === "resumen") + '" tabindex="' + (modoFicha === "resumen" ? 0 : -1) + '"' + (modoFicha === "resumen" ? ' class="activo"' : "") + ">" + t("Resumen", "Overview") + "</button>" +
+      '<button type="button" role="tab" data-modo="caso" aria-selected="' + (modoFicha === "caso") + '" tabindex="' + (modoFicha === "caso" ? 0 : -1) + '"' + (modoFicha === "caso" ? ' class="activo"' : "") + ">" + t("Caso de estudio", "Case study") + "</button></div></header>";
+    var texto = '<div class="detalle__texto"><div class="detalle__modo" data-modo="resumen"' + (modoFicha === "resumen" ? "" : " hidden") + ">" + htmlResumen(p) + "</div>" +
+      '<div class="detalle__modo" data-modo="caso"' + (modoFicha === "caso" ? "" : " hidden") + ">" + htmlCaso(p) + "</div>" + htmlPie(p) + "</div>";
     var visual = '<div class="detalle__visual">' + htmlCaptura(p) + htmlFlujo(p) + htmlLenguajes(p) +
-      '<div><p class="mini-titulo">Tecnologías</p><div class="chips" style="margin-top:8px">' + p.tecnologias.map(function (t) { return "<span>" + escapar(t) + "</span>"; }).join("") + "</div></div></div>";
+      '<div><p class="mini-titulo">' + t("Tecnologías", "Tech stack") + '</p><div class="chips chips--separado">' + p.tecnologias.map(function (x) { return "<span>" + escapar(x) + "</span>"; }).join("") + "</div></div></div>";
     return '<article class="tile detalle">' + cab + '<div class="detalle__cuerpo">' + texto + visual + "</div></article>";
   }
 
@@ -443,36 +528,40 @@
   var cajaDetalle = $("#detalle");
   var proyectoActual = null;
   var pushes = {};
-  var tiempoRelativo = new Intl.RelativeTimeFormat("es", { numeric: "auto" });
   function haceCuanto(fecha) {
+    var formato = new Intl.RelativeTimeFormat(idioma, { numeric: "auto" });
     var seg = (new Date(fecha).getTime() - Date.now()) / 1000;
     var tramos = [[60, "second"], [60, "minute"], [24, "hour"], [30, "day"], [12, "month"], [Infinity, "year"]];
     for (var i = 0; i < tramos.length; i++) {
-      if (Math.abs(seg) < tramos[i][0]) return tiempoRelativo.format(Math.round(seg), tramos[i][1]);
+      if (Math.abs(seg) < tramos[i][0]) return formato.format(Math.round(seg), tramos[i][1]);
       seg /= tramos[i][0];
     }
   }
   function pintarActualizado() {
-    var el = $("#detalle-act");
-    if (el && proyectoActual && pushes[proyectoActual.repo]) el.textContent = "Demo actualizada " + haceCuanto(pushes[proyectoActual.repo]);
+    var el = $("[data-act]", cajaDetalle);
+    if (el && proyectoActual && pushes[proyectoActual.repo]) el.textContent = t("Demo actualizada ", "Demo updated ") + haceCuanto(pushes[proyectoActual.repo]);
   }
 
-  listaProyectos.innerHTML = PROYECTOS.map(function (p) {
-    return '<button type="button" role="tab" class="item-proyecto" id="tab-' + p.id + '" data-id="' + p.id + '" data-categorias="' + p.categorias.join(" ") +
-      '" aria-controls="detalle" aria-selected="false" tabindex="-1"><span class="item-proyecto__icono"><svg viewBox="0 0 24 24" aria-hidden="true">' + (ICONOS[p.icono] || ICONOS.paquete) +
-      "</svg></span><span><strong>" + escapar(p.nombre) + "</strong><small>" + escapar(p.periodo) + (p.enlaces.demo ? " · demo en vivo" : "") + "</small></span>" + ICONO_FLECHA + "</button>";
-  }).join("");
-  var tabsProyecto = $$(".item-proyecto", listaProyectos);
+  var tabsProyecto = [];
+  function pintarLista() {
+    listaProyectos.innerHTML = PROYECTOS.map(function (p) {
+      return '<button type="button" role="tab" class="item-proyecto" id="tab-' + p.id + '" data-id="' + p.id + '" data-categorias="' + p.categorias.join(" ") +
+        '" aria-controls="detalle" aria-selected="false" tabindex="-1"><span class="item-proyecto__icono"><svg viewBox="0 0 24 24" aria-hidden="true">' + (ICONOS[p.icono] || ICONOS.paquete) +
+        "</svg></span><span><strong>" + escapar(campo(p, "nombre")) + "</strong><small>" + escapar(p.periodo) + (p.enlaces.demo ? t(" · demo en vivo", " · live demo") : "") + "</small></span>" + ICONO_FLECHA + "</button>";
+    }).join("");
+    tabsProyecto = $$(".item-proyecto", listaProyectos);
+    tabsProyecto.forEach(function (tab) { tab.addEventListener("click", function () { elegirProyecto(tab); }); });
+  }
 
   function elegirProyecto(tab) {
     var p = PROYECTOS.filter(function (x) { return x.id === tab.dataset.id; })[0];
     if (!p) return;
     proyectoActual = p;
-    tabsProyecto.forEach(function (t) {
-      var on = t === tab;
-      t.classList.toggle("activo", on);
-      t.setAttribute("aria-selected", String(on));
-      t.tabIndex = on ? 0 : -1;
+    tabsProyecto.forEach(function (x) {
+      var on = x === tab;
+      x.classList.toggle("activo", on);
+      x.setAttribute("aria-selected", String(on));
+      x.tabIndex = on ? 0 : -1;
     });
     cajaDetalle.setAttribute("aria-labelledby", tab.id);
     cajaDetalle.innerHTML = htmlDetalle(p);
@@ -480,27 +569,64 @@
     trasPintar(function () { art.classList.add("lleno"); });
     pintarActualizado();
   }
-  tabsProyecto.forEach(function (t) { t.addEventListener("click", function () { elegirProyecto(t); }); });
+
+  // Resumen / Caso de estudio dentro de la ficha (se recuerda al cambiar de proyecto)
+  function elegirModoFicha(boton) {
+    modoFicha = boton.dataset.modo;
+    $$(".segmento--chico button", cajaDetalle).forEach(function (b) {
+      var on = b === boton;
+      b.classList.toggle("activo", on);
+      b.setAttribute("aria-selected", String(on));
+      b.tabIndex = on ? 0 : -1;
+    });
+    $$(".detalle__modo", cajaDetalle).forEach(function (m) { m.hidden = m.dataset.modo !== modoFicha; });
+  }
+  cajaDetalle.addEventListener("click", function (e) {
+    var b = e.target.closest(".segmento--chico button");
+    if (b) elegirModoFicha(b);
+  });
+  cajaDetalle.addEventListener("keydown", function (e) {
+    if (!e.target.closest(".segmento--chico")) return;
+    if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+    var botones = $$(".segmento--chico button", cajaDetalle);
+    var otro = botones[(botones.indexOf(e.target) + 1) % botones.length];
+    e.preventDefault();
+    e.stopPropagation();
+    elegirModoFicha(otro);
+    otro.focus();
+  });
+
+  pintarLista();
   teclasPestanas(listaProyectos, elegirProyecto);
   if (tabsProyecto.length) elegirProyecto(tabsProyecto[0]);
 
   // Filtros: esconden proyectos de la lista; si el elegido queda oculto, se pasa al primero visible
   var botonesFiltro = $$(".filtro");
+  var filtroActual = "todos";
   function filtrar(filtro) {
+    filtroActual = filtro;
     botonesFiltro.forEach(function (b) {
       var activo = b.dataset.filtro === filtro;
       b.classList.toggle("activo", activo);
       b.setAttribute("aria-pressed", String(activo));
     });
-    var visibles = tabsProyecto.filter(function (t) {
-      var entra = filtro === "todos" || t.dataset.categorias.split(" ").indexOf(filtro) !== -1;
-      t.hidden = !entra;
+    var visibles = tabsProyecto.filter(function (x) {
+      var entra = filtro === "todos" || x.dataset.categorias.split(" ").indexOf(filtro) !== -1;
+      x.hidden = !entra;
       return entra;
     });
     var actual = $(".item-proyecto.activo", listaProyectos);
     if (visibles.length && (!actual || actual.hidden)) elegirProyecto(visibles[0]);
   }
   botonesFiltro.forEach(function (b) { b.addEventListener("click", function () { filtrar(b.dataset.filtro); }); });
+
+  alCambiarIdioma.push(function () {
+    var id = proyectoActual && proyectoActual.id;
+    pintarLista();
+    filtrar(filtroActual);
+    var tab = $("#tab-" + id) || tabsProyecto[0];
+    if (tab) elegirProyecto(tab);
+  });
 
   // Resumen calculado desde los datos
   (function () {
@@ -532,11 +658,11 @@
     .catch(function () { /* sin conexión o límite de la API: no se muestra la fecha */ });
 
   /* ---------- Proyectos / Actividad ---------- */
-  var botonesSegmento = $$(".segmento button");
+  var botonesSegmento = $$(".segmento[aria-label] > button").filter(function (b) { return b.dataset.panel; });
   var marcaSegmento = $(".segmento__marca");
   var panelActual = "galeria";
   function moverMarcaSegmento() {
-    var b = $(".segmento button.activo");
+    var b = botonesSegmento.filter(function (x) { return x.classList.contains("activo"); })[0];
     if (!b || !b.offsetWidth) return;
     marcaSegmento.style.setProperty("--x", b.offsetLeft - 4 + "px");
     marcaSegmento.style.setProperty("--w", b.offsetWidth + "px");
@@ -551,77 +677,84 @@
       document.getElementById(b.getAttribute("aria-controls")).classList.toggle("activo", on);
     });
     moverMarcaSegmento();
-    if (panel === "actividad") mostrarActividad();
+    if (panel === "actividad") actividad.mostrar();
   }
   function elegirSegmento(b) {
     cambiarPanel(b.dataset.panel);
     history.replaceState(null, "", b.dataset.panel === "actividad" ? "#actividad" : "#proyectos");
   }
   botonesSegmento.forEach(function (b) { b.addEventListener("click", function () { elegirSegmento(b); }); });
-  teclasPestanas($(".segmento"), elegirSegmento);
+  teclasPestanas(botonesSegmento[0].parentNode, elegirSegmento);
 
   /* ---------- Actividad: commits por día, como el mapa de GitHub ---------- */
-  var mostrarActividad = (function () {
+  var actividad = (function () {
     var datos = window.ACTIVIDAD;
     var caja = $("#actividad");
     if (!datos || !caja || !Object.keys(datos.dias).length) {
       $("#seg-actividad").hidden = true;
-      return function () {};
+      return { mostrar: function () {}, construir: function () {} };
     }
+    var grilla = $("#act-grilla");
+    var desliza = $("#act-desliza");
+    var tabla = $(".actividad__tabla", caja);
+    var tip = $("#act-tip");
 
     // A mediodía, para que los cambios de horario no muevan los días
     function aFecha(clave) { var p = clave.split("-"); return new Date(+p[0], p[1] - 1, +p[2], 12); }
     function aClave(f) { return f.getFullYear() + "-" + ("0" + (f.getMonth() + 1)).slice(-2) + "-" + ("0" + f.getDate()).slice(-2); }
-    var formatoDia = new Intl.DateTimeFormat("es-CL", { day: "numeric", month: "short", year: "numeric" });
-    var formatoMesCorto = new Intl.DateTimeFormat("es-CL", { month: "short" });
-    var formatoMesLargo = new Intl.DateTimeFormat("es-CL", { month: "long", year: "numeric" });
 
-    // Desde el primer día del mes del primer commit hasta la fecha en que se generaron los datos; las semanas parten el lunes
-    var primero = aFecha(Object.keys(datos.dias).sort()[0]);
-    primero.setDate(1);
-    var fin = aFecha(datos.generado);
-    var dia = new Date(primero);
-    dia.setDate(dia.getDate() - (primero.getDay() + 6) % 7);
+    function construir() {
+      var formatoDia = new Intl.DateTimeFormat(LOCALE[idioma], { day: "numeric", month: "short", year: "numeric" });
+      var formatoMesCorto = new Intl.DateTimeFormat(LOCALE[idioma], { month: "short" });
+      var formatoMesLargo = new Intl.DateTimeFormat(LOCALE[idioma], { month: "long", year: "numeric" });
 
-    var celdas = [], meses = [], total = 0, activos = 0, racha = 0, mejorRacha = 0, maximo = { n: 0, fecha: null }, col = 0;
-    for (var i = 0; dia <= fin; i++) {
-      col = Math.floor(i / 7);
-      if (dia < primero) {
-        celdas.push('<span class="vacia"></span>');
-      } else {
-        var n = datos.dias[aClave(dia)] || 0;
-        var nivel = n === 0 ? 0 : n <= 2 ? 1 : n <= 5 ? 2 : n <= 10 ? 3 : 4;
-        var texto = (n ? n + (n === 1 ? " commit" : " commits") : "Sin commits") + " · " + formatoDia.format(dia);
-        celdas.push('<span data-n="' + nivel + '" data-tip="' + texto + '" style="--x:' + col + ";--y:" + (i % 7) + '"></span>');
-        if (dia.getDate() === 1) {
-          var mes = formatoMesCorto.format(dia).replace(".", "");
-          if (dia.getMonth() === 0 || !meses.length) mes += " '" + String(dia.getFullYear()).slice(-2);
-          meses.push('<span style="grid-column:' + (col + 1) + '">' + mes + "</span>");
+      // Desde el primer día del mes del primer commit hasta la fecha en que se generaron los datos; las semanas parten el lunes
+      var primero = aFecha(Object.keys(datos.dias).sort()[0]);
+      primero.setDate(1);
+      var fin = aFecha(datos.generado);
+      var dia = new Date(primero);
+      dia.setDate(dia.getDate() - (primero.getDay() + 6) % 7);
+
+      var celdas = [], meses = [], total = 0, activos = 0, racha = 0, mejorRacha = 0, maximo = { n: 0, fecha: null }, col = 0;
+      for (var i = 0; dia <= fin; i++) {
+        col = Math.floor(i / 7);
+        if (dia < primero) {
+          celdas.push('<span class="vacia"></span>');
+        } else {
+          var n = datos.dias[aClave(dia)] || 0;
+          var nivel = n === 0 ? 0 : n <= 2 ? 1 : n <= 5 ? 2 : n <= 10 ? 3 : 4;
+          var texto = (n ? n + (n === 1 ? " commit" : " commits") : t("Sin commits", "No commits")) + " · " + formatoDia.format(dia);
+          celdas.push('<span data-n="' + nivel + '" data-tip="' + texto + '" style="--x:' + col + ";--y:" + (i % 7) + '"></span>');
+          if (dia.getDate() === 1) {
+            var mes = formatoMesCorto.format(dia).replace(".", "");
+            if (dia.getMonth() === 0 || !meses.length) mes += " '" + String(dia.getFullYear()).slice(-2);
+            meses.push('<span style="grid-column:' + (col + 1) + '">' + mes + "</span>");
+          }
+          total += n;
+          if (n) { activos++; racha++; mejorRacha = Math.max(mejorRacha, racha); } else { racha = 0; }
+          if (n > maximo.n) maximo = { n: n, fecha: new Date(dia) };
         }
-        total += n;
-        if (n) { activos++; racha++; mejorRacha = Math.max(mejorRacha, racha); } else { racha = 0; }
-        if (n > maximo.n) maximo = { n: n, fecha: new Date(dia) };
+        dia.setDate(dia.getDate() + 1);
       }
-      dia.setDate(dia.getDate() + 1);
+
+      tabla.style.setProperty("--cols", col + 1);
+      // Con pocas semanas las celdas crecen para que el mapa no quede perdido en la tarjeta
+      tabla.style.setProperty("--celda", col < 26 ? "18px" : col < 40 ? "15px" : "12px");
+      grilla.innerHTML = celdas.join("");
+      $("#act-meses").innerHTML = meses.join("");
+      $("#act-semana").innerHTML = (idioma === "en" ? ["Mon", "", "Wed", "", "Fri", "", ""] : ["lun", "", "mié", "", "vie", "", ""])
+        .map(function (d) { return "<span>" + d + "</span>"; }).join("");
+      grilla.setAttribute("aria-label", t(total + " commits en " + activos + " días, entre " + formatoMesLargo.format(primero) + " y " + formatoMesLargo.format(fin),
+        total + " commits on " + activos + " days, from " + formatoMesLargo.format(primero) + " to " + formatoMesLargo.format(fin)));
+      $("#act-total").dataset.contar = total;
+      $("#act-dias").dataset.contar = activos;
+      $("#act-racha").dataset.contar = mejorRacha;
+      $("#act-max").dataset.contar = maximo.n;
+      $("#act-max-fecha").textContent = t("commits el " + formatoDia.format(maximo.fecha) + ", el día más activo", "commits on " + formatoDia.format(maximo.fecha) + ", the busiest day");
+      $("#act-generado").textContent = t("Actualizado al ", "Updated ") + formatoDia.format(fin);
+      $$("[data-contar]", caja).forEach(function (el) { if (contadoresHechos.has(el)) el.textContent = el.dataset.contar; });
     }
 
-    var grilla = $("#act-grilla");
-    var tabla = $(".actividad__tabla", caja);
-    tabla.style.setProperty("--cols", col + 1);
-    // Con pocas semanas las celdas crecen para que el mapa no quede perdido en la tarjeta
-    if (col < 40) tabla.style.setProperty("--celda", col < 26 ? "18px" : "15px");
-    grilla.innerHTML = celdas.join("");
-    $("#act-meses").innerHTML = meses.join("");
-    grilla.setAttribute("aria-label", total + " commits en " + activos + " días, entre " + formatoMesLargo.format(primero) + " y " + formatoMesLargo.format(fin));
-    $("#act-total").dataset.contar = total;
-    $("#act-dias").dataset.contar = activos;
-    $("#act-racha").dataset.contar = mejorRacha;
-    $("#act-max").dataset.contar = maximo.n;
-    $("#act-max-fecha").textContent = "commits el " + formatoDia.format(maximo.fecha) + ", el día más activo";
-    $("#act-generado").textContent = "Actualizado al " + formatoDia.format(fin);
-
-    var desliza = $("#act-desliza");
-    var tip = $("#act-tip");
     function mostrarTip(celda) {
       if (!celda || !celda.dataset.tip) { tip.hidden = true; return; }
       var r = celda.getBoundingClientRect(), rc = caja.getBoundingClientRect();
@@ -634,11 +767,16 @@
     grilla.addEventListener("pointerleave", function () { tip.hidden = true; });
     desliza.addEventListener("scroll", function () { tip.hidden = true; }, { passive: true });
 
-    return function () {
-      // Lo más reciente queda a la vista cuando el mapa no cabe completo
-      desliza.scrollLeft = desliza.scrollWidth;
-      $$("[data-contar]", caja).forEach(contar);
-      trasPintar(function () { caja.classList.add("lleno"); });
+    construir();
+    alCambiarIdioma.push(construir);
+    return {
+      construir: construir,
+      mostrar: function () {
+        // Lo más reciente queda a la vista cuando el mapa no cabe completo
+        desliza.scrollLeft = desliza.scrollWidth;
+        $$("[data-contar]", caja).forEach(contar);
+        trasPintar(function () { caja.classList.add("lleno"); });
+      }
     };
   })();
 
@@ -646,15 +784,15 @@
   var listaHitos = $(".hitos");
   var tabsHito = $$(".hito", listaHitos);
   function elegirHito(tab) {
-    tabsHito.forEach(function (t) {
-      var on = t === tab;
-      t.classList.toggle("activo", on);
-      t.setAttribute("aria-selected", String(on));
-      t.tabIndex = on ? 0 : -1;
-      document.getElementById(t.getAttribute("aria-controls")).classList.toggle("activo", on);
+    tabsHito.forEach(function (x) {
+      var on = x === tab;
+      x.classList.toggle("activo", on);
+      x.setAttribute("aria-selected", String(on));
+      x.tabIndex = on ? 0 : -1;
+      document.getElementById(x.getAttribute("aria-controls")).classList.toggle("activo", on);
     });
   }
-  tabsHito.forEach(function (t) { t.addEventListener("click", function () { elegirHito(t); }); });
+  tabsHito.forEach(function (x) { x.addEventListener("click", function () { elegirHito(x); }); });
   teclasPestanas(listaHitos, elegirHito);
 
   /* ---------- Vistas: una sección a la vez ---------- */
@@ -663,6 +801,12 @@
   var btnAnterior = $("#btn-anterior");
   var btnSiguiente = $("#btn-siguiente");
   var vistaActual = null;
+  function nombreVista(id) {
+    return {
+      inicio: t("Inicio", "Home"), trayectoria: t("Trayectoria", "Journey"), proyectos: t("Proyectos", "Projects"),
+      habilidades: t("Habilidades", "Skills"), contacto: t("Contacto", "Contact")
+    }[id];
+  }
 
   function moverMarcaPestanas() {
     var a = $('.pestanas a[aria-current="page"]');
@@ -680,6 +824,18 @@
         $$("[data-contar]", el).forEach(contar);
       });
     });
+  }
+
+  function actualizarPaginador() {
+    var ahora = VISTAS.indexOf(vistaActual);
+    btnAnterior.disabled = ahora === 0;
+    btnSiguiente.disabled = ahora === VISTAS.length - 1;
+    $("#paginador-sig").textContent = ahora < VISTAS.length - 1 ? nombreVista(VISTAS[ahora + 1]) : t("Fin", "End");
+    btnSiguiente.setAttribute("aria-label", ahora < VISTAS.length - 1 ? t("Siguiente sección: ", "Next section: ") + nombreVista(VISTAS[ahora + 1]) : t("Última sección", "Last section"));
+    $("#paginador-pos").textContent = "0" + (ahora + 1) + " / 0" + VISTAS.length;
+    document.title = vistaActual === "inicio"
+      ? t("Erick Colvin · Ingeniero en Computación e Informática", "Erick Colvin · Computer Engineer")
+      : nombreVista(vistaActual) + " · Erick Colvin";
   }
 
   function mostrarVista(id, opciones) {
@@ -702,19 +858,13 @@
         if (a.dataset.ir === id) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
       });
       moverMarcaPestanas();
-      btnAnterior.disabled = ahora === 0;
-      btnSiguiente.disabled = ahora === VISTAS.length - 1;
-      $("#paginador-sig").textContent = ahora < VISTAS.length - 1 ? NOMBRES[VISTAS[ahora + 1]] : "Fin";
-      $("#paginador-pos").textContent = "0" + (ahora + 1) + " / 0" + VISTAS.length;
-      document.title = id === "inicio" ? TITULO : NOMBRES[id] + " · Erick Colvin";
+      actualizarPaginador();
       if (opciones.foco) {
         var titulo = $("h1, h2", vista);
         if (titulo) titulo.focus({ preventScroll: true });
       }
     }
-    if (id === "proyectos") {
-      cambiarPanel(opciones.panel || panelActual);
-    }
+    if (id === "proyectos") cambiarPanel(opciones.panel || panelActual);
   }
 
   function aplicarDireccion() {
@@ -746,12 +896,12 @@
   btnAnterior.addEventListener("click", function () { irRelativo(-1); });
   btnSiguiente.addEventListener("click", function () { irRelativo(1); });
 
-  // Flechas izquierda y derecha cambian de sección (salvo dentro de pestañas o campos)
+  // Flechas izquierda y derecha cambian de sección (salvo dentro de pestañas, campos o el diálogo de idioma)
   document.addEventListener("keydown", function (e) {
     if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
     if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
-    var t = e.target;
-    if (t.closest && (t.closest('[role="tablist"], input, textarea, select, [contenteditable]'))) return;
+    var x = e.target;
+    if (x.closest && x.closest('[role="tablist"], input, textarea, select, [contenteditable], dialog')) return;
     irRelativo(e.key === "ArrowRight" ? 1 : -1);
   });
 
@@ -773,14 +923,15 @@
   })();
 
   var pendienteMedida = false;
+  function medirMarcas() { moverMarcaPestanas(); moverMarcaSegmento(); }
   window.addEventListener("resize", function () {
     if (pendienteMedida) return;
     pendienteMedida = true;
-    requestAnimationFrame(function () { pendienteMedida = false; moverMarcaPestanas(); moverMarcaSegmento(); });
+    requestAnimationFrame(function () { pendienteMedida = false; medirMarcas(); });
   });
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { moverMarcaPestanas(); moverMarcaSegmento(); });
-
-  aplicarDireccion();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(medirMarcas);
+  // Los textos cambian de ancho con el idioma: las píldoras se vuelven a medir
+  alCambiarIdioma.push(function () { actualizarPaginador(); requestAnimationFrame(medirMarcas); });
 
   /* ---------- Luz del cursor, foco en los mosaicos y botones magnéticos ---------- */
   var luz = $(".luz-cursor");
@@ -819,8 +970,8 @@
     var etiqueta = $("span", btnCopiar);
     var correo = btnCopiar.dataset.correo;
     var hecho = function () {
-      etiqueta.textContent = "¡Copiado!";
-      setTimeout(function () { etiqueta.textContent = "Copiar correo"; }, 2000);
+      etiqueta.textContent = t("¡Copiado!", "Copied!");
+      setTimeout(function () { etiqueta.textContent = t("Copiar correo", "Copy email"); }, 2000);
     };
     if (navigator.clipboard && window.isSecureContext) {
       navigator.clipboard.writeText(correo).then(hecho, function () { window.location.href = "mailto:" + correo; });
@@ -830,9 +981,43 @@
   });
 
   /* ---------- Hora local de Santiago y año ---------- */
-  var formatoHora = new Intl.DateTimeFormat("es-CL", { hour: "2-digit", minute: "2-digit", timeZone: "America/Santiago" });
-  function pintarHora() { $("#hora-local").textContent = formatoHora.format(new Date()); }
-  pintarHora();
+  function pintarHora() {
+    $("#hora-local").textContent = new Intl.DateTimeFormat(LOCALE[idioma], { hour: "2-digit", minute: "2-digit", timeZone: "America/Santiago" }).format(new Date());
+  }
   setInterval(pintarHora, 30000);
+  alCambiarIdioma.push(pintarHora);
   $("#anio").textContent = new Date().getFullYear();
+
+  /* ---------- Arranque ---------- */
+  aplicarTextos();
+  pintarTema();
+  pintarMovimiento();
+  pintarHora();
+  rotarRol();
+  tipearTerminal(false);
+  aplicarDireccion();
+
+  /* ---------- Elección de idioma en la primera visita ---------- */
+  var dialogo = $("#dialogo-idioma");
+  function cerrarDialogo(elegido) {
+    guardar("idioma", elegido);
+    cambiarIdioma(elegido);
+    raiz.dataset.idiomaElegido = "si";
+    if (!movimientoCompleto()) { dialogo.close(); mostrarAviso(); return; }
+    dialogo.classList.add("cerrando");
+    setTimeout(function () { dialogo.classList.remove("cerrando"); dialogo.close(); mostrarAviso(); }, 260);
+  }
+  if (raiz.dataset.idiomaElegido === "no" && dialogo && typeof dialogo.showModal === "function") {
+    dialogo.showModal();
+    var sugerido = $('.opcion-idioma[data-idioma="' + idioma + '"]', dialogo);
+    sugerido.classList.add("sugerida");
+    sugerido.focus();
+    $$(".opcion-idioma", dialogo).forEach(function (b) {
+      b.addEventListener("click", function () { cerrarDialogo(b.dataset.idioma); });
+    });
+    // Escape cierra con el idioma detectado
+    dialogo.addEventListener("cancel", function (e) { e.preventDefault(); cerrarDialogo(idioma); });
+  } else {
+    mostrarAviso();
+  }
 })();

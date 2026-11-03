@@ -6,8 +6,10 @@
   <title>CV · Erick Colvin Córdova</title>
   <meta name="description" content="Currículum de Erick Alejandro Colvin Córdova, Ingeniero en Computación e Informática: automatización de procesos, Power Platform y desarrollo full-stack.">
   <meta name="author" content="Erick Alejandro Colvin Córdova">
-  <meta name="theme-color" content="#07080d">
+  <meta name="theme-color" content="#07080c">
   <link rel="canonical" href="https://erickcolvin.github.io/cv.html">
+  <link rel="alternate" hreflang="es" href="https://erickcolvin.github.io/cv.html?lang=es">
+  <link rel="alternate" hreflang="en" href="https://erickcolvin.github.io/cv.html?lang=en">
   <meta property="og:type" content="profile">
   <meta property="og:title" content="CV · Erick Colvin Córdova">
   <meta property="og:description" content="Automatización de procesos, Power Platform y desarrollo full-stack.">
@@ -20,25 +22,33 @@
   <link rel="stylesheet" href="css/cv.css">
   <script>
     (function () {
-      var d = document.documentElement, tema, mov;
-      try { tema = localStorage.getItem('tema'); mov = localStorage.getItem('movimiento'); } catch (e) {}
+      var d = document.documentElement, tema, mov, idioma, param;
+      try { tema = localStorage.getItem('tema'); mov = localStorage.getItem('movimiento'); idioma = localStorage.getItem('idioma'); } catch (e) {}
+      param = (location.search.match(/[?&]lang=(es|en)\b/) || [])[1];
+      if (param) idioma = param;
+      if (!idioma) idioma = /^es\b/i.test(navigator.language || '') ? 'es' : 'en';
       if (!tema) tema = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
       if (!mov) mov = matchMedia('(prefers-reduced-motion: reduce)').matches ? 'reducido' : 'completo';
       d.dataset.theme = tema;
       d.dataset.motion = mov;
+      d.dataset.idioma = idioma;
+      d.lang = idioma === 'en' ? 'en' : 'es-CL';
     })();
   </script>
 </head>
 <body>
   <header class="barra">
-    <a class="barra__volver" href="./">
+    <a class="barra__volver" href="./" id="volver">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
-      Portafolio
+      <span data-i18n="volver">Portafolio</span>
     </a>
-    <p class="barra__ayuda">En el diálogo de impresión elige <strong>Guardar como PDF</strong>.</p>
+    <p class="barra__ayuda" data-i18n-html="ayuda">En el diálogo de impresión elige <strong>Guardar como PDF</strong>.</p>
+    <button class="barra__idioma" type="button" id="btn-idioma" aria-label="Cambiar idioma a inglés">
+      <span data-cod="es">ES</span><span data-cod="en">EN</span>
+    </button>
     <button class="barra__pdf" type="button" id="btn-pdf">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
-      Descargar PDF
+      <span data-i18n="pdf">Descargar PDF</span>
     </button>
   </header>
 
@@ -46,13 +56,12 @@
     <header class="cab">
       <div>
         <h1>Erick Alejandro <span>Colvin Córdova</span></h1>
-        <p class="cab__rol">Ingeniero en Computación e Informática · Analista de Innovación</p>
+        <p class="cab__rol" data-i18n="rol">Ingeniero en Computación e Informática · Analista de Innovación</p>
       </div>
       <ul class="cab__contacto">
         <li>Santiago, Chile</li>
         <li><a href="mailto:erick.a.colvincordova@gmail.com">erick.a.colvincordova@gmail.com</a></li>
         <li><a href="https://www.linkedin.com/in/erickcolvin">linkedin.com/in/erickcolvin</a></li>
-        <li><a href="https://github.com/ErickColvin">github.com/ErickColvin</a></li>
         <li><a href="https://erickcolvin.github.io/">erickcolvin.github.io</a></li>
       </ul>
     </header>
@@ -60,74 +69,74 @@
     <div class="cuerpo">
       <div class="principal">
         <section>
-          <h2>Perfil</h2>
-          <p>Profesional enfocado en innovación y automatización de procesos. Lidero la transformación digital de flujos operativos en entornos industriales, con impacto directo en la eficiencia y en la reducción de carga manual. En paralelo construyo productos web completos (APIs, bases de datos, pagos, seguridad e IA local) y los publico en GitHub.</p>
+          <h2 data-i18n="perfil">Perfil</h2>
+          <p data-i18n="perfil.texto">Profesional enfocado en innovación y automatización de procesos. Lidero la transformación digital de flujos operativos en entornos industriales, con impacto directo en la eficiencia y en la reducción de carga manual. En paralelo construyo productos web completos (APIs, bases de datos, pagos, seguridad e IA local) con demo en vivo.</p>
         </section>
 
         <section>
-          <h2>Experiencia</h2>
+          <h2 data-i18n="experiencia">Experiencia</h2>
           <article class="puesto">
-            <header><h3>Analista de Innovación <small>(previamente practicante)</small></h3><time>Sep. 2025 – Actualidad</time></header>
+            <header><h3><span data-i18n="p1.titulo">Analista de Innovación</span> <small data-i18n="p1.sub">(previamente practicante)</small></h3><time data-i18n="p1.fecha">Sep. 2025 – Actualidad</time></header>
             <ul>
-              <li>Automaticé las auditorías 5S+ de áreas productivas con Power Apps y Power Automate, integrando 6 fuentes de datos y 5 flujos para gestionar hallazgos y verificables de cumplimiento: <strong>−70% de tiempo</strong> del proceso.</li>
-              <li>Implementé la gestión documental bajo Standard Work, estandarizando el control de versiones y la validación de responsables: el ciclo de aprobación bajó de <strong>25 a 8 días</strong>.</li>
+              <li data-i18n-html="p1.a">Automaticé las auditorías 5S+ de áreas productivas con Power Apps y Power Automate, integrando 6 fuentes de datos y 5 flujos para gestionar hallazgos y verificables de cumplimiento: <strong>−70% de tiempo</strong> del proceso.</li>
+              <li data-i18n-html="p1.b">Implementé la gestión documental bajo Standard Work, estandarizando el control de versiones y la validación de responsables: el ciclo de aprobación bajó de <strong>25 a 8 días</strong>.</li>
             </ul>
           </article>
           <article class="puesto">
-            <header><h3>Práctica profesional · Automatización de procesos</h3><time>Ene. 2024 – Feb. 2024</time></header>
-            <ul><li>Creé automatizaciones con JavaScript y Node.js que redujeron las tareas manuales y subieron la eficiencia del equipo.</li></ul>
+            <header><h3 data-i18n="p2.titulo">Práctica profesional · Automatización de procesos</h3><time data-i18n="p2.fecha">Ene. 2024 – Feb. 2024</time></header>
+            <ul><li data-i18n="p2.a">Creé automatizaciones con JavaScript y Node.js que redujeron las tareas manuales y subieron la eficiencia del equipo.</li></ul>
           </article>
           <article class="puesto">
-            <header><h3>Técnico en cámaras termográficas FLIR</h3><time>Dic. 2022 – Sep. 2024</time></header>
-            <ul><li>Revisé, reparé y calibré cámaras FLIR, y trabajé junto a un equipo técnico en Brasil para mantener los equipos siempre listos.</li></ul>
+            <header><h3 data-i18n="p3.titulo">Técnico en cámaras termográficas FLIR</h3><time data-i18n="p3.fecha">Dic. 2022 – Sep. 2024</time></header>
+            <ul><li data-i18n="p3.a">Revisé, reparé y calibré cámaras FLIR, y trabajé junto a un equipo técnico en Brasil para mantener los equipos siempre listos.</li></ul>
           </article>
           <article class="puesto">
-            <header><h3>Experiencia hotelera</h3><time>2024 – 2025</time></header>
-            <ul><li>Atendí clientes en español, inglés y portugués, y gané soltura para adaptarme rápido a distintos roles.</li></ul>
+            <header><h3 data-i18n="p4.titulo">Experiencia hotelera</h3><time>2024 – 2025</time></header>
+            <ul><li data-i18n="p4.a">Atendí clientes en español, inglés y portugués, y gané soltura para adaptarme rápido a distintos roles.</li></ul>
           </article>
         </section>
 
         <section>
-          <h2>Proyectos en GitHub</h2>
+          <h2 data-i18n="proyectos">Proyectos con demo en vivo</h2>
           <div class="proyectos" id="cv-proyectos">
-            <p>TraceLink V2, Finanzas Personales, Condominio Santa Marta y Rayo: detalle en erickcolvin.github.io.</p>
+            <p>TraceLink V2, Finanzas Personales, Condominio Santa Marta y Rayo: erickcolvin.github.io.</p>
           </div>
         </section>
       </div>
 
       <aside class="lateral">
         <section>
-          <h2>Formación</h2>
-          <p class="item"><strong>Ingeniería en Computación e Informática</strong><time>Mar. 2023 – Dic. 2025</time></p>
+          <h2 data-i18n="formacion">Formación</h2>
+          <p class="item"><strong data-i18n="titulo">Ingeniería en Computación e Informática</strong><time data-i18n="titulo.fecha">Mar. 2023 – Dic. 2025</time></p>
         </section>
 
         <section>
-          <h2>Certificaciones</h2>
+          <h2 data-i18n="certificaciones">Certificaciones</h2>
           <ul class="lista">
-            <li><strong>Microsoft Learn · Power Platform</strong>38 insignias y 6 trofeos: Power Automate con múltiples orígenes de datos, AI Builder, flujos de aprobación y Power Apps.</li>
-            <li><strong>CCNA: Conmutación, enrutamiento y redes inalámbricas</strong>Cisco · jul. 2025</li>
-            <li><strong>Machine Learning for Data Science Projects</strong>IBM SkillsBuild · jun. 2025</li>
-            <li><strong>Calibración de cuerpos negros</strong>FLIR Brasil · ago. 2024</li>
-            <li><strong>Inglés social y laboral 4 · 94%</strong>Instituto Chileno Británico de Cultura · ene. 2024</li>
+            <li><strong>Microsoft Learn · Power Platform</strong><span data-i18n="c1">38 insignias y 6 trofeos: Power Automate con múltiples orígenes de datos, AI Builder, flujos de aprobación y Power Apps.</span></li>
+            <li><strong data-i18n="c2.t">CCNA: Conmutación, enrutamiento y redes inalámbricas</strong><span data-i18n="c2">Cisco · jul. 2025</span></li>
+            <li><strong>Machine Learning for Data Science Projects</strong><span data-i18n="c3">IBM SkillsBuild · jun. 2025</span></li>
+            <li><strong data-i18n="c4.t">Calibración de cuerpos negros</strong><span data-i18n="c4">FLIR Brasil · ago. 2024</span></li>
+            <li><strong data-i18n="c5.t">Inglés social y laboral 4 · 94%</strong><span data-i18n="c5">Instituto Chileno Británico de Cultura · ene. 2024</span></li>
           </ul>
         </section>
 
         <section>
-          <h2>Idiomas</h2>
+          <h2 data-i18n="idiomas">Idiomas</h2>
           <ul class="idiomas">
-            <li><span>Español</span><b>Nativo</b><i style="--n:5"></i></li>
-            <li><span>Inglés</span><b>B2</b><i style="--n:4"></i></li>
-            <li><span>Portugués</span><b>Básico</b><i style="--n:2"></i></li>
+            <li><span data-i18n="i1">Español</span><b data-i18n="i1.n">Nativo</b><i style="--n:5"></i></li>
+            <li><span data-i18n="i2">Inglés</span><b>B2</b><i style="--n:4"></i></li>
+            <li><span data-i18n="i3">Portugués</span><b data-i18n="i3.n">Básico</b><i style="--n:2"></i></li>
           </ul>
         </section>
 
         <section>
-          <h2>Herramientas</h2>
-          <p class="grupo">Automatización</p>
+          <h2 data-i18n="herramientas">Herramientas</h2>
+          <p class="grupo" data-i18n="g1">Automatización</p>
           <div class="chips"><span>Power Apps</span><span>Power Automate</span><span>SharePoint</span><span>Power BI</span><span>AI Builder</span><span>Excel</span></div>
-          <p class="grupo">Desarrollo</p>
+          <p class="grupo" data-i18n="g2">Desarrollo</p>
           <div class="chips"><span>JavaScript</span><span>TypeScript</span><span>Node.js</span><span>React</span><span>Express</span><span>C# · .NET</span><span>Python</span></div>
-          <p class="grupo">Datos e infraestructura</p>
+          <p class="grupo" data-i18n="g3">Datos e infraestructura</p>
           <div class="chips"><span>PostgreSQL</span><span>SQLite</span><span>MongoDB</span><span>Prisma</span><span>Docker</span><span>GitHub Actions</span></div>
         </section>
       </aside>
@@ -137,20 +146,94 @@
   <script src="js/proyectos.js"></script>
   <script>
     (function () {
-      // Los proyectos salen de los mismos datos del portafolio: se muestran los cuatro primeros
-      var caja = document.getElementById("cv-proyectos");
-      var lista = (window.PROYECTOS || []).slice(0, 4);
-      if (lista.length) {
-        caja.innerHTML = lista.map(function (p) {
-          var enlace = p.enlaces.demo || p.enlaces.codigo || "";
+      var raiz = document.documentElement;
+      var EN = {
+        "volver": "Portfolio",
+        "ayuda": "In the print dialog choose <strong>Save as PDF</strong>.",
+        "pdf": "Download PDF",
+        "rol": "Computer Engineer · Innovation Analyst",
+        "perfil": "Profile",
+        "perfil.texto": "A professional focused on innovation and process automation. I lead the digital transformation of operational workflows in industrial settings, with a direct impact on efficiency and on reducing manual work. Alongside, I build complete web products (APIs, databases, payments, security and local AI) with live demos.",
+        "experiencia": "Experience",
+        "p1.titulo": "Innovation Analyst",
+        "p1.sub": "(previously intern)",
+        "p1.fecha": "Sep. 2025 – Present",
+        "p1.a": "Automated 5S+ audits for production areas with Power Apps and Power Automate, integrating 6 data sources and 5 flows to manage findings and compliance evidence: <strong>−70% process time</strong>.",
+        "p1.b": "Rolled out document management under Standard Work, standardizing version control and owner sign-off: the approval cycle went from <strong>25 to 8 days</strong>.",
+        "p2.titulo": "Internship · Process automation",
+        "p2.fecha": "Jan. 2024 – Feb. 2024",
+        "p2.a": "Built automations with JavaScript and Node.js that cut manual tasks and raised the team's efficiency.",
+        "p3.titulo": "FLIR thermal camera technician",
+        "p3.fecha": "Dec. 2022 – Sep. 2024",
+        "p3.a": "Inspected, repaired and calibrated FLIR cameras, working with a technical team in Brazil to keep equipment always ready.",
+        "p4.titulo": "Hospitality",
+        "p4.a": "Served guests in Spanish, English and Portuguese, and learned to adapt quickly to different roles.",
+        "proyectos": "Projects with live demos",
+        "formacion": "Education",
+        "titulo": "B.Sc. Computer Engineering",
+        "titulo.fecha": "Mar. 2023 – Dec. 2025",
+        "certificaciones": "Certifications",
+        "c1": "38 badges and 6 trophies: Power Automate with multiple data sources, AI Builder, approval flows and Power Apps.",
+        "c2.t": "CCNA: Switching, Routing and Wireless Essentials",
+        "c2": "Cisco · Jul. 2025",
+        "c3": "IBM SkillsBuild · Jun. 2025",
+        "c4.t": "Blackbody calibration",
+        "c4": "FLIR Brazil · Aug. 2024",
+        "c5.t": "Social and Professional English 4 · 94%",
+        "c5": "Chilean-British Institute of Culture · Jan. 2024",
+        "idiomas": "Languages",
+        "i1": "Spanish",
+        "i1.n": "Native",
+        "i2": "English",
+        "i3": "Portuguese",
+        "i3.n": "Basic",
+        "herramientas": "Tools",
+        "g1": "Automation",
+        "g2": "Development",
+        "g3": "Data and infrastructure"
+      };
+      var originales = new WeakMap();
+      var idioma = raiz.dataset.idioma === "en" ? "en" : "es";
+      var esc = function (x) { var d = document.createElement("div"); d.textContent = x; return d.innerHTML; };
+
+      function pintarProyectos() {
+        var lista = (window.PROYECTOS || []).slice(0, 4);
+        if (!lista.length) return;
+        var campo = function (p, n) { return idioma === "en" && p.en && p.en[n] ? p.en[n] : p[n]; };
+        document.getElementById("cv-proyectos").innerHTML = lista.map(function (p) {
+          var enlace = p.enlaces.demo || "";
           var texto = enlace.replace(/^https?:\/\//, "").replace(/\/$/, "");
-          var esc = function (t) { var d = document.createElement("div"); d.textContent = t; return d.innerHTML; };
-          return '<article class="proyecto"><header><h3>' + esc(p.nombre) + "</h3>" +
+          return '<article class="proyecto"><header><h3>' + esc(campo(p, "nombre")) + "</h3>" +
             (enlace ? '<a href="' + enlace + '">' + esc(texto) + "</a>" : "") + "</header>" +
-            "<p>" + esc(p.resumen) + ' <span class="proyecto__tec">' + esc(p.tecnologias.slice(0, 4).join(" · ")) + "</span></p></article>";
+            "<p>" + esc(campo(p, "resumen")) + ' <span class="proyecto__tec">' + esc(p.tecnologias.slice(0, 4).join(" · ")) + "</span></p></article>";
         }).join("");
       }
+
+      function aplicar() {
+        var en = idioma === "en";
+        raiz.dataset.idioma = idioma;
+        raiz.lang = en ? "en" : "es-CL";
+        document.title = en ? "CV · Erick Colvin Córdova (English)" : "CV · Erick Colvin Córdova";
+        document.querySelectorAll("[data-i18n]").forEach(function (el) {
+          if (!originales.has(el)) originales.set(el, el.textContent);
+          el.textContent = (en && EN[el.dataset.i18n]) || originales.get(el);
+        });
+        document.querySelectorAll("[data-i18n-html]").forEach(function (el) {
+          if (!originales.has(el)) originales.set(el, el.innerHTML);
+          el.innerHTML = (en && EN[el.dataset.i18nHtml]) || originales.get(el);
+        });
+        document.getElementById("btn-idioma").setAttribute("aria-label", en ? "Switch language to Spanish" : "Cambiar idioma a inglés");
+        document.getElementById("volver").setAttribute("href", "./?lang=" + idioma);
+        pintarProyectos();
+      }
+
+      document.getElementById("btn-idioma").addEventListener("click", function () {
+        idioma = idioma === "es" ? "en" : "es";
+        try { localStorage.setItem("idioma", idioma); } catch (e) {}
+        aplicar();
+      });
       document.getElementById("btn-pdf").addEventListener("click", function () { window.print(); });
+      aplicar();
     })();
   </script>
 </body>
