@@ -2,7 +2,7 @@
 <html lang="es-CL">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Erick Colvin · Ingeniero en Computación e Informática</title>
   <meta name="description" content="Portafolio de Erick Colvin Córdova: automatización de procesos, Power Platform y desarrollo full-stack. Proyectos publicados en GitHub.">
   <meta name="author" content="Erick Alejandro Colvin Córdova">
@@ -56,24 +56,47 @@
 </head>
 <body>
   <a class="saltar" href="#contenido">Saltar al contenido</a>
-  <div class="progreso" aria-hidden="true"><span></span></div>
+
+  <!-- Fondo: aurora, rejilla, red de nodos y grano -->
+  <div class="fondo" aria-hidden="true">
+    <div class="fondo__manchas"><span></span><span></span><span></span></div>
+    <div class="fondo__rejilla"></div>
+    <canvas class="fondo__red" id="red"></canvas>
+    <div class="fondo__grano"></div>
+  </div>
   <div class="luz-cursor" aria-hidden="true"></div>
 
-  <header class="nav" id="nav">
-    <a class="nav__logo" href="#inicio" aria-label="Erick Colvin, volver al inicio">
-      <span class="nav__monograma">EC</span>
-      <span class="nav__nombre">Erick Colvin</span>
+  <header class="barra" id="barra">
+    <a class="barra__logo" href="#inicio" data-ir="inicio" aria-label="Erick Colvin, ir al inicio">
+      <span class="monograma">EC</span>
+      <span class="barra__nombre">Erick Colvin</span>
     </a>
-    <nav aria-label="Principal">
-      <ul class="nav__links" id="menu">
-        <li><a href="#sobre-mi">Sobre mí</a></li>
-        <li><a href="#experiencia">Experiencia</a></li>
-        <li><a href="#proyectos">Proyectos</a></li>
-        <li><a href="#habilidades">Habilidades</a></li>
-        <li><a href="#contacto">Contacto</a></li>
-      </ul>
+
+    <nav class="pestanas" aria-label="Secciones">
+      <span class="pestanas__marca" aria-hidden="true"></span>
+      <a href="#inicio" data-ir="inicio">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9v11h14V9"/><path d="M10 20v-6h4v6"/></svg>
+        <span>Inicio</span>
+      </a>
+      <a href="#trayectoria" data-ir="trayectoria">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+        <span>Trayectoria</span>
+      </a>
+      <a href="#proyectos" data-ir="proyectos">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 10 5-10 5L2 7l10-5Z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/></svg>
+        <span>Proyectos</span>
+      </a>
+      <a href="#habilidades" data-ir="habilidades">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 5.4L19 10l-5.2 1.6L12 17l-1.8-5.4L5 10l5.2-1.6z"/><path d="M19 15l.7 2.1 2.1.7-2.1.7L19 21l-.7-2.5-2.1-.7 2.1-.7z"/></svg>
+        <span>Habilidades</span>
+      </a>
+      <a href="#contacto" data-ir="contacto">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>
+        <span>Contacto</span>
+      </a>
     </nav>
-    <div class="nav__acciones">
+
+    <div class="barra__acciones">
       <button class="icono-btn" id="btn-movimiento" type="button" aria-pressed="true" title="Animaciones activadas">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 5.4L19 10l-5.2 1.6L12 17l-1.8-5.4L5 10l5.2-1.6z"/><path d="M19 15l.7 2.1 2.1.7-2.1.7L19 21l-.7-2.5-2.1-.7 2.1-.7z"/></svg>
         <span class="sr">Animaciones</span>
@@ -83,327 +106,312 @@
         <svg class="ico-luna" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
         <span class="sr">Cambiar tema</span>
       </button>
-      <button class="icono-btn nav__menu" id="btn-menu" type="button" aria-expanded="false" aria-controls="menu">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
-        <span class="sr">Abrir menú</span>
-      </button>
+      <a class="btn btn--chico btn--fantasma barra__cv" href="cv.html">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/></svg>
+        CV
+      </a>
     </div>
   </header>
 
-  <main id="contenido">
-    <!-- ============ INICIO ============ -->
-    <section class="hero" id="inicio">
-      <canvas class="hero__red" id="red" aria-hidden="true"></canvas>
-      <div class="hero__manchas" aria-hidden="true"><span></span><span></span><span></span></div>
-      <div class="hero__rejilla" aria-hidden="true"></div>
+  <main class="escenario" id="contenido">
 
-      <div class="contenedor hero__grid">
-        <div class="hero__texto">
-          <p class="etiqueta revelar"><span class="punto-vivo"></span> Analista de Innovación · Santiago, Chile</p>
-          <h1 class="hero__titulo" aria-label="Erick Colvin Córdova">
-            <span class="linea" aria-hidden="true"><span class="letras">Erick Colvin</span></span>
-            <span class="linea degradado" aria-hidden="true"><span class="letras">Córdova</span></span>
-          </h1>
-          <p class="hero__rol"><span class="mono acento">&gt;</span> <span id="rol">Ingeniero en Computación e Informática</span><span class="cursor" aria-hidden="true"></span></p>
-          <p class="hero__bajada revelar">Automatizo procesos y construyo software que quita carga manual: desde flujos en Power Platform para áreas productivas hasta plataformas web completas con pagos, seguridad e IA local.</p>
-          <div class="hero__ctas revelar">
-            <a class="btn btn--primario iman" href="#proyectos">Ver proyectos
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-            </a>
-            <a class="btn btn--fantasma iman" href="https://github.com/ErickColvin" target="_blank" rel="noopener">
-              <svg class="relleno" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 0-.8.4-1.3.7-1.6-2.6-.3-5.4-1.3-5.4-5.9 0-1.3.5-2.4 1.2-3.2 0-.3-.5-1.5.2-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.5.4.9 1.1.9 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>
-              GitHub
-            </a>
-            <a class="btn btn--fantasma iman" href="cv.html">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/></svg>
-              CV
-            </a>
-          </div>
-        </div>
-
-        <div class="terminal revelar" role="img" aria-label="Terminal decorativa que presenta a Erick y lista sus repositorios públicos">
-          <div class="terminal__barra">
-            <span></span><span></span><span></span>
-            <p>erick@colvin: ~</p>
-          </div>
-          <pre class="terminal__cuerpo" id="terminal" aria-hidden="true"></pre>
-        </div>
-      </div>
-
-      <div class="contenedor cifras" data-escalonar>
-        <div class="cifra revelar">
-          <strong><span data-contar="70">70</span><small>%</small></strong>
-          <span>menos tiempo en las auditorías 5S+</span>
-        </div>
-        <div class="cifra revelar">
-          <strong>25<small class="flecha">→</small><span data-contar="8" data-desde="25">8</span></strong>
-          <span>días de ciclo de aprobación documental</span>
-        </div>
-        <div class="cifra revelar">
-          <strong><span data-contar="38">38</span></strong>
-          <span>insignias Microsoft Learn en Power Platform</span>
-        </div>
-        <div class="cifra revelar">
-          <strong><span data-contar="160" id="cifra-commits">160</span></strong>
-          <span>commits en <span id="cifra-proyectos">7</span> proyectos en GitHub</span>
-        </div>
-      </div>
-
-      <a class="bajar" href="#sobre-mi" aria-label="Ir a Sobre mí"><span></span></a>
-    </section>
-
-    <!-- ============ SOBRE MÍ ============ -->
-    <section class="seccion" id="sobre-mi">
-      <div class="contenedor">
-        <header class="seccion__cab revelar">
-          <span class="seccion__num">01</span>
-          <h2>Sobre mí</h2>
-        </header>
-
-        <div class="sobre">
-          <div class="sobre__texto revelar">
-            <p class="sobre__grande">Profesional enfocado en <em>innovación</em> y <em>automatización de procesos</em>.</p>
-            <p>Lidero la transformación digital de flujos operativos en entornos industriales, con impacto directo en la eficiencia y en la reducción de carga manual.</p>
-            <p>En paralelo construyo productos web completos (APIs, bases de datos, pagos, seguridad e IA local) y los publico en GitHub.</p>
-            <p>Antes trabajé con hardware: revisé, reparé y calibré cámaras termográficas FLIR junto a un equipo técnico en Brasil, y atendí clientes en español, inglés y portugués.</p>
-          </div>
-
-          <ul class="datos" data-escalonar>
-            <li class="dato revelar">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-              <div><span>Ubicación</span><strong>Santiago, Chile</strong></div>
-            </li>
-            <li class="dato revelar">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 10 12 5 2 10l10 5 10-5Z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/><path d="M22 10v6"/></svg>
-              <div><span>Formación</span><strong>Ingeniero en Computación e Informática</strong><small>Mar. 2023 – Dic. 2025</small></div>
-            </li>
-            <li class="dato revelar">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg>
-              <div><span>Idiomas</span><strong>Español nativo · Inglés B2</strong><small>Portugués básico</small></div>
-            </li>
-            <li class="dato revelar">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-              <div><span>Hoy</span><strong>Analista de Innovación</strong><small>Desde sep. 2025</small></div>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============ EXPERIENCIA ============ -->
-    <section class="seccion" id="experiencia">
-      <div class="contenedor">
-        <header class="seccion__cab revelar">
-          <span class="seccion__num">02</span>
-          <h2>Experiencia</h2>
-        </header>
-
-        <ol class="linea-tiempo" id="linea-tiempo">
-          <li class="hito revelar">
-            <span class="hito__punto" aria-hidden="true"></span>
-            <article class="hito__tarjeta">
-              <p class="hito__fecha">Sep. 2025 — Actualidad</p>
-              <h3>Analista de Innovación</h3>
-              <p class="hito__sub">Previamente practicante</p>
-              <ul>
-                <li>Automaticé las auditorías 5S+ de áreas productivas con Power Apps y Power Automate, integrando 6 fuentes de datos y 5 flujos para gestionar hallazgos y verificables de cumplimiento: <strong>−70% de tiempo</strong> del proceso.</li>
-                <li>Implementé la gestión documental bajo Standard Work, estandarizando el control de versiones y la validación de responsables: el ciclo de aprobación bajó de <strong>25 a 8 días</strong>.</li>
-              </ul>
-              <div class="chips"><span>Power Apps</span><span>Power Automate</span><span>Standard Work</span><span>5S+</span></div>
-            </article>
-          </li>
-          <li class="hito revelar">
-            <span class="hito__punto" aria-hidden="true"></span>
-            <article class="hito__tarjeta">
-              <p class="hito__fecha">2024 — 2025</p>
-              <h3>Experiencia hotelera</h3>
-              <ul>
-                <li>Atendí clientes en español, inglés y portugués, y gané soltura para adaptarme rápido a distintos roles.</li>
-              </ul>
-              <div class="chips"><span>Atención al cliente</span><span>Trilingüe</span></div>
-            </article>
-          </li>
-          <li class="hito revelar">
-            <span class="hito__punto" aria-hidden="true"></span>
-            <article class="hito__tarjeta">
-              <p class="hito__fecha">Ene. 2024 — Feb. 2024</p>
-              <h3>Práctica profesional · Automatización de procesos</h3>
-              <ul>
-                <li>Creé automatizaciones con JavaScript y Node.js que redujeron las tareas manuales y subieron la eficiencia del equipo.</li>
-              </ul>
-              <div class="chips"><span>JavaScript</span><span>Node.js</span></div>
-            </article>
-          </li>
-          <li class="hito hito--estudio revelar">
-            <span class="hito__punto" aria-hidden="true"></span>
-            <article class="hito__tarjeta">
-              <p class="hito__fecha">Mar. 2023 — Dic. 2025</p>
-              <h3>Ingeniería en Computación e Informática</h3>
-              <ul>
-                <li>Proyecto de título: plataforma logística con trazabilidad, importación desde Excel y alertas de stock, que después evolucionó en TraceLink.</li>
-              </ul>
-              <div class="chips"><span>Formación</span></div>
-            </article>
-          </li>
-          <li class="hito revelar">
-            <span class="hito__punto" aria-hidden="true"></span>
-            <article class="hito__tarjeta">
-              <p class="hito__fecha">Dic. 2022 — Sep. 2024</p>
-              <h3>Técnico en cámaras termográficas FLIR</h3>
-              <ul>
-                <li>Revisé, reparé y calibré cámaras FLIR, y trabajé junto a un equipo técnico en Brasil para mantener los equipos siempre listos.</li>
-              </ul>
-              <div class="chips"><span>Calibración</span><span>Hardware</span><span>Equipo internacional</span></div>
-            </article>
-          </li>
-        </ol>
-      </div>
-    </section>
-
-    <!-- ============ PROYECTOS ============ -->
-    <section class="seccion" id="proyectos">
-      <div class="contenedor">
-        <header class="seccion__cab revelar">
-          <span class="seccion__num">03</span>
-          <h2>Proyectos en GitHub</h2>
-        </header>
-        <p class="seccion__intro revelar">Lo que he construido y publicado: desde proyectos en equipo de la universidad hasta plataformas con pagos, CI/CD e inteligencia artificial que corre en casa.</p>
-
-        <div class="resumen-gh" data-escalonar>
-          <div class="revelar"><strong id="gh-repos">7</strong><span>repositorios públicos</span></div>
-          <div class="revelar"><strong id="gh-commits">160</strong><span>commits</span></div>
-          <div class="revelar"><strong id="gh-lenguajes">8</strong><span>lenguajes</span></div>
-          <div class="revelar"><strong id="gh-demos">2</strong><span>demos en vivo</span></div>
-        </div>
-
-        <div class="filtros revelar" role="group" aria-label="Filtrar proyectos">
-          <button type="button" class="filtro activo" data-filtro="todos" aria-pressed="true">Todos</button>
-          <button type="button" class="filtro" data-filtro="fullstack" aria-pressed="false">Full-stack</button>
-          <button type="button" class="filtro" data-filtro="ia" aria-pressed="false">IA</button>
-          <button type="button" class="filtro" data-filtro="frontend" aria-pressed="false">Frontend</button>
-          <button type="button" class="filtro" data-filtro="web" aria-pressed="false">Sitios web</button>
-        </div>
-
-        <div class="proyectos" id="proyectos-lista" aria-live="polite"></div>
-        <noscript><p class="seccion__intro">Activa JavaScript para ver las tarjetas, o revisa los proyectos directo en <a href="https://github.com/ErickColvin?tab=repositories">github.com/ErickColvin</a>.</p></noscript>
-
-        <div class="evolucion revelar">
-          <h3 class="evolucion__titulo">Evolución</h3>
-          <ol class="evolucion__lista" id="evolucion"></ol>
-        </div>
-
-        <div class="actividad revelar" id="actividad" hidden>
-          <div class="actividad__cab">
-            <h3 class="evolucion__titulo">Actividad en GitHub</h3>
-            <p class="actividad__nota">Mis commits en los repositorios de estos proyectos. El trabajo en Power Platform no vive en GitHub.</p>
-          </div>
-          <dl class="actividad__datos">
-            <div><dt>commits</dt><dd id="act-total">0</dd></div>
-            <div><dt>días con commits</dt><dd id="act-dias">0</dd></div>
-            <div><dt>días seguidos, la racha más larga</dt><dd id="act-racha">0</dd></div>
-            <div><dt id="act-max-fecha">el día más activo</dt><dd id="act-max">0</dd></div>
-          </dl>
-          <div class="actividad__desliza" id="act-desliza">
-            <div class="actividad__tabla">
-              <span></span>
-              <div class="actividad__meses" id="act-meses" aria-hidden="true"></div>
-              <div class="actividad__semana" aria-hidden="true"><span>lun</span><span></span><span>mié</span><span></span><span>vie</span><span></span><span></span></div>
-              <div class="actividad__grilla" id="act-grilla" role="img"></div>
+    <!-- ============ 01 · INICIO ============ -->
+    <section class="vista" id="inicio" aria-label="Inicio">
+      <div class="vista__marco">
+        <div class="bento">
+          <article class="tile bento__hero revelar">
+            <p class="etiqueta"><span class="punto-vivo"></span> Analista de Innovación · Santiago, Chile</p>
+            <h1 class="hero__titulo" aria-label="Erick Colvin Córdova" tabindex="-1">
+              <span class="linea" aria-hidden="true"><span class="letras">Erick Colvin</span></span>
+              <span class="linea degradado" aria-hidden="true"><span class="letras">Córdova</span></span>
+            </h1>
+            <p class="hero__rol"><span class="mono acento">&gt;</span> <span id="rol">Ingeniero en Computación e Informática</span><span class="cursor" aria-hidden="true"></span></p>
+            <p class="hero__bajada">Automatizo procesos y construyo software que quita carga manual: desde flujos en Power Platform para áreas productivas hasta plataformas web completas con pagos, seguridad e IA local.</p>
+            <div class="hero__ctas">
+              <a class="btn btn--primario iman" href="#proyectos" data-ir="proyectos">Ver proyectos
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </a>
+              <a class="btn btn--fantasma iman" href="cv.html">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/></svg>
+                Descargar CV
+              </a>
+              <a class="btn btn--fantasma btn--icono iman" href="https://github.com/ErickColvin" target="_blank" rel="noopener" aria-label="GitHub">
+                <svg class="relleno" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 0-.8.4-1.3.7-1.6-2.6-.3-5.4-1.3-5.4-5.9 0-1.3.5-2.4 1.2-3.2 0-.3-.5-1.5.2-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.5.4.9 1.1.9 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>
+              </a>
             </div>
+          </article>
+
+          <div class="tile terminal bento__terminal revelar" role="img" aria-label="Terminal decorativa que presenta a Erick y lista sus repositorios públicos">
+            <div class="terminal__barra">
+              <span></span><span></span><span></span>
+              <p>erick@colvin: ~</p>
+            </div>
+            <pre class="terminal__cuerpo" id="terminal" aria-hidden="true"></pre>
           </div>
-          <div class="actividad__pie">
-            <p id="act-generado"></p>
-            <p class="actividad__leyenda" aria-hidden="true">Menos <i data-n="0"></i><i data-n="1"></i><i data-n="2"></i><i data-n="3"></i><i data-n="4"></i> Más</p>
+
+          <div class="tile cifra revelar">
+            <strong><span data-contar="70">70</span><small>%</small></strong>
+            <span>menos tiempo en las auditorías 5S+</span>
           </div>
-          <p class="actividad__tip" id="act-tip" role="status" hidden></p>
+          <div class="tile cifra revelar">
+            <strong>25<small class="flecha">→</small><span data-contar="8" data-desde="25">8</span></strong>
+            <span>días de ciclo de aprobación documental</span>
+          </div>
+          <div class="tile cifra revelar">
+            <strong><span data-contar="38">38</span></strong>
+            <span>insignias Microsoft Learn en Power Platform</span>
+          </div>
+          <a class="tile cifra cifra--enlace revelar" href="#actividad" data-ir="proyectos" data-panel="actividad">
+            <strong><span data-contar="160" id="cifra-commits">160</span></strong>
+            <span>commits en <span id="cifra-proyectos">7</span> proyectos en GitHub</span>
+            <svg class="cifra__flecha" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>
+          </a>
         </div>
       </div>
     </section>
 
-    <!-- ============ HABILIDADES ============ -->
-    <section class="seccion" id="habilidades">
-      <div class="contenedor">
-        <header class="seccion__cab revelar">
-          <span class="seccion__num">04</span>
-          <h2>Habilidades</h2>
+    <!-- ============ 02 · TRAYECTORIA ============ -->
+    <section class="vista" id="trayectoria" aria-labelledby="titulo-trayectoria">
+      <div class="vista__marco">
+        <header class="cab revelar">
+          <p class="cab__num">02 — Sobre mí y experiencia</p>
+          <h2 id="titulo-trayectoria" tabindex="-1">Trayectoria</h2>
         </header>
 
-        <div class="grupos" data-escalonar>
-          <article class="grupo revelar">
+        <div class="trayectoria">
+          <article class="tile sobre revelar">
+            <p class="sobre__grande">Profesional enfocado en <em>innovación</em> y <em>automatización de procesos</em>.</p>
+            <p>Lidero la transformación digital de flujos operativos en entornos industriales. En paralelo construyo productos web completos (APIs, bases de datos, pagos, seguridad e IA local) y los publico en GitHub.</p>
+            <ul class="datos">
+              <li class="dato">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                <div><span>Ubicación</span><strong>Santiago, Chile</strong></div>
+              </li>
+              <li class="dato">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 10 12 5 2 10l10 5 10-5Z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/><path d="M22 10v6"/></svg>
+                <div><span>Formación</span><strong>Ing. en Computación e Informática</strong></div>
+              </li>
+              <li class="dato">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg>
+                <div><span>Idiomas</span><strong>Español · Inglés B2</strong><small>Portugués básico</small></div>
+              </li>
+              <li class="dato">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+                <div><span>Hoy</span><strong>Analista de Innovación</strong><small>Desde sep. 2025</small></div>
+              </li>
+            </ul>
+          </article>
+
+          <article class="tile experiencia revelar">
+            <div class="hitos" role="tablist" aria-label="Experiencia" aria-orientation="vertical">
+              <button class="hito activo" type="button" role="tab" id="tab-h1" aria-controls="panel-h1" aria-selected="true">
+                <time>Sep. 2025 — hoy</time><strong>Analista de Innovación</strong>
+              </button>
+              <button class="hito" type="button" role="tab" id="tab-h2" aria-controls="panel-h2" aria-selected="false" tabindex="-1">
+                <time>2024 — 2025</time><strong>Experiencia hotelera</strong>
+              </button>
+              <button class="hito" type="button" role="tab" id="tab-h3" aria-controls="panel-h3" aria-selected="false" tabindex="-1">
+                <time>Ene. — Feb. 2024</time><strong>Práctica profesional</strong>
+              </button>
+              <button class="hito hito--estudio" type="button" role="tab" id="tab-h4" aria-controls="panel-h4" aria-selected="false" tabindex="-1">
+                <time>2023 — 2025</time><strong>Ingeniería</strong>
+              </button>
+              <button class="hito" type="button" role="tab" id="tab-h5" aria-controls="panel-h5" aria-selected="false" tabindex="-1">
+                <time>Dic. 2022 — Sep. 2024</time><strong>Técnico FLIR</strong>
+              </button>
+            </div>
+
+            <div class="hito-paneles">
+              <div class="hito-panel activo" role="tabpanel" id="panel-h1" aria-labelledby="tab-h1">
+                <p class="hito-panel__fecha">Sep. 2025 — Actualidad</p>
+                <h3>Analista de Innovación</h3>
+                <p class="hito-panel__sub">Previamente practicante</p>
+                <ul>
+                  <li>Automaticé las auditorías 5S+ de áreas productivas con Power Apps y Power Automate, integrando 6 fuentes de datos y 5 flujos para gestionar hallazgos y verificables de cumplimiento: <strong>−70% de tiempo</strong> del proceso.</li>
+                  <li>Implementé la gestión documental bajo Standard Work, estandarizando el control de versiones y la validación de responsables: el ciclo de aprobación bajó de <strong>25 a 8 días</strong>.</li>
+                </ul>
+                <div class="chips"><span>Power Apps</span><span>Power Automate</span><span>Standard Work</span><span>5S+</span></div>
+              </div>
+              <div class="hito-panel" role="tabpanel" id="panel-h2" aria-labelledby="tab-h2">
+                <p class="hito-panel__fecha">2024 — 2025</p>
+                <h3>Experiencia hotelera</h3>
+                <ul>
+                  <li>Atendí clientes en español, inglés y portugués, y gané soltura para adaptarme rápido a distintos roles.</li>
+                </ul>
+                <div class="chips"><span>Atención al cliente</span><span>Trilingüe</span></div>
+              </div>
+              <div class="hito-panel" role="tabpanel" id="panel-h3" aria-labelledby="tab-h3">
+                <p class="hito-panel__fecha">Ene. 2024 — Feb. 2024</p>
+                <h3>Práctica profesional · Automatización de procesos</h3>
+                <ul>
+                  <li>Creé automatizaciones con JavaScript y Node.js que redujeron las tareas manuales y subieron la eficiencia del equipo.</li>
+                </ul>
+                <div class="chips"><span>JavaScript</span><span>Node.js</span></div>
+              </div>
+              <div class="hito-panel" role="tabpanel" id="panel-h4" aria-labelledby="tab-h4">
+                <p class="hito-panel__fecha">Mar. 2023 — Dic. 2025</p>
+                <h3>Ingeniería en Computación e Informática</h3>
+                <ul>
+                  <li>Proyecto de título: plataforma logística con trazabilidad, importación desde Excel y alertas de stock, que después evolucionó en TraceLink.</li>
+                </ul>
+                <div class="chips"><span>Formación</span><span>Proyecto de título</span></div>
+              </div>
+              <div class="hito-panel" role="tabpanel" id="panel-h5" aria-labelledby="tab-h5">
+                <p class="hito-panel__fecha">Dic. 2022 — Sep. 2024</p>
+                <h3>Técnico en cámaras termográficas FLIR</h3>
+                <ul>
+                  <li>Revisé, reparé y calibré cámaras FLIR, y trabajé junto a un equipo técnico en Brasil para mantener los equipos siempre listos.</li>
+                </ul>
+                <div class="chips"><span>Calibración</span><span>Hardware</span><span>Equipo internacional</span></div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 03 · PROYECTOS ============ -->
+    <section class="vista" id="proyectos" aria-labelledby="titulo-proyectos">
+      <div class="vista__marco">
+        <header class="cab cab--fila revelar">
+          <div>
+            <p class="cab__num">03 — Publicados en GitHub</p>
+            <h2 id="titulo-proyectos" tabindex="-1">Proyectos</h2>
+          </div>
+          <div class="segmento" role="tablist" aria-label="Ver">
+            <span class="segmento__marca" aria-hidden="true"></span>
+            <button type="button" role="tab" class="activo" aria-selected="true" aria-controls="panel-galeria" id="seg-galeria" data-panel="galeria">Proyectos</button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="panel-actividad" id="seg-actividad" data-panel="actividad" tabindex="-1">Actividad</button>
+          </div>
+        </header>
+
+        <div class="panel-proyectos activo" id="panel-galeria" role="tabpanel" aria-labelledby="seg-galeria">
+          <div class="galeria">
+            <div class="galeria__lado revelar">
+              <ul class="resumen-gh" aria-label="Resumen">
+                <li><strong id="gh-proyectos">4</strong> proyectos</li>
+                <li><strong id="gh-commits">160</strong> commits</li>
+                <li><strong id="gh-lenguajes">8</strong> lenguajes</li>
+                <li><strong id="gh-demos">2</strong> demos</li>
+              </ul>
+              <div class="filtros" role="group" aria-label="Filtrar proyectos">
+                <button type="button" class="filtro activo" data-filtro="todos" aria-pressed="true">Todos</button>
+                <button type="button" class="filtro" data-filtro="fullstack" aria-pressed="false">Full-stack</button>
+                <button type="button" class="filtro" data-filtro="ia" aria-pressed="false">IA</button>
+                <button type="button" class="filtro" data-filtro="web" aria-pressed="false">Web</button>
+              </div>
+              <div class="lista-proyectos" id="lista-proyectos" role="tablist" aria-label="Proyectos" aria-orientation="vertical"></div>
+            </div>
+            <div class="detalle-caja" id="detalle" role="tabpanel" aria-live="polite"></div>
+          </div>
+          <noscript><p class="cab__num">Activa JavaScript para ver los proyectos, o revísalos en <a href="https://github.com/ErickColvin?tab=repositories">github.com/ErickColvin</a>.</p></noscript>
+        </div>
+
+        <div class="panel-proyectos" id="panel-actividad" role="tabpanel" aria-labelledby="seg-actividad">
+          <div class="tile actividad" id="actividad">
+            <div class="actividad__cab">
+              <h3>Actividad en GitHub</h3>
+              <p class="actividad__nota">Mis commits en los repositorios de estos proyectos. El trabajo en Power Platform no vive en GitHub.</p>
+            </div>
+            <dl class="actividad__datos">
+              <div><dt>commits</dt><dd id="act-total">0</dd></div>
+              <div><dt>días con commits</dt><dd id="act-dias">0</dd></div>
+              <div><dt>días seguidos, la racha más larga</dt><dd id="act-racha">0</dd></div>
+              <div><dt id="act-max-fecha">el día más activo</dt><dd id="act-max">0</dd></div>
+            </dl>
+            <div class="actividad__desliza" id="act-desliza">
+              <div class="actividad__tabla">
+                <span></span>
+                <div class="actividad__meses" id="act-meses" aria-hidden="true"></div>
+                <div class="actividad__semana" aria-hidden="true"><span>lun</span><span></span><span>mié</span><span></span><span>vie</span><span></span><span></span></div>
+                <div class="actividad__grilla" id="act-grilla" role="img"></div>
+              </div>
+            </div>
+            <div class="actividad__pie">
+              <p id="act-generado"></p>
+              <p class="actividad__leyenda" aria-hidden="true">Menos <i data-n="0"></i><i data-n="1"></i><i data-n="2"></i><i data-n="3"></i><i data-n="4"></i> Más</p>
+            </div>
+            <p class="actividad__tip" id="act-tip" role="status" hidden></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 04 · HABILIDADES ============ -->
+    <section class="vista" id="habilidades" aria-labelledby="titulo-habilidades">
+      <div class="vista__marco">
+        <header class="cab revelar">
+          <p class="cab__num">04 — Herramientas y certificaciones</p>
+          <h2 id="titulo-habilidades" tabindex="-1">Habilidades</h2>
+        </header>
+
+        <div class="grupos">
+          <article class="tile grupo revelar">
             <div class="grupo__icono"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
             <h3>Automatización y Power Platform</h3>
             <div class="chips"><span>Power Apps</span><span>Power Automate</span><span>SharePoint</span><span>Power BI</span><span>AI Builder</span><span>Excel</span></div>
           </article>
-          <article class="grupo revelar">
+          <article class="tile grupo revelar">
             <div class="grupo__icono"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/></svg></div>
             <h3>Desarrollo</h3>
             <div class="chips"><span>JavaScript</span><span>TypeScript</span><span>Node.js</span><span>React</span><span>Express</span><span>C# · .NET</span><span>Python</span></div>
           </article>
-          <article class="grupo revelar">
+          <article class="tile grupo revelar">
             <div class="grupo__icono"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.7 4 3 9 3s9-1.3 9-3V5"/><path d="M3 12c0 1.7 4 3 9 3s9-1.3 9-3"/></svg></div>
             <h3>Datos e infraestructura</h3>
             <div class="chips"><span>PostgreSQL</span><span>SQLite</span><span>MongoDB</span><span>Prisma</span><span>Docker</span><span>GitHub Actions</span></div>
           </article>
-          <article class="grupo revelar">
+          <article class="tile grupo revelar">
             <div class="grupo__icono"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3"/></svg></div>
             <h3>IA y redes</h3>
             <div class="chips"><span>LLM local (Ollama)</span><span>Machine Learning</span><span>CCNA</span><span>Seguridad web</span></div>
           </article>
         </div>
-      </div>
 
-      <div class="cinta" aria-hidden="true">
-        <div class="cinta__pista">
-          <div class="cinta__grupo">
-            <span>Power Automate</span><span>React</span><span>TypeScript</span><span>Node.js</span><span>PostgreSQL</span><span>Power Apps</span><span>.NET</span><span>Docker</span><span>Express</span><span>Ollama</span><span>SharePoint</span><span>Prisma</span>
-          </div>
-          <div class="cinta__grupo cinta__grupo--copia">
-            <span>Power Automate</span><span>React</span><span>TypeScript</span><span>Node.js</span><span>PostgreSQL</span><span>Power Apps</span><span>.NET</span><span>Docker</span><span>Express</span><span>Ollama</span><span>SharePoint</span><span>Prisma</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="contenedor">
         <h3 class="subtitulo revelar">Certificaciones y cursos</h3>
-        <ul class="certificados" data-escalonar>
-          <li class="certificado revelar">
-            <span class="certificado__fecha">Jun. 2025</span>
-            <strong>Machine Learning for Data Science Projects</strong>
-            <span>IBM SkillsBuild</span>
-          </li>
-          <li class="certificado revelar">
-            <span class="certificado__fecha">Jul. 2025</span>
-            <strong>CCNA: Conmutación, enrutamiento y redes inalámbricas</strong>
-            <span>Cisco</span>
-          </li>
-          <li class="certificado revelar">
-            <span class="certificado__fecha">Ago. 2024</span>
-            <strong>Calibración de cuerpos negros</strong>
-            <span>FLIR Brasil</span>
-          </li>
-          <li class="certificado revelar">
-            <span class="certificado__fecha">Ene. 2024</span>
-            <strong>Inglés social y laboral 4 · 94%</strong>
-            <span>Instituto Chileno Británico de Cultura</span>
-          </li>
-          <li class="certificado certificado--ancho revelar">
+        <ul class="certificados">
+          <li class="tile certificado certificado--ancho revelar">
             <span class="certificado__fecha">Microsoft Learn</span>
             <strong>38 insignias y 6 trofeos en Power Platform</strong>
             <span>Power Automate con múltiples orígenes de datos, AI Builder, flujos de aprobación y diseño de interfaces en Power Apps.</span>
           </li>
+          <li class="tile certificado revelar">
+            <span class="certificado__fecha">Jul. 2025 · Cisco</span>
+            <strong>CCNA: Conmutación, enrutamiento y redes inalámbricas</strong>
+          </li>
+          <li class="tile certificado revelar">
+            <span class="certificado__fecha">Jun. 2025 · IBM SkillsBuild</span>
+            <strong>Machine Learning for Data Science Projects</strong>
+          </li>
+          <li class="tile certificado revelar">
+            <span class="certificado__fecha">Ago. 2024 · FLIR Brasil</span>
+            <strong>Calibración de cuerpos negros</strong>
+          </li>
+          <li class="tile certificado revelar">
+            <span class="certificado__fecha">Ene. 2024 · Chileno Británico</span>
+            <strong>Inglés social y laboral 4 · 94%</strong>
+          </li>
         </ul>
+
+        <div class="cinta revelar" aria-hidden="true">
+          <div class="cinta__pista">
+            <div class="cinta__grupo">
+              <span>Power Automate</span><span>React</span><span>TypeScript</span><span>Node.js</span><span>PostgreSQL</span><span>Power Apps</span><span>.NET</span><span>Docker</span><span>Express</span><span>Ollama</span><span>SharePoint</span><span>Prisma</span>
+            </div>
+            <div class="cinta__grupo cinta__grupo--copia">
+              <span>Power Automate</span><span>React</span><span>TypeScript</span><span>Node.js</span><span>PostgreSQL</span><span>Power Apps</span><span>.NET</span><span>Docker</span><span>Express</span><span>Ollama</span><span>SharePoint</span><span>Prisma</span>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
-    <!-- ============ CONTACTO ============ -->
-    <section class="seccion contacto" id="contacto">
-      <div class="contenedor">
-        <header class="seccion__cab revelar">
-          <span class="seccion__num">05</span>
-          <h2>Contacto</h2>
-        </header>
-        <div class="contacto__caja revelar">
-          <p class="contacto__grande">¿Conversamos?</p>
+    <!-- ============ 05 · CONTACTO ============ -->
+    <section class="vista" id="contacto" aria-labelledby="titulo-contacto">
+      <div class="vista__marco vista__marco--centro">
+        <div class="contacto revelar">
+          <p class="cab__num">05 — Contacto</p>
+          <h2 class="contacto__grande" id="titulo-contacto" tabindex="-1">¿Conversamos?</h2>
           <p class="contacto__texto">Si tu equipo tiene un proceso manual que quiere automatizar, o una herramienta por construir, escríbeme.</p>
           <div class="contacto__acciones">
             <a class="btn btn--primario iman" href="mailto:erick.a.colvincordova@gmail.com">
@@ -429,16 +437,23 @@
               CV en PDF
             </a>
           </div>
+          <p class="contacto__hora"><span class="punto-vivo"></span> Santiago, Chile · <span id="hora-local">--:--</span> hora local</p>
         </div>
       </div>
     </section>
   </main>
 
   <footer class="pie">
-    <div class="contenedor pie__fila">
-      <p>© <span id="anio">2026</span> Erick Alejandro Colvin Córdova</p>
-      <p class="pie__hecho">Hecho a mano con HTML, CSS y JavaScript · Publicado en GitHub Pages</p>
-      <a href="#inicio" class="pie__arriba">Volver arriba ↑</a>
+    <p>© <span id="anio">2026</span> Erick Colvin · Hecho a mano, publicado en GitHub Pages</p>
+    <div class="paginador">
+      <button class="paginador__btn" type="button" id="btn-anterior" aria-label="Sección anterior">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <span class="paginador__pos" id="paginador-pos" aria-live="polite">01 / 05</span>
+      <button class="paginador__btn paginador__btn--sig" type="button" id="btn-siguiente">
+        <span id="paginador-sig">Trayectoria</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+      </button>
     </div>
   </footer>
 

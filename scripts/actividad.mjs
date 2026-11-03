@@ -6,11 +6,12 @@ import { execFileSync } from "node:child_process";
 import { writeFileSync } from "node:fs";
 
 const DUENO = "ErickColvin";
+// Solo los proyectos del portafolio; las demos generadas (tracelink-preview, finanzas-preview) no cuentan
 const REPOS = [
-  "TraceLink", "tracelink-frontend", "Tesis1", "Proyecto-1",
+  "TraceLink",
   "finanzas-personales", "finanzas-personales-demo",
   "condominio-santa-marta", "santa-marta-preview",
-  "rayo-web", "ErickColvin.github.io"
+  "rayo-web"
 ];
 // Commits de equipos o de equipos sin cuenta vinculada: se reconocen por login o por nombre de autor
 const MIOS = { logins: ["ErickColvin"], nombres: ["Erick Colvin", "ErickColvin"] };
