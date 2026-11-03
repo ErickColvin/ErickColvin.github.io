@@ -1,0 +1,2 @@
+# Los parches de las demos se aplican byte a byte: sin conversión de saltos de línea
+*.patch -text
