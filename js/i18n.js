@@ -56,7 +56,7 @@ window.TEXTOS_EN = {
   "h3.titulo": "Internship · Process automation",
   "h3.p1": "Built automations with JavaScript and Node.js that cut manual tasks and raised the team's efficiency.",
   "h4.corto": "Engineering degree",
-  "h4.fecha": "Mar. 2023 — Dec. 2025",
+  "h4.fecha": "2022 — Dec. 2025",
   "h4.titulo": "B.Sc. Computer Engineering",
   "h4.p1": "Capstone project: a logistics platform with traceability, Excel imports and stock alerts, which later evolved into TraceLink.",
   "h4.c1": "Education",

@@ -287,11 +287,13 @@
   }
   alCambiarIdioma.push(function () { tipearTerminal(true); });
 
-  /* ---------- Red de nodos del fondo (canvas) ---------- */
+  /* ---------- Cielo estrellado del fondo (canvas) ---------- */
+  // Estrellas que titilan a su ritmo y se desplazan un poco con el cursor (paralaje según su profundidad)
   var red = (function () {
     var lienzo = $("#red");
     var ctx = lienzo.getContext("2d");
     var puntos = [], ancho = 0, alto = 0, dpr = 1, raton = { x: -9999, y: -9999 };
+    var desvio = { x: 0, y: 0 };
     var colorPunto = "165,180,252", colorLinea = "125,211,252";
     var cuadro = null;
 
@@ -299,7 +301,7 @@
       var estilo = getComputedStyle(raiz);
       colorPunto = estilo.getPropertyValue("--red-punto").trim() || colorPunto;
       colorLinea = estilo.getPropertyValue("--red-linea").trim() || colorLinea;
-      if (!movimientoCompleto()) dibujar();
+      if (!movimientoCompleto()) dibujar(0);
     }
 
     function medir() {
@@ -309,84 +311,71 @@
       lienzo.width = ancho * dpr;
       lienzo.height = alto * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      // Menos nodos que antes: el fondo acompaña, no compite con el contenido
-      var cantidad = Math.min(60, Math.round((ancho * alto) / 24000));
+      var cantidad = Math.min(170, Math.round((ancho * alto) / 8500));
       puntos = [];
       for (var i = 0; i < cantidad; i++) {
+        var profundidad = Math.random();
         puntos.push({
           x: Math.random() * ancho,
           y: Math.random() * alto,
-          vx: (Math.random() - 0.5) * 0.25,
-          vy: (Math.random() - 0.5) * 0.25,
-          r: Math.random() * 1.3 + 0.6
+          // Las cercanas son más grandes, brillan más y se mueven más con el cursor
+          r: 0.35 + profundidad * profundidad * 1.25,
+          z: profundidad,
+          base: 0.25 + profundidad * 0.55,
+          fase: Math.random() * Math.PI * 2,
+          ritmo: 0.6 + Math.random() * 1.8,
+          // Algunas con el tono de la paleta en vez de blanco
+          tinte: Math.random() < 0.18 ? (Math.random() < 0.5 ? "a" : "b") : null
         });
       }
     }
 
-    function dibujar() {
+    function dibujar(t) {
       ctx.clearRect(0, 0, ancho, alto);
-      var DIST = 140, DIST_RATON = 180;
+      var claro = raiz.dataset.theme === "light";
       for (var i = 0; i < puntos.length; i++) {
         var p = puntos[i];
-        for (var j = i + 1; j < puntos.length; j++) {
-          var q = puntos[j];
-          var dx = p.x - q.x, dy = p.y - q.y;
-          var d2 = dx * dx + dy * dy;
-          if (d2 < DIST * DIST) {
-            ctx.strokeStyle = "rgba(" + colorLinea + "," + (1 - Math.sqrt(d2) / DIST) * 0.14 + ")";
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(p.x, p.y);
-            ctx.lineTo(q.x, q.y);
-            ctx.stroke();
-          }
-        }
-        var mx = p.x - raton.x, my = p.y - raton.y;
-        var dm = Math.sqrt(mx * mx + my * my);
-        if (dm < DIST_RATON) {
-          ctx.strokeStyle = "rgba(" + colorPunto + "," + (1 - dm / DIST_RATON) * 0.35 + ")";
-          ctx.beginPath();
-          ctx.moveTo(p.x, p.y);
-          ctx.lineTo(raton.x, raton.y);
-          ctx.stroke();
-        }
-        ctx.fillStyle = "rgba(" + colorPunto + ",0.55)";
+        var brillo = p.base * (0.65 + 0.35 * Math.sin(t * 0.001 * p.ritmo + p.fase));
+        if (claro) brillo *= 0.45;
+        var color = p.tinte === "a" ? colorLinea : p.tinte === "b" ? colorPunto : claro ? colorPunto : "235,240,255";
+        var x = p.x + desvio.x * p.z, y = p.y + desvio.y * p.z;
+        ctx.fillStyle = "rgba(" + color + "," + brillo.toFixed(3) + ")";
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.arc(x, y, p.r, 0, Math.PI * 2);
         ctx.fill();
+        // Las más brillantes con un pequeño halo
+        if (p.r > 1.2 && !claro) {
+          ctx.fillStyle = "rgba(" + color + "," + (brillo * 0.18).toFixed(3) + ")";
+          ctx.beginPath();
+          ctx.arc(x, y, p.r * 3.2, 0, Math.PI * 2);
+          ctx.fill();
+        }
       }
     }
 
     function mover() {
-      for (var i = 0; i < puntos.length; i++) {
-        var p = puntos[i];
-        // El ratón atrae suavemente a los nodos cercanos
-        var dx = raton.x - p.x, dy = raton.y - p.y;
-        var d = Math.sqrt(dx * dx + dy * dy);
-        if (d < 180 && d > 1) { p.vx += (dx / d) * 0.008; p.vy += (dy / d) * 0.008; }
-        p.vx *= 0.992; p.vy *= 0.992;
-        var vel = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
-        if (vel < 0.08) { p.vx += (Math.random() - 0.5) * 0.03; p.vy += (Math.random() - 0.5) * 0.03; }
-        p.x += p.vx; p.y += p.vy;
-        if (p.x < 0 || p.x > ancho) p.vx *= -1;
-        if (p.y < 0 || p.y > alto) p.vy *= -1;
-        p.x = Math.max(0, Math.min(ancho, p.x));
-        p.y = Math.max(0, Math.min(alto, p.y));
-      }
+      // El cielo se corre hasta 14 px hacia el lado contrario del cursor, con suavidad
+      var objetivoX = raton.x < -999 ? 0 : (ancho / 2 - raton.x) / (ancho / 2) * 14;
+      var objetivoY = raton.y < -999 ? 0 : (alto / 2 - raton.y) / (alto / 2) * 10;
+      desvio.x += (objetivoX - desvio.x) * 0.04;
+      desvio.y += (objetivoY - desvio.y) * 0.04;
     }
 
-    function bucle() {
+    function bucle(t) {
       cuadro = null;
       if (!movimientoCompleto() || document.hidden) return;
       mover();
-      dibujar();
+      dibujar(t || 0);
       cuadro = requestAnimationFrame(bucle);
     }
 
     function reiniciar() {
       if (cuadro) cancelAnimationFrame(cuadro);
       cuadro = null;
-      if (movimientoCompleto()) bucle(); else dibujar();
+      // Un primer cuadro inmediato: con la pestaña en segundo plano requestAnimationFrame no corre
+      if (!movimientoCompleto()) desvio.x = desvio.y = 0;
+      dibujar(performance.now());
+      if (movimientoCompleto()) cuadro = requestAnimationFrame(bucle);
     }
 
     window.addEventListener("pointermove", function (e) { raton.x = e.clientX; raton.y = e.clientY; }, { passive: true });
