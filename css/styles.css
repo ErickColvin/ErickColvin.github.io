@@ -147,7 +147,7 @@ svg.relleno { fill: currentColor; stroke: none; }
 .fondo__manchas span:nth-child(1) { width: 560px; height: 560px; top: -180px; left: -140px; background: var(--c2); }
 .fondo__manchas span:nth-child(2) { width: 460px; height: 460px; top: 25%; right: -160px; background: var(--c1); animation-delay: -7s; animation-duration: 26s; }
 .fondo__manchas span:nth-child(3) { width: 420px; height: 420px; bottom: -220px; left: 30%; background: var(--c3); animation-delay: -13s; animation-duration: 30s; opacity: calc(var(--mancha-op) * 0.7); }
-/* Luna que gira en el fondo: el relieve se desliza de derecha a izquierda bajo un sombreado fijo */
+/* Luna en el fondo: gira (el relieve se desliza bajo un sombreado fijo) y cruza el cielo en arco, de derecha a izquierda */
 .luna {
   --luna-1: #f4f6ff;
   --luna-2: #c4cbe7;
@@ -156,16 +156,17 @@ svg.relleno { fill: currentColor; stroke: none; }
   --crater: 0.5;
   --borde-crater: 0.2;
   --mares: 0.42;
+  --luna-op: 0.7;
   position: absolute;
-  top: clamp(64px, 9vh, 110px);
-  right: clamp(-110px, -3vw, -24px);
-  width: clamp(180px, 22vw, 340px);
+  top: 12vh;
+  right: 9vw;
+  width: clamp(64px, 7vw, 116px);
   aspect-ratio: 1;
-  opacity: 0.62;
-  filter: drop-shadow(0 0 70px color-mix(in srgb, var(--c2) 40%, transparent)) drop-shadow(0 0 18px color-mix(in srgb, var(--c1) 25%, transparent));
-  animation: luna-flota 16s ease-in-out infinite alternate;
+  opacity: var(--luna-op);
+  filter: drop-shadow(0 0 34px color-mix(in srgb, var(--c2) 45%, transparent)) drop-shadow(0 0 10px color-mix(in srgb, var(--c1) 30%, transparent));
+  animation: luna-cruza 80s linear infinite;
 }
-[data-theme="light"] .luna { --luna-1: #ffffff; --luna-2: #e9ecf7; --luna-3: #c3c9de; --luna-sombra: 0.16; --crater: 0.24; --borde-crater: 0.3; --mares: 0.16; opacity: 0.9; filter: drop-shadow(0 0 60px color-mix(in srgb, var(--c2) 22%, transparent)); }
+[data-theme="light"] .luna { --luna-1: #ffffff; --luna-2: #e9ecf7; --luna-3: #c3c9de; --luna-sombra: 0.16; --crater: 0.24; --borde-crater: 0.3; --mares: 0.16; --luna-op: 0.92; filter: drop-shadow(0 0 30px color-mix(in srgb, var(--c2) 26%, transparent)); }
 /* stroke: none porque la regla general de íconos le pone trazo a todo svg */
 .luna svg { width: 100%; height: 100%; overflow: visible; stroke: none; transform: rotate(-18deg); }
 .luna .luna-1 { stop-color: var(--luna-1); }
@@ -176,9 +177,18 @@ svg.relleno { fill: currentColor; stroke: none; }
 .luna .crater-2 { stop-color: #3c4466; stop-opacity: calc(var(--crater) / 2.5); }
 .luna .crater-3 { stop-color: #ffffff; stop-opacity: var(--borde-crater); }
 .luna .luna-mares { fill: #5f6890; fill-opacity: var(--mares); }
-.luna__superficie { animation: luna-gira 90s linear infinite; }
+.luna__superficie { animation: luna-gira 40s linear infinite; }
 @keyframes luna-gira { to { transform: translateX(-200px); } }
-@keyframes luna-flota { from { transform: translateY(0) rotate(0deg); } to { transform: translateY(-16px) rotate(2deg); } }
+/* Entra por la derecha, sube hasta la mitad del recorrido y baja al salir por la izquierda; aparece y se va con un fundido */
+@keyframes luna-cruza {
+  0% { transform: translate(12vw, 9vh); opacity: 0; }
+  5% { opacity: var(--luna-op); }
+  25% { transform: translate(-14vw, 2.5vh); }
+  50% { transform: translate(-40vw, 0); }
+  75% { transform: translate(-66vw, 2.5vh); }
+  95% { opacity: var(--luna-op); }
+  100% { transform: translate(-92vw, 9vh); opacity: 0; }
+}
 
 .fondo__rejilla {
   position: absolute;
@@ -539,10 +549,11 @@ svg.relleno { fill: currentColor; stroke: none; }
   flex-direction: column;
   overflow: hidden;
   border-color: rgba(255, 255, 255, 0.1);
-  background: rgba(8, 10, 18, 0.82);
+  /* Translúcida como el resto del vidrio: la luna se ve pasar difuminada por detrás */
+  background: rgba(8, 10, 18, 0.66);
   color: #d5d9e8;
 }
-[data-theme="light"] .terminal { background: rgba(13, 16, 30, 0.95); }
+[data-theme="light"] .terminal { background: rgba(13, 16, 30, 0.86); }
 .terminal__barra {
   display: flex;
   align-items: center;
@@ -1343,7 +1354,7 @@ svg.relleno { fill: currentColor; stroke: none; }
 /* Teléfonos y tablets angostas: las pestañas pasan a una barra inferior */
 @media (max-width: 860px) {
   .barra { grid-template-columns: 1fr auto; padding-block: 10px; }
-  .luna { top: 58px; right: -48px; width: 150px; opacity: 0.5; }
+  .luna { top: 70px; width: 54px; }
   .barra__cv { display: none; }
   .pestanas {
     position: fixed;
