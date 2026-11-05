@@ -20,7 +20,7 @@
   --c3: #be185d;
   --grad: linear-gradient(110deg, var(--c1), var(--c2) 50%, var(--c3));
   --f-titulo: "Space Grotesk", system-ui, sans-serif;
-  --f-texto: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-texto: var(--f-titulo);
   color-scheme: dark;
 }
 [data-theme="light"] {
@@ -74,7 +74,7 @@ svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width:
   border-radius: 11px;
   border: 1px solid var(--barra-borde);
   background: transparent;
-  font: 600 12px ui-monospace, "Cascadia Code", monospace;
+  font: 600 12px var(--f-titulo);
   cursor: pointer;
 }
 .barra__idioma span { display: grid; place-items: center; min-width: 30px; height: 28px; border-radius: 8px; color: var(--barra-texto); }

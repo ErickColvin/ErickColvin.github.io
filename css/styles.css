@@ -34,10 +34,11 @@
   --radio: 22px;
   --ancho: 1240px;
   --gutter: clamp(16px, 3.4vw, 40px);
-  --f-titulo: "Space Grotesk", system-ui, sans-serif;
-  --f-serif: "Instrument Serif", Georgia, "Times New Roman", serif;
-  --f-texto: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --f-mono: "JetBrains Mono", ui-monospace, "Cascadia Code", monospace;
+  /* Una sola familia en toda la página; la monoespaciada vive solo dentro de la terminal */
+  --f-titulo: "Space Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-texto: var(--f-titulo);
+  --f-mono: var(--f-titulo);
+  --f-codigo: "JetBrains Mono", ui-monospace, "Cascadia Code", monospace;
   --suave: cubic-bezier(0.2, 0.75, 0.2, 1);
 
   color-scheme: dark;
@@ -146,6 +147,39 @@ svg.relleno { fill: currentColor; stroke: none; }
 .fondo__manchas span:nth-child(1) { width: 560px; height: 560px; top: -180px; left: -140px; background: var(--c2); }
 .fondo__manchas span:nth-child(2) { width: 460px; height: 460px; top: 25%; right: -160px; background: var(--c1); animation-delay: -7s; animation-duration: 26s; }
 .fondo__manchas span:nth-child(3) { width: 420px; height: 420px; bottom: -220px; left: 30%; background: var(--c3); animation-delay: -13s; animation-duration: 30s; opacity: calc(var(--mancha-op) * 0.7); }
+/* Luna que gira en el fondo: el relieve se desliza de derecha a izquierda bajo un sombreado fijo */
+.luna {
+  --luna-1: #f4f6ff;
+  --luna-2: #c4cbe7;
+  --luna-3: #7d86aa;
+  --luna-sombra: 0.8;
+  --crater: 0.5;
+  --borde-crater: 0.2;
+  --mares: 0.42;
+  position: absolute;
+  top: clamp(64px, 9vh, 110px);
+  right: clamp(-110px, -3vw, -24px);
+  width: clamp(180px, 22vw, 340px);
+  aspect-ratio: 1;
+  opacity: 0.62;
+  filter: drop-shadow(0 0 70px color-mix(in srgb, var(--c2) 40%, transparent)) drop-shadow(0 0 18px color-mix(in srgb, var(--c1) 25%, transparent));
+  animation: luna-flota 16s ease-in-out infinite alternate;
+}
+[data-theme="light"] .luna { --luna-1: #ffffff; --luna-2: #e9ecf7; --luna-3: #c3c9de; --luna-sombra: 0.16; --crater: 0.24; --borde-crater: 0.3; --mares: 0.16; opacity: 0.9; filter: drop-shadow(0 0 60px color-mix(in srgb, var(--c2) 22%, transparent)); }
+/* stroke: none porque la regla general de íconos le pone trazo a todo svg */
+.luna svg { width: 100%; height: 100%; overflow: visible; stroke: none; transform: rotate(-18deg); }
+.luna .luna-1 { stop-color: var(--luna-1); }
+.luna .luna-2 { stop-color: var(--luna-2); }
+.luna .luna-3 { stop-color: var(--luna-3); }
+.luna .luna-sombra { stop-color: #05060c; stop-opacity: var(--luna-sombra); }
+.luna .crater-1 { stop-color: #3c4466; stop-opacity: var(--crater); }
+.luna .crater-2 { stop-color: #3c4466; stop-opacity: calc(var(--crater) / 2.5); }
+.luna .crater-3 { stop-color: #ffffff; stop-opacity: var(--borde-crater); }
+.luna .luna-mares { fill: #5f6890; fill-opacity: var(--mares); }
+.luna__superficie { animation: luna-gira 90s linear infinite; }
+@keyframes luna-gira { to { transform: translateX(-200px); } }
+@keyframes luna-flota { from { transform: translateY(0) rotate(0deg); } to { transform: translateY(-16px) rotate(2deg); } }
+
 .fondo__rejilla {
   position: absolute;
   inset: 0;
@@ -520,7 +554,7 @@ svg.relleno { fill: currentColor; stroke: none; }
 .terminal__barra span { width: 11px; height: 11px; border-radius: 50%; background: #ff5f57; }
 .terminal__barra span:nth-child(2) { background: #febc2e; }
 .terminal__barra span:nth-child(3) { background: #28c840; }
-.terminal__barra p { margin: 0 auto; padding-right: 40px; color: #8a90a8; font: 500 0.78rem var(--f-mono); }
+.terminal__barra p { margin: 0 auto; padding-right: 40px; color: #8a90a8; font: 500 0.78rem var(--f-codigo); }
 /* El alto lo pone la tarjeta del lado; el texto viejo se va por arriba como en una terminal real */
 .terminal__cuerpo {
   flex: 1 1 0;
@@ -528,7 +562,7 @@ svg.relleno { fill: currentColor; stroke: none; }
   margin: 0;
   padding: 16px 20px;
   overflow: hidden;
-  font: 400 0.8rem/1.75 var(--f-mono);
+  font: 400 0.8rem/1.75 var(--f-codigo);
   white-space: pre-wrap;
   word-break: break-word;
 }
@@ -1093,13 +1127,6 @@ svg.relleno { fill: currentColor; stroke: none; }
 .red:hover { color: var(--texto); background: var(--tarjeta-2); }
 .contacto__hora { display: inline-flex; align-items: center; gap: 10px; margin-top: 22px; color: var(--texto-3); font: 500 0.8rem var(--f-mono); }
 
-/* ---------- Acentos en serif itálica: la voz editorial del sitio ---------- */
-.linea.serif .letras { font-family: var(--f-serif); font-style: italic; font-weight: 400; font-size: 1.1em; letter-spacing: -0.01em; padding-right: 0.14em; }
-.sobre__grande em,
-.contacto__grande em { font-family: var(--f-serif); font-style: italic; font-weight: 400; letter-spacing: -0.01em; }
-.sobre__grande em { font-size: 1.12em; }
-.contacto__grande em { padding-right: 0.06em; }
-
 /* ---------- Idioma: botón ES/EN y diálogo de la primera visita ---------- */
 .idioma-btn {
   display: inline-flex;
@@ -1149,7 +1176,7 @@ svg.relleno { fill: currentColor; stroke: none; }
 }
 .monograma--grande { width: 58px; height: 58px; margin: 0 auto 18px; border-radius: 17px; font-size: 1.25rem; }
 .monograma--grande::before { border-radius: 18px; }
-.dialogo-idioma__titulo { font: 400 clamp(1.8rem, 5vw, 2.4rem) / 1.08 var(--f-serif); font-style: italic; letter-spacing: -0.01em; }
+.dialogo-idioma__titulo { font: 700 clamp(1.5rem, 4.4vw, 2rem) / 1.12 var(--f-titulo); letter-spacing: -0.03em; }
 .dialogo-idioma__sub { margin-top: 6px; color: var(--texto-2); }
 .dialogo-idioma__opciones { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 24px; }
 .opcion-idioma {
@@ -1187,7 +1214,7 @@ svg.relleno { fill: currentColor; stroke: none; }
 .chips--separado { margin-top: 8px; }
 .caso { display: flex; flex-direction: column; gap: 6px; }
 .caso .mini-titulo:not(:first-child) { margin-top: 6px; }
-.caso__reto { color: var(--texto); font: 400 1.14rem / 1.38 var(--f-serif); font-style: italic; }
+.caso__reto { color: var(--texto); font: 500 1.02rem / 1.42 var(--f-titulo); letter-spacing: -0.01em; }
 .caso__decisiones { counter-reset: decision; display: grid; gap: 6px; color: var(--texto-2); font-size: 0.86rem; line-height: 1.5; }
 .caso__decisiones li { counter-increment: decision; position: relative; padding-left: 28px; }
 .caso__decisiones li::before {
@@ -1316,6 +1343,7 @@ svg.relleno { fill: currentColor; stroke: none; }
 /* Teléfonos y tablets angostas: las pestañas pasan a una barra inferior */
 @media (max-width: 860px) {
   .barra { grid-template-columns: 1fr auto; padding-block: 10px; }
+  .luna { top: 58px; right: -48px; width: 150px; opacity: 0.5; }
   .barra__cv { display: none; }
   .pestanas {
     position: fixed;

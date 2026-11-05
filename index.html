@@ -43,7 +43,7 @@
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
   <script>
     // Tema, animaciones e idioma antes de pintar, para evitar parpadeos.
@@ -70,6 +70,45 @@
   <!-- Fondo: aurora, rejilla, red de nodos y grano -->
   <div class="fondo" aria-hidden="true">
     <div class="fondo__manchas"><span></span><span></span><span></span></div>
+    <!-- Luna: los cráteres se desplazan bajo un sombreado fijo, así parece girar sobre su eje -->
+    <div class="luna">
+      <svg viewBox="0 0 200 200">
+        <defs>
+          <radialGradient id="luna-base" cx="38%" cy="34%" r="72%">
+            <stop offset="0" class="luna-1"/><stop offset="0.55" class="luna-2"/><stop offset="1" class="luna-3"/>
+          </radialGradient>
+          <radialGradient id="luna-crater">
+            <stop offset="0" class="crater-1"/>
+            <stop offset="0.68" class="crater-2"/>
+            <stop offset="0.86" class="crater-3"/>
+            <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+          </radialGradient>
+          <radialGradient id="luna-volumen" cx="34%" cy="30%" r="78%">
+            <stop offset="0.42" stop-color="#05060c" stop-opacity="0"/>
+            <stop offset="1" class="luna-sombra"/>
+          </radialGradient>
+          <filter id="luna-difusa"><feGaussianBlur stdDeviation="2.6"/></filter>
+          <clipPath id="luna-disco"><circle cx="100" cy="100" r="96"/></clipPath>
+          <g id="luna-relieve">
+            <g class="luna-mares" filter="url(#luna-difusa)">
+              <ellipse cx="42" cy="72" rx="36" ry="25"/><ellipse cx="122" cy="122" rx="30" ry="21"/>
+              <ellipse cx="166" cy="60" rx="21" ry="15"/><ellipse cx="80" cy="152" rx="25" ry="13"/>
+            </g>
+            <g fill="url(#luna-crater)">
+              <circle cx="30" cy="40" r="9"/><circle cx="70" cy="100" r="6"/><circle cx="95" cy="45" r="12"/>
+              <circle cx="140" cy="82" r="7"/><circle cx="174" cy="140" r="10"/><circle cx="55" cy="160" r="5"/>
+              <circle cx="125" cy="166" r="8"/><circle cx="186" cy="95" r="5"/><circle cx="16" cy="120" r="7"/>
+              <circle cx="110" cy="92" r="4"/><circle cx="150" cy="30" r="6"/><circle cx="60" cy="126" r="4"/>
+            </g>
+          </g>
+        </defs>
+        <circle cx="100" cy="100" r="96" fill="url(#luna-base)"/>
+        <g clip-path="url(#luna-disco)">
+          <g class="luna__superficie"><use href="#luna-relieve"/><use href="#luna-relieve" x="200"/></g>
+        </g>
+        <circle cx="100" cy="100" r="96" fill="url(#luna-volumen)"/>
+      </svg>
+    </div>
     <div class="fondo__rejilla"></div>
     <canvas class="fondo__red" id="red"></canvas>
     <div class="fondo__grano"></div>
@@ -136,7 +175,7 @@
             <p class="etiqueta"><span class="punto-vivo"></span> <span data-i18n="hero.etiqueta">Analista de Innovación · Santiago, Chile</span></p>
             <h1 class="hero__titulo" aria-label="Erick Alejandro Colvin Córdova" tabindex="-1">
               <span class="linea" aria-hidden="true"><span class="letras">Erick Alejandro</span></span>
-              <span class="linea degradado serif" aria-hidden="true"><span class="letras">Colvin Córdova</span></span>
+              <span class="linea degradado" aria-hidden="true"><span class="letras">Colvin Córdova</span></span>
             </h1>
             <p class="hero__rol"><span class="mono acento">&gt;</span> <span id="rol">Ingeniero en Computación e Informática</span><span class="cursor" aria-hidden="true"></span></p>
             <p class="hero__bajada" data-i18n="hero.bajada">Automatizo procesos y construyo software que quita carga manual: desde flujos en Power Platform para áreas productivas hasta plataformas web completas con pagos, seguridad e IA local.</p>
@@ -164,11 +203,11 @@
 
           <div class="tile cifra revelar">
             <strong><span data-contar="70">70</span><small>%</small></strong>
-            <span data-i18n="cifra.auditorias">menos tiempo en las auditorías 5S+</span>
+            <span data-i18n="cifra.auditorias">Reducí el tiempo de las auditorías 5S+</span>
           </div>
           <div class="tile cifra revelar">
             <strong>25<small class="flecha">→</small><span data-contar="8" data-desde="25">8</span></strong>
-            <span data-i18n="cifra.aprobacion">días de ciclo de aprobación documental</span>
+            <span data-i18n="cifra.aprobacion">Reducción del tiempo de aprobación y de ciclo (días)</span>
           </div>
           <div class="tile cifra revelar">
             <strong><span data-contar="38">38</span></strong>
@@ -424,7 +463,7 @@
       <div class="vista__marco vista__marco--centro">
         <div class="contacto revelar">
           <p class="cab__num" data-i18n="contacto.num">05 — Contacto</p>
-          <h2 class="contacto__grande" id="titulo-contacto" tabindex="-1" data-i18n-html="contacto.titulo">¿<em>Conversamos</em>?</h2>
+          <h2 class="contacto__grande" id="titulo-contacto" tabindex="-1" data-i18n="contacto.titulo">¿Conversamos?</h2>
           <p class="contacto__texto" data-i18n="contacto.texto">Si tu equipo tiene un proceso manual que quiere automatizar, o una herramienta por construir, escríbeme.</p>
           <div class="contacto__acciones">
             <a class="btn btn--primario iman" href="mailto:erick.a.colvincordova@gmail.com">
