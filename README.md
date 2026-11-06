@@ -33,7 +33,7 @@ El script clona el repositorio privado en una carpeta temporal, aplica `scripts/
 
 ## Animaciones
 
-Transiciones entre vistas según la dirección, píldora que sigue a la pestaña activa, un cielo de estrellas que titilan con paralaje, una luna gibosa en SVG que gira y cruza el cielo, una estación espacial que pasa girando en 3D con reflejos en sus paneles, título letra por letra, terminal que se escribe sola, contadores, mosaicos de vidrio con foco de luz, capturas de las demos que se recorren solas y mapa de actividad que aparece en ola.
+Transiciones entre vistas según la dirección, píldora que sigue a la pestaña activa, un cielo de estrellas que titilan con paralaje, una luna gibosa en SVG, fija, con una estación espacial que la orbita (pasa por delante y por detrás) girando en 3D y con reflejos en sus paneles, título letra por letra, terminal que se escribe sola, contadores, mosaicos de vidrio con foco de luz, capturas de las demos que se recorren solas y mapa de actividad que aparece en ola.
 
 Si el sistema tiene activado "reducir movimiento", la página arranca en modo tranquilo y muestra un aviso para activarlas. El botón ✦ de la barra superior las activa o reduce en cualquier momento; también hay tema claro y oscuro.
 
