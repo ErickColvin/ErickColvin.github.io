@@ -1418,6 +1418,24 @@ svg.relleno { fill: currentColor; stroke: none; }
   .detalle__cuerpo { grid-template-columns: 1fr; }
 }
 
+/* Tablets en horizontal y notebooks chicos (961–1180 px de ancho, poco alto): vuelve el inicio en dos columnas
+   y el detalle del proyecto lado a lado, para que cada vista quepa sin scroll */
+@media (min-width: 961px) and (max-width: 1180px) and (max-height: 900px) {
+  .bento__hero { grid-column: span 7; }
+  .bento__terminal { grid-column: span 5; }
+  .terminal__cuerpo { flex: 1 1 0; height: auto; min-height: 160px; font-size: 0.7rem; }
+  .hero__titulo { font-size: clamp(2rem, min(4.4vw, 7.4vh), 3.4rem); }
+  .detalle__cuerpo { grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr); }
+  .grupos { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .certificados { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .certificado--ancho { grid-column: auto; }
+}
+/* iPad en horizontal (1024×768): como en los notebooks bajos, salen el pie y la cinta decorativa; se navega con las pestañas o deslizando */
+@media (min-width: 961px) and (max-width: 1180px) and (max-height: 800px) {
+  .pie, .cinta { display: none; }
+  .vista { padding-bottom: 12px; }
+}
+
 @media (max-width: 960px) {
   .trayectoria { grid-template-columns: minmax(0, 1fr); }
   /* minmax(0, …): la fila deslizable de proyectos no debe estirar la columna */
@@ -1470,8 +1488,39 @@ svg.relleno { fill: currentColor; stroke: none; }
   .resumen-gh li { padding: 8px 10px; }
   .terminal__cuerpo { height: 270px; font-size: 0.72rem; padding: 14px; }
   .contacto__acciones .btn { width: 100%; }
+  /* El correo baja a una segunda línea en la arroba si no cabe (en vez de cortarse con "…") */
+  .contacto__acciones .btn--primario { white-space: normal; line-height: 1.25; }
+  .correo { min-width: 0; }
   .aviso { flex-direction: column; align-items: stretch; gap: 10px; }
   .aviso__acciones { justify-content: space-between; }
+}
+
+/* Teléfonos angostos (iPhone SE, Android de 360 px) */
+@media (max-width: 380px) {
+  .contacto__grande { font-size: clamp(1.9rem, 10vw, 2.6rem); }
+}
+@media (max-width: 359px) {
+  /* "Trayectoria" y "Habilidades" caben en su pestaña sin chocar */
+  .pestanas { left: 8px; right: 8px; padding: 4px; }
+  .pestanas__marca { top: 4px; bottom: 4px; }
+  .pestanas a { font-size: 0.6rem; letter-spacing: -0.01em; }
+}
+
+/* Teléfonos en horizontal: la barra inferior pasa a una sola línea (ícono y texto lado a lado) para dejar más alto al contenido */
+@media (max-width: 860px) and (max-height: 500px) {
+  .barra { padding-block: 6px; }
+  .sistema { top: 56px; }
+  .pestanas { bottom: calc(6px + env(safe-area-inset-bottom)); padding: 4px; border-radius: 18px; }
+  .pestanas a { flex-direction: row; justify-content: center; gap: 6px; padding: 7px 4px; border-radius: 14px; font-size: 0.74rem; }
+  .pestanas a svg { width: 16px; height: 16px; }
+  .pestanas__marca { top: 4px; bottom: 4px; border-radius: 14px; }
+  .vista { padding-bottom: calc(60px + env(safe-area-inset-bottom)); }
+  .aviso { bottom: calc(58px + env(safe-area-inset-bottom)); }
+}
+
+/* Pantallas táctiles: los botones chicos (Resumen / Caso de estudio) llegan a un tamaño cómodo para el dedo */
+@media (pointer: coarse) {
+  .segmento--chico button { padding-block: 10px; }
 }
 
 /* Pantallas bajas de escritorio (1366×768, 1280×720): se compacta para que cada vista siga cabiendo */
