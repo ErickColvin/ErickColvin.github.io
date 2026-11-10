@@ -20,7 +20,7 @@ Está en **español e inglés**: la primera visita pregunta el idioma, después 
 | TraceLink V2 | `erickcolvin.github.io/tracelink-preview` | La app web ya trae servicios de prueba: `VITE_DATA_MODE=mock`, `vite build --base /tracelink-preview/`, `basename` en el router y rutas de imágenes con `import.meta.env.BASE_URL` |
 | Finanzas Personales | `erickcolvin.github.io/finanzas-preview` | La página responde la API desde datos grabados con `scripts/demos/finanzas-demo-estatica.js`: mismos filtros que el backend, cambios en memoria y exportación a CSV en el navegador |
 | Condominio Santa Marta | `erickcolvin.github.io/santa-marta-preview` | Modo demostración propio del proyecto |
-| Rayo | `erickcolvin.github.io/rayo-web` | El sitio mismo |
+| Rayo | `rayofps.cl` (Netlify; `erickcolvin.github.io/rayo-web` redirige ahí) | El sitio mismo |
 
 Cada demo es un repositorio público solo con la versión compilada; el código fuente es privado. Para rehacer y publicar una demo con un comando:
 

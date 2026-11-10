@@ -231,7 +231,7 @@
       { sal: 'tracelink-preview     <span class="t-ts">TypeScript</span>' },
       { sal: 'finanzas-preview      <span class="t-cs">C# · React</span>' },
       { sal: 'santa-marta-preview   <span class="t-js">JavaScript</span>' },
-      { sal: 'rayo-web              <span class="t-html">HTML</span>' },
+      { sal: 'rayofps.cl            <span class="t-html">HTML</span>' },
       { cmd: t("./impacto --resumen", "./impact --summary") },
       { sal: '<span class="t-ok">✓</span> ' + t("auditorías 5S+       ", "5S+ audits           ") + '<span class="t-acento">' + t("−70% tiempo", "−70% time") + "</span>" },
       { sal: '<span class="t-ok">✓</span> ' + t("aprobación docs      ", "doc approvals        ") + '<span class="t-acento">' + t("25 → 8 días", "25 → 8 days") + "</span>" }
@@ -899,7 +899,7 @@
     var inicio = null;
     var escenario = $(".escenario");
     escenario.addEventListener("touchstart", function (e) {
-      if (e.touches.length !== 1 || e.target.closest(".actividad__desliza, .lista-proyectos, .hitos, .cinta")) { inicio = null; return; }
+      if (e.touches.length !== 1 || e.target.closest(".actividad__desliza, .lista-proyectos, .hitos")) { inicio = null; return; }
       inicio = { x: e.touches[0].clientX, y: e.touches[0].clientY, t: Date.now() };
     }, { passive: true });
     escenario.addEventListener("touchend", function (e) {

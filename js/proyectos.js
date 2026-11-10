@@ -185,46 +185,48 @@ window.PROYECTOS = [
     estado: "sitio",
     icono: "rayo",
     categorias: ["web"],
-    resumen: "Landing de venta para Rayo, un optimizador de FPS para Windows.",
+    resumen: "Sitio de venta de Rayo, un optimizador de FPS para Windows, en su propio dominio: rayofps.cl.",
     puntos: [
-      "Sitio estático, responsive y animado, publicado en GitHub Pages.",
-      "Cifras tomadas del repositorio del producto: configuraciones de juegos y optimizaciones.",
-      "Compra configurable desde un solo objeto: links de pago o ticket por Discord."
+      "Publicado en su propio dominio, rayofps.cl, con Netlify.",
+      "Navegación por pantallas con barra inferior, como una app; las animaciones respetan «reducir movimiento».",
+      "Cifras tomadas del repositorio del producto: 87 optimizaciones y configuraciones para 18 juegos.",
+      "Compra en una ventana: Mercado Pago o transferencia, y la licencia llega por un ticket de Discord."
     ],
-    flujo: ["Repo del producto", "Landing estática", "Descarga directa", "Compra"],
+    flujo: ["Repo del producto", "Sitio por pantallas", "Descarga gratis", "Mercado Pago o transferencia", "Licencia por Discord"],
     caso: {
       reto: "El creador de Rayo necesitaba explicar qué hace el optimizador y venderlo sin montar un servidor de pagos.",
       decisiones: [
         "Las cifras salen del repositorio del producto, no de un resumen: así la página no promete de más.",
-        "Compra sin backend: links de pago de Mercado Pago y un formulario que registra pedidos en Google Sheets con Apps Script.",
+        "Compra sin backend: links de pago de Mercado Pago o transferencia, y una planilla de Google Sheets (Apps Script) que registra los pedidos.",
         "Contra el spam: tokens HMAC de un solo uso, tiempo mínimo de llenado y límite de intentos."
       ],
       cifras: [["87", "optimizaciones explicadas"], ["18", "juegos con configuración"], ["0", "servidores que mantener"]],
-      resultado: "Publicada en GitHub Pages. Las licencias se entregan a mano por un ticket de Discord."
+      resultado: "En línea en rayofps.cl, con planes Pro y Elite de pago único. Las licencias se entregan a mano por un ticket de Discord."
     },
-    tecnologias: ["HTML", "CSS", "JavaScript", "Apps Script", "GitHub Pages"],
-    lenguajes: { HTML: 61289, CSS: 45997, JavaScript: 13478 },
-    commits: 6,
+    tecnologias: ["HTML", "CSS", "JavaScript", "Apps Script", "Netlify"],
+    lenguajes: { HTML: 48637, CSS: 46701, JavaScript: 33295 },
+    commits: 15,
     captura: "assets/proyectos/rayo.jpg",
-    enlaces: { demo: "https://erickcolvin.github.io/rayo-web/" },
+    enlaces: { demo: "https://rayofps.cl/" },
     en: {
       nombre: "Rayo · Sales site",
-      resumen: "Sales landing page for Rayo, an FPS optimizer for Windows.",
+      resumen: "Sales site for Rayo, an FPS optimizer for Windows, on its own domain: rayofps.cl.",
       puntos: [
-        "Static, responsive, animated site published on GitHub Pages.",
-        "Figures pulled from the product's repository: game configs and optimizations.",
-        "Purchase flow set from a single object: payment links or a Discord ticket."
+        "Live on its own domain, rayofps.cl, hosted on Netlify.",
+        "Screen-by-screen navigation with a bottom bar, like an app; animations respect “reduce motion”.",
+        "Figures pulled from the product's repository: 87 optimizations and configs for 18 games.",
+        "Checkout in one window: Mercado Pago or bank transfer, and the license arrives through a Discord ticket."
       ],
-      flujo: ["Product repo", "Static landing", "Direct download", "Purchase"],
+      flujo: ["Product repo", "Screen-based site", "Free download", "Mercado Pago or transfer", "License via Discord"],
       caso: {
         reto: "Rayo's creator needed to explain what the optimizer does and sell it without running a payment server.",
         decisiones: [
           "Figures come from the product's repository, not from a summary, so the page never over-promises.",
-          "No backend: Mercado Pago payment links plus a form that logs orders to Google Sheets through Apps Script.",
+          "No backend: Mercado Pago payment links or bank transfer, plus a Google Sheets log (Apps Script) that records orders.",
           "Against spam: single-use HMAC tokens, a minimum fill time and rate limits."
         ],
         cifras: [["87", "optimizations explained"], ["18", "game configs"], ["0", "servers to maintain"]],
-        resultado: "Live on GitHub Pages. License keys are delivered by hand through a Discord ticket."
+        resultado: "Live at rayofps.cl, with one-time Pro and Elite plans. License keys are delivered by hand through a Discord ticket."
       }
     }
   }
