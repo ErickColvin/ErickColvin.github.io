@@ -315,7 +315,7 @@
     var fin = parseFloat(el.dataset.contar);
     var inicio = el.dataset.desde ? parseFloat(el.dataset.desde) : 0;
     if (!movimientoCompleto()) { el.textContent = fin; return; }
-    var dur = 1500, t0 = null;
+    var dur = 900, t0 = null;
     function paso(tiempo) {
       if (t0 === null) t0 = tiempo;
       var k = Math.min(1, (tiempo - t0) / dur);
@@ -714,12 +714,12 @@
 
   function revelar(vista) {
     var elementos = $$(".revelar", vista);
-    elementos.forEach(function (el, i) { el.style.setProperty("--retraso", Math.min(i * 70, 560) + "ms"); });
-    trasPintar(function () {
-      elementos.forEach(function (el) {
-        el.classList.add("visible");
-        $$("[data-contar]", el).forEach(contar);
-      });
+    elementos.forEach(function (el, i) { el.style.setProperty("--retraso", Math.min(i * 40, 200) + "ms"); });
+    // Forzar el cálculo de estilos fija el punto de partida; así la transición arranca ya, sin esperar al siguiente cuadro
+    void vista.offsetWidth;
+    elementos.forEach(function (el) {
+      el.classList.add("visible");
+      $$("[data-contar]", el).forEach(contar);
     });
   }
 
@@ -743,9 +743,11 @@
       vistaActual = id;
       $$(".vista").forEach(function (v) {
         var activa = v.id === id;
+        // Al salir de una vista queda marcada: al volver ya no repite su entrada
+        if (!activa && v.classList.contains("activa")) v.dataset.visitada = "1";
         v.classList.toggle("activa", activa);
         v.classList.toggle("desde-izq", activa && !primera && ahora < antes);
-        if (!activa) $$(".revelar", v).forEach(function (el) { el.classList.remove("visible"); });
+        v.classList.toggle("al-instante", activa && !!opciones.teclado);
       });
       var vista = document.getElementById(id);
       vista.scrollTop = 0;
@@ -776,9 +778,9 @@
     if (location.hash !== hash) history.pushState(null, "", hash);
     mostrarVista(id, opciones);
   }
-  function irRelativo(paso) {
+  function irRelativo(paso, opciones) {
     var i = VISTAS.indexOf(vistaActual) + paso;
-    if (i >= 0 && i < VISTAS.length) ir(VISTAS[i]);
+    if (i >= 0 && i < VISTAS.length) ir(VISTAS[i], opciones);
   }
 
   document.addEventListener("click", function (e) {
@@ -786,7 +788,7 @@
     if (!el || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
     e.preventDefault();
     // Con teclado (detail = 0) el foco pasa al título de la sección
-    ir(el.dataset.ir, { panel: el.dataset.panel, foco: e.detail === 0 });
+    ir(el.dataset.ir, { panel: el.dataset.panel, foco: e.detail === 0, teclado: e.detail === 0 });
   });
   window.addEventListener("popstate", aplicarDireccion);
   window.addEventListener("hashchange", aplicarDireccion);
@@ -799,7 +801,8 @@
     if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
     var x = e.target;
     if (x.closest && x.closest('[role="tablist"], input, textarea, select, [contenteditable], dialog')) return;
-    irRelativo(e.key === "ArrowRight" ? 1 : -1);
+    // Las acciones de teclado se repiten mucho: cambian de sección sin animación
+    irRelativo(e.key === "ArrowRight" ? 1 : -1, { teclado: true });
   });
 
   // Deslizar con el dedo cambia de sección, salvo en las filas que se desplazan de lado
@@ -881,7 +884,7 @@
   function textoResumen() {
     var tiempo = ($(".js-antiguedad") || {}).textContent || "";
     return [
-      "Erick Alejandro Colvin Córdova — " + t("Ingeniero en Computación e Informática", "Computer Engineer"),
+      "Erick Alejandro Colvin Córdova · " + t("Ingeniero en Computación e Informática", "Computer Engineer"),
       t("Analista de Innovación desde sep. 2025", "Innovation Analyst since Sep. 2025") + tiempo + " · Santiago, Chile",
       t("Enfoque: transformación digital y automatización de procesos (Power Platform) · desarrollo de software",
         "Focus: digital transformation and process automation (Power Platform) · software development"),

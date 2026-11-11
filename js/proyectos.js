@@ -17,7 +17,7 @@ window.PROYECTOS = [
     nombre: "TraceLink V2 · CH Market",
     repo: "tracelink-preview",
     inicio: "2026-08",
-    periodo: "2025 — 2026",
+    periodo: "2025 – 2026",
     rol: "Arquitectura y desarrollo full-stack",
     estado: "privado",
     icono: "paquete",
