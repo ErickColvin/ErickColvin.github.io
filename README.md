@@ -2,13 +2,13 @@
 
 Sitio personal publicado en GitHub Pages: **https://erickcolvin.github.io/**
 
-Página estática hecha a mano con HTML, CSS y JavaScript, sin dependencias ni paso de compilación. Funciona como una app de cinco vistas (Inicio, Trayectoria, Proyectos, Habilidades y Contacto): cada sección cabe en la pantalla, también en un notebook (1366×657), y se cambia con las pestañas, las flechas del teclado o deslizando en el celular.
+Página estática hecha a mano con HTML, CSS y JavaScript, sin dependencias ni paso de compilación. Funciona como una app de cinco vistas (Perfil, Experiencia, Proyectos, Competencias y Contacto): cada sección cabe en la pantalla, también en un notebook (1366×657), y se cambia con las pestañas, las flechas del teclado o deslizando en el celular.
 
 Está en **español e inglés**: la primera visita pregunta el idioma, después se cambia con el botón ES/EN, y `?lang=en` abre el sitio y el CV en inglés.
 
 ## Qué muestra
 
-- Perfil, experiencia, habilidades y certificaciones (desde el CV).
+- Perfil pensado para reclutadores: ficha «Perfil en 30 segundos» con botón para copiar un resumen en texto plano, antigüedad en el cargo calculada con la fecha de hoy, casos de estudio en formato contexto · enfoque · impacto y competencias con la evidencia de dónde se aplicaron (desde el CV).
 - Cuatro proyectos en formato lista y detalle, cada uno con demo en vivo y dos vistas: **Resumen** (captura que se recorre, arquitectura, lenguajes) y **Caso de estudio** (el reto, las decisiones clave y el resultado con cifras verificables).
 - Mapa de actividad con los commits por día, al estilo de GitHub.
 - CV de una página en `cv.html`, listo para guardar como PDF desde el navegador.
@@ -33,7 +33,7 @@ El script clona el repositorio privado en una carpeta temporal, aplica `scripts/
 
 ## Animaciones
 
-Transiciones entre vistas según la dirección, píldora que sigue a la pestaña activa, un cielo de estrellas que titilan con paralaje, una luna gibosa en SVG, fija, con una estación espacial que la orbita (pasa por delante y por detrás) girando en 3D y con reflejos en sus paneles, título letra por letra, terminal que se escribe sola, contadores, mosaicos de vidrio con foco de luz, capturas de las demos que se recorren solas y mapa de actividad que aparece en ola.
+Transiciones entre vistas según la dirección, píldora que sigue a la pestaña activa, un cielo de estrellas que titilan con paralaje, una luna gibosa en SVG, fija, con una estación espacial que la orbita (pasa por delante y por detrás) girando en 3D y con reflejos en sus paneles, título letra por letra, contadores, mosaicos de vidrio con foco de luz, capturas de las demos que se recorren solas y mapa de actividad que aparece en ola.
 
 Si el sistema tiene activado "reducir movimiento", la página arranca en modo tranquilo y muestra un aviso para activarlas. El botón ✦ de la barra superior las activa o reduce en cualquier momento; también hay tema claro y oscuro.
 

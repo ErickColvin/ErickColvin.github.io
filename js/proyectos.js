@@ -6,6 +6,7 @@
   - categorias: "fullstack", "ia", "web" (deben coincidir con los filtros del HTML).
   - lenguajes: bytes por lenguaje, tal como los entrega la API de GitHub (/repos/:dueño/:repo/languages).
   - commits: commits propios en los repositorios del proyecto (los mismos que cuenta scripts/actividad.mjs).
+  - rol: qué hizo Erick en el proyecto (se muestra junto al período, en ambos idiomas).
   - captura: imagen alta de la demo en assets/proyectos/; en la ficha se recorre de arriba abajo.
   - caso: el caso de estudio (reto, decisiones y resultado). Solo cifras verificables en los repositorios.
   - en: los mismos textos en inglés.
@@ -17,6 +18,7 @@ window.PROYECTOS = [
     repo: "tracelink-preview",
     inicio: "2026-08",
     periodo: "2025 — 2026",
+    rol: "Arquitectura y desarrollo full-stack",
     estado: "privado",
     icono: "paquete",
     categorias: ["fullstack"],
@@ -45,6 +47,7 @@ window.PROYECTOS = [
     captura: "assets/proyectos/tracelink.jpg",
     enlaces: { demo: "https://erickcolvin.github.io/tracelink-preview/" },
     en: {
+      rol: "Architecture and full-stack development",
       resumen: "Commerce, inventory, orders and traceability platform for Colvin Solutions, with an authoritative API, PostgreSQL and a real checkout.",
       puntos: [
         "Modular Express 5 API on PostgreSQL 18 and Prisma, with per-tenant data models.",
@@ -72,6 +75,7 @@ window.PROYECTOS = [
     repo: "finanzas-preview",
     inicio: "2026-10",
     periodo: "2026",
+    rol: "Diseño y desarrollo de punta a punta",
     estado: "privado",
     icono: "billetera",
     categorias: ["fullstack", "ia"],
@@ -100,6 +104,7 @@ window.PROYECTOS = [
     captura: "assets/proyectos/finanzas.jpg",
     enlaces: { demo: "https://erickcolvin.github.io/finanzas-preview/" },
     en: {
+      rol: "End-to-end design and development",
       resumen: "Self-hosted app that turns bank notification emails into a dashboard. No financial data ever leaves the machine.",
       puntos: [
         "Reads Gmail read-only (OAuth) and checks SPF, DKIM and DMARC before trusting an email.",
@@ -127,6 +132,7 @@ window.PROYECTOS = [
     repo: "santa-marta-preview",
     inicio: "2026-10",
     periodo: "2026",
+    rol: "Diseño y desarrollo del MVP",
     estado: "privado",
     icono: "edificio",
     categorias: ["fullstack"],
@@ -155,6 +161,7 @@ window.PROYECTOS = [
     captura: "assets/proyectos/santa-marta.jpg",
     enlaces: { demo: "https://erickcolvin.github.io/santa-marta-preview/" },
     en: {
+      rol: "MVP design and development",
       resumen: "MVP to manage a 306-home gated community, with resident, management, committee and front-desk profiles.",
       puntos: [
         "Billing and (simulated) Mercado Pago payments, fines, payment plans, online voting at meetings and parcel tracking.",
@@ -182,6 +189,7 @@ window.PROYECTOS = [
     repo: "rayo-web",
     inicio: "2026-10",
     periodo: "2026",
+    rol: "Diseño y desarrollo del sitio",
     estado: "sitio",
     icono: "rayo",
     categorias: ["web"],
@@ -204,11 +212,12 @@ window.PROYECTOS = [
       resultado: "En línea en rayofps.cl, con planes Pro y Elite de pago único. Las licencias se entregan a mano por un ticket de Discord."
     },
     tecnologias: ["HTML", "CSS", "JavaScript", "Apps Script", "Netlify"],
-    lenguajes: { HTML: 48637, CSS: 46701, JavaScript: 33295 },
-    commits: 15,
+    lenguajes: { HTML: 55750, CSS: 51938, JavaScript: 33306 },
+    commits: 19,
     captura: "assets/proyectos/rayo.jpg",
     enlaces: { demo: "https://rayofps.cl/" },
     en: {
+      rol: "Site design and development",
       nombre: "Rayo · Sales site",
       resumen: "Sales site for Rayo, an FPS optimizer for Windows, on its own domain: rayofps.cl.",
       puntos: [

@@ -152,8 +152,6 @@
     guardar("movimiento", valor);
     pintarMovimiento();
     red.reiniciar();
-    tipearTerminal(true);
-    rotarRol();
   }
   btnMov.addEventListener("click", function () {
     cambiarMovimiento(movimientoCompleto() ? "reducido" : "completo");
@@ -186,106 +184,17 @@
     }).join("");
   });
 
-  /* ---------- Rol que se escribe y borra ---------- */
-  var ROLES = {
-    es: ["Ingeniero en Computación e Informática", "Automatización de procesos", "Power Apps · Power Automate", "Desarrollo full-stack", "IA local y datos"],
-    en: ["Computer Engineer", "Process automation", "Power Apps · Power Automate", "Full-stack development", "Local AI and data"]
-  };
-  var elRol = $("#rol");
-  var temporizadorRol = null;
-  function rotarRol() {
-    clearTimeout(temporizadorRol);
-    var roles = ROLES[idioma];
-    if (!movimientoCompleto()) { elRol.textContent = roles[0]; return; }
-    var indice = 0, texto = roles[0], borrando = false;
-    elRol.textContent = texto;
-    function paso() {
-      if (!movimientoCompleto()) { elRol.textContent = roles[0]; return; }
-      var objetivo = roles[indice];
-      if (!borrando) {
-        texto = objetivo.slice(0, texto.length + 1);
-        elRol.textContent = texto;
-        if (texto === objetivo) { borrando = true; temporizadorRol = setTimeout(paso, 2200); return; }
-        temporizadorRol = setTimeout(paso, 55 + Math.random() * 45);
-      } else {
-        texto = texto.slice(0, -1);
-        elRol.textContent = texto;
-        if (!texto) { borrando = false; indice = (indice + 1) % roles.length; temporizadorRol = setTimeout(paso, 300); return; }
-        temporizadorRol = setTimeout(paso, 28);
-      }
-    }
-    borrando = true;
-    temporizadorRol = setTimeout(paso, 3200);
+  /* ---------- Antigüedad en el cargo actual: se calcula con la fecha de hoy ---------- */
+  var INICIO_CARGO = new Date(2025, 8, 1, 12); // sep. 2025
+  function pintarAntiguedad() {
+    var hoy = new Date();
+    var meses = Math.max(1, (hoy.getFullYear() - INICIO_CARGO.getFullYear()) * 12 + hoy.getMonth() - INICIO_CARGO.getMonth());
+    var anos = Math.floor(meses / 12), resto = meses % 12, partes = [];
+    if (anos) partes.push(anos + " " + (idioma === "en" ? (anos === 1 ? "yr" : "yrs") : (anos === 1 ? "año" : "años")));
+    if (resto) partes.push(resto + " " + (idioma === "en" ? (resto === 1 ? "mo" : "mos") : (resto === 1 ? "mes" : "meses")));
+    $$(".js-antiguedad").forEach(function (el) { el.textContent = " · " + partes.join(" "); });
   }
-  alCambiarIdioma.push(rotarRol);
-
-  /* ---------- Terminal ---------- */
-  function lineasTerminal() {
-    return [
-      { cmd: "whoami" },
-      { sal: '<span class="t-ok">erick-colvin</span>' },
-      { cmd: t("cat perfil.txt", "cat profile.txt") },
-      { sal: t("Ingeniero en Computación e Informática", "Computer Engineer · Santiago, Chile") },
-      { sal: '<span class="t-acento">' + t("Power Platform · Full-stack · IA local", "Power Platform · Full-stack · Local AI") + "</span>" },
-      { cmd: t("ls demos/ --en-vivo", "ls demos/ --live") },
-      { sal: 'tracelink-preview     <span class="t-ts">TypeScript</span>' },
-      { sal: 'finanzas-preview      <span class="t-cs">C# · React</span>' },
-      { sal: 'santa-marta-preview   <span class="t-js">JavaScript</span>' },
-      { sal: 'rayofps.cl            <span class="t-html">HTML</span>' },
-      { cmd: t("./impacto --resumen", "./impact --summary") },
-      { sal: '<span class="t-ok">✓</span> ' + t("auditorías 5S+       ", "5S+ audits           ") + '<span class="t-acento">' + t("−70% tiempo", "−70% time") + "</span>" },
-      { sal: '<span class="t-ok">✓</span> ' + t("aprobación docs      ", "doc approvals        ") + '<span class="t-acento">' + t("25 → 8 días", "25 → 8 days") + "</span>" }
-    ];
-  }
-  var PROMPT = '<span class="t-prompt">$</span> ';
-  var CURSOR = '<span class="t-cursor"></span>';
-  var elTerminal = $("#terminal");
-  var corridaTerminal = 0;
-
-  function pintarTerminal(html) {
-    elTerminal.innerHTML = html;
-    elTerminal.scrollTop = elTerminal.scrollHeight;
-  }
-  function tipearTerminal(reiniciar) {
-    var corrida = ++corridaTerminal;
-    var lineas = lineasTerminal();
-    if (!movimientoCompleto()) {
-      pintarTerminal(lineas.map(function (l) {
-        return l.cmd ? PROMPT + '<span class="t-cmd">' + l.cmd + "</span>" : '<span class="t-sal">' + l.sal + "</span>";
-      }).join("\n") + "\n" + PROMPT + CURSOR);
-      return;
-    }
-    if (!reiniciar && elTerminal.dataset.listo) return;
-    var hecho = "";
-    var n = 0;
-    function siguiente() {
-      if (corrida !== corridaTerminal) return;
-      if (n >= lineas.length) {
-        pintarTerminal(hecho + PROMPT + CURSOR);
-        elTerminal.dataset.listo = "1";
-        return;
-      }
-      var linea = lineas[n++];
-      if (linea.sal) {
-        hecho += '<span class="t-sal">' + linea.sal + "</span>\n";
-        pintarTerminal(hecho + CURSOR);
-        setTimeout(siguiente, 90);
-        return;
-      }
-      var c = 0;
-      (function tecla() {
-        if (corrida !== corridaTerminal) return;
-        c++;
-        pintarTerminal(hecho + PROMPT + '<span class="t-cmd">' + linea.cmd.slice(0, c) + "</span>" + CURSOR);
-        if (c < linea.cmd.length) { setTimeout(tecla, 38 + Math.random() * 50); return; }
-        hecho += PROMPT + '<span class="t-cmd">' + linea.cmd + "</span>\n";
-        setTimeout(siguiente, 380);
-      })();
-    }
-    pintarTerminal(PROMPT + CURSOR);
-    setTimeout(siguiente, 900);
-  }
-  alCambiarIdioma.push(function () { tipearTerminal(true); });
+  alCambiarIdioma.push(pintarAntiguedad);
 
   /* ---------- Cielo estrellado del fondo (canvas) ---------- */
   // Estrellas que titilan a su ritmo y se desplazan un poco con el cursor (paralaje según su profundidad)
@@ -482,35 +391,34 @@
 
   function htmlResumen(p) {
     var nota = campo(p, "nota");
-    return '<p class="detalle__resumen">' + escapar(campo(p, "resumen")) + "</p>" +
-      (nota ? '<p class="detalle__nota">' + escapar(nota) + "</p>" : "") +
-      '<ul class="puntos">' + campo(p, "puntos").map(function (x) { return "<li>" + escapar(x) + "</li>"; }).join("") + "</ul>";
+    return (nota ? '<p class="detalle__nota">' + escapar(nota) + "</p>" : "") +
+      '<ul class="puntos">' + campo(p, "puntos").map(function (x) { return "<li>" + escapar(x) + "</li>"; }).join("") + "</ul>" + htmlFlujo(p);
   }
 
-  // Caso de estudio: el reto, las decisiones que lo resolvieron y el resultado con cifras verificables
+  // Caso de estudio en formato de consultoría: contexto y desafío, enfoque e impacto con cifras verificables
   function htmlCaso(p) {
     var caso = campo(p, "caso");
     if (!caso) return "";
-    return '<div class="caso"><p class="mini-titulo">' + t("El reto", "The challenge") + '</p><p class="caso__reto">' + escapar(caso.reto) + "</p>" +
-      '<p class="mini-titulo">' + t("Decisiones clave", "Key decisions") + '</p><ol class="caso__decisiones">' +
+    return '<div class="caso"><p class="mini-titulo">' + t("Contexto y desafío", "Context and challenge") + '</p><p class="caso__reto">' + escapar(caso.reto) + "</p>" +
+      '<p class="mini-titulo">' + t("Enfoque", "Approach") + '</p><ol class="caso__decisiones">' +
       caso.decisiones.map(function (d) { return "<li>" + escapar(d) + "</li>"; }).join("") + "</ol>" +
-      '<p class="mini-titulo">' + t("Resultado", "Outcome") + '</p><ul class="caso__cifras">' +
+      '<p class="mini-titulo">' + t("Impacto", "Impact") + '</p><ul class="caso__cifras">' +
       caso.cifras.map(function (c) { return "<li><strong>" + escapar(c[0]) + "</strong><span>" + escapar(c[1]) + "</span></li>"; }).join("") +
       '</ul><p class="caso__resultado">' + escapar(caso.resultado) + "</p></div>";
   }
 
-  var modoFicha = "resumen";
+  var modoFicha = "caso";
   function htmlDetalle(p) {
     var cab = '<header class="detalle__cab"><div class="detalle__icono"><svg viewBox="0 0 24 24" aria-hidden="true">' + (ICONOS[p.icono] || ICONOS.paquete) + "</svg></div>" +
-      '<div class="detalle__titulo"><h3>' + escapar(campo(p, "nombre")) + '</h3><p class="detalle__meta"><span>' + escapar(p.periodo) + "</span><span>" + p.commits + " commits</span>" + htmlInsignias(p) + "</p></div>" +
-      '<div class="segmento segmento--chico" role="tablist" aria-label="' + t("Contenido de la ficha", "Card content") + '">' +
-      '<button type="button" role="tab" data-modo="resumen" aria-selected="' + (modoFicha === "resumen") + '" tabindex="' + (modoFicha === "resumen" ? 0 : -1) + '"' + (modoFicha === "resumen" ? ' class="activo"' : "") + ">" + t("Resumen", "Overview") + "</button>" +
-      '<button type="button" role="tab" data-modo="caso" aria-selected="' + (modoFicha === "caso") + '" tabindex="' + (modoFicha === "caso" ? 0 : -1) + '"' + (modoFicha === "caso" ? ' class="activo"' : "") + ">" + t("Caso de estudio", "Case study") + "</button></div></header>";
-    var texto = '<div class="detalle__texto"><div class="detalle__modo" data-modo="resumen"' + (modoFicha === "resumen" ? "" : " hidden") + ">" + htmlResumen(p) + "</div>" +
-      '<div class="detalle__modo" data-modo="caso"' + (modoFicha === "caso" ? "" : " hidden") + ">" + htmlCaso(p) + "</div>" + htmlPie(p) + "</div>";
-    var visual = '<div class="detalle__visual">' + htmlCaptura(p) + htmlFlujo(p) + htmlLenguajes(p) +
+      '<div class="detalle__titulo"><h3>' + escapar(campo(p, "nombre")) + '</h3><p class="detalle__meta"><span>' + escapar(p.periodo) + "</span><span>" + escapar(campo(p, "rol")) + "</span>" + htmlInsignias(p) + '</p><p class="detalle__lema">' + escapar(campo(p, "resumen")) + "</p></div>" +
+      '<div class="detalle__acciones"><div class="segmento segmento--chico" role="tablist" aria-label="' + t("Contenido de la ficha", "Card content") + '">' +
+      '<button type="button" role="tab" data-modo="caso" aria-selected="' + (modoFicha === "caso") + '" tabindex="' + (modoFicha === "caso" ? 0 : -1) + '"' + (modoFicha === "caso" ? ' class="activo"' : "") + ">" + t("Caso de estudio", "Case study") + "</button>" +
+      '<button type="button" role="tab" data-modo="resumen" aria-selected="' + (modoFicha === "resumen") + '" tabindex="' + (modoFicha === "resumen" ? 0 : -1) + '"' + (modoFicha === "resumen" ? ' class="activo"' : "") + ">" + t("Detalle técnico", "Technical detail") + "</button></div>" + htmlPie(p) + "</div></header>";
+    var texto = '<div class="detalle__texto"><div class="detalle__modo" data-modo="caso"' + (modoFicha === "caso" ? "" : " hidden") + ">" + htmlCaso(p) + "</div>" +
+      '<div class="detalle__modo" data-modo="resumen"' + (modoFicha === "resumen" ? "" : " hidden") + ">" + htmlResumen(p) + "</div></div>";
+    var visual = '<div class="detalle__visual">' + htmlCaptura(p) + htmlLenguajes(p) +
       '<div><p class="mini-titulo">' + t("Tecnologías", "Tech stack") + '</p><div class="chips chips--separado">' + p.tecnologias.map(function (x) { return "<span>" + escapar(x) + "</span>"; }).join("") + "</div></div></div>";
-    return '<article class="tile detalle">' + cab + '<div class="detalle__cuerpo">' + texto + visual + "</div></article>";
+    return '<article class="tile detalle" data-modo="' + modoFicha + '">' + cab + '<div class="detalle__cuerpo">' + texto + visual + "</div></article>";
   }
 
   var listaProyectos = $("#lista-proyectos");
@@ -559,7 +467,7 @@
     pintarActualizado();
   }
 
-  // Resumen / Caso de estudio dentro de la ficha (se recuerda al cambiar de proyecto)
+  // Caso de estudio / Detalle técnico dentro de la ficha (se recuerda al cambiar de proyecto)
   function elegirModoFicha(boton) {
     modoFicha = boton.dataset.modo;
     $$(".segmento--chico button", cajaDetalle).forEach(function (b) {
@@ -569,6 +477,8 @@
       b.tabIndex = on ? 0 : -1;
     });
     $$(".detalle__modo", cajaDetalle).forEach(function (m) { m.hidden = m.dataset.modo !== modoFicha; });
+    var ficha = $(".detalle", cajaDetalle);
+    if (ficha) ficha.dataset.modo = modoFicha;
   }
   cajaDetalle.addEventListener("click", function (e) {
     var b = e.target.closest(".segmento--chico button");
@@ -629,12 +539,10 @@
     $("#gh-commits").textContent = commits;
     $("#gh-lenguajes").textContent = Object.keys(lenguajes).length;
     $("#gh-demos").textContent = demos;
-    $("#cifra-proyectos").textContent = PROYECTOS.length;
-    // La cifra del inicio usa el total del mapa de actividad cuando existe
-    var total = window.ACTIVIDAD ? Object.keys(window.ACTIVIDAD.dias).reduce(function (s, d) { return s + window.ACTIVIDAD.dias[d]; }, 0) : commits;
-    var cifra = $("#cifra-commits");
-    cifra.dataset.contar = total;
-    cifra.textContent = total;
+    // La cifra del inicio cuenta las soluciones con demo en vivo
+    var cifra = $("#cifra-proyectos");
+    cifra.dataset.contar = demos;
+    cifra.textContent = demos;
   })();
 
   // Fecha de la última publicación de cada demo, en vivo desde la API pública de GitHub
@@ -792,8 +700,8 @@
   var vistaActual = null;
   function nombreVista(id) {
     return {
-      inicio: t("Inicio", "Home"), trayectoria: t("Trayectoria", "Journey"), proyectos: t("Proyectos", "Projects"),
-      habilidades: t("Habilidades", "Skills"), contacto: t("Contacto", "Contact")
+      inicio: t("Perfil", "Profile"), trayectoria: t("Experiencia", "Experience"), proyectos: t("Proyectos", "Projects"),
+      habilidades: t("Competencias", "Skills"), contacto: t("Contacto", "Contact")
     }[id];
   }
 
@@ -969,6 +877,52 @@
     }
   });
 
+  /* ---------- Resumen del perfil en texto plano, listo para pegar en la ficha de un candidato ---------- */
+  function textoResumen() {
+    var tiempo = ($(".js-antiguedad") || {}).textContent || "";
+    return [
+      "Erick Alejandro Colvin Córdova — " + t("Ingeniero en Computación e Informática", "Computer Engineer"),
+      t("Analista de Innovación desde sep. 2025", "Innovation Analyst since Sep. 2025") + tiempo + " · Santiago, Chile",
+      t("Enfoque: transformación digital y automatización de procesos (Power Platform) · desarrollo de software",
+        "Focus: digital transformation and process automation (Power Platform) · software development"),
+      t("Logros: −70% en el tiempo de las auditorías 5S+ · ciclo de aprobación documental de 25 a 8 días",
+        "Results: −70% time on 5S+ audits · document approval cycle cut from 25 to 8 days"),
+      t("Credenciales: Microsoft Learn Power Platform (38 insignias, 6 trofeos) · CCNA (Cisco) · Machine Learning for Data Science (IBM)",
+        "Credentials: Microsoft Learn Power Platform (38 badges, 6 trophies) · CCNA (Cisco) · Machine Learning for Data Science (IBM)"),
+      t("Idiomas: español nativo · inglés B2 · portugués básico", "Languages: native Spanish · English B2 · basic Portuguese"),
+      t("Contacto: ", "Contact: ") + "erick.a.colvincordova@gmail.com · linkedin.com/in/erickcolvin · erickcolvin.github.io"
+    ].join("\n");
+  }
+  function copiarClasico(texto) {
+    var area = document.createElement("textarea");
+    area.value = texto;
+    area.setAttribute("readonly", "");
+    area.style.cssText = "position:fixed;top:0;left:0;opacity:0;pointer-events:none";
+    document.body.appendChild(area);
+    area.select();
+    var ok = false;
+    try { ok = document.execCommand("copy"); } catch (e) {}
+    area.remove();
+    return ok;
+  }
+  $$(".js-copiar-resumen").forEach(function (boton) {
+    boton.addEventListener("click", function () {
+      var etiqueta = $("span", boton);
+      var original = etiqueta.textContent;
+      var avisar = function (texto) {
+        etiqueta.textContent = texto;
+        setTimeout(function () { etiqueta.textContent = original; }, 2200);
+      };
+      var texto = textoResumen();
+      var respaldo = function () { avisar(copiarClasico(texto) ? t("¡Resumen copiado!", "Summary copied!") : t("No se pudo copiar", "Couldn't copy")); };
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(texto).then(function () { avisar(t("¡Resumen copiado!", "Summary copied!")); }, respaldo);
+      } else {
+        respaldo();
+      }
+    });
+  });
+
   /* ---------- Hora local de Santiago y año ---------- */
   function pintarHora() {
     $("#hora-local").textContent = new Intl.DateTimeFormat(LOCALE[idioma], { hour: "2-digit", minute: "2-digit", timeZone: "America/Santiago" }).format(new Date());
@@ -982,8 +936,7 @@
   pintarTema();
   pintarMovimiento();
   pintarHora();
-  rotarRol();
-  tipearTerminal(false);
+  pintarAntiguedad();
   aplicarDireccion();
 
   /* ---------- Elección de idioma en la primera visita ---------- */
