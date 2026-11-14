@@ -26,8 +26,10 @@
     paquete: '<path d="M16.5 9.4 7.5 4.2"/><path d="M21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4a2 2 0 0 0 1-1.7Z"/><path d="M3.3 7 12 12l8.7-5"/><path d="M12 22V12"/>',
     billetera: '<path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>',
     edificio: '<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01M16 6h.01M12 6h.01M12 10h.01M12 14h.01M16 10h.01M16 14h.01M8 10h.01M8 14h.01"/>',
-    rayo: '<path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/>'
+    rayo: '<path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/>',
+    flujo: '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><path d="M6.5 10v3.5a2 2 0 0 0 2 2H14"/><path d="m11.5 13 2.5 2.5-2.5 2.5"/>'
   };
+  var ICONO_AMPLIAR = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 3h6v6"/><path d="M9 21H3v-6"/><path d="M21 3l-7 7"/><path d="M3 21l7-7"/></svg>';
   var ICONO_EXTERNO = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>';
   var ICONO_CANDADO = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
   var ICONO_MUNDO = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20"/></svg>';
@@ -341,6 +343,7 @@
   }
 
   function htmlLenguajes(p) {
+    if (!Object.keys(p.lenguajes || {}).length) return "";
     var lista = porcentajes(p.lenguajes);
     var nombre = function (n) { return n === "Otros" ? t("Otros", "Other") : n; };
     var decimal = function (n) { return idioma === "en" ? n.toFixed(1) : n.toFixed(1).replace(".", ","); };
@@ -369,11 +372,13 @@
     if (p.enlaces.demo) s.push('<span class="insignia insignia--vivo"><i></i>' + t("Demo en vivo", "Live demo") + "</span>");
     if (p.estado === "privado") s.push('<span class="insignia insignia--privado">' + ICONO_CANDADO + t("Código privado", "Private code") + "</span>");
     if (p.estado === "sitio") s.push('<span class="insignia">' + ICONO_MUNDO + t("Sitio publicado", "Published site") + "</span>");
+    if (p.estado === "interno") s.push('<span class="insignia insignia--privado">' + ICONO_CANDADO + t("Proyecto interno", "Internal project") + "</span>");
     return s.join("");
   }
 
   // Vista previa del demo dentro de una ventana de navegador. Es decorativa: el enlace accesible es "Ver demo".
   function htmlCaptura(p) {
+    if (window.Reel && window.Reel.tiene(p)) return window.Reel.html(p);
     if (!p.captura || !p.enlaces.demo) return "";
     var direccion = p.enlaces.demo.replace(/^https?:\/\//, "").replace(/\/$/, "");
     return '<a class="captura" href="' + p.enlaces.demo + '" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">' +
@@ -385,14 +390,22 @@
   function htmlPie(p) {
     var s = [];
     if (p.enlaces.demo) s.push('<a class="enlace enlace--demo" href="' + p.enlaces.demo + '" target="_blank" rel="noopener">' + ICONO_EXTERNO + t("Ver demo", "View demo") + '<span class="sr"> ' + t("de", "of") + " " + escapar(campo(p, "nombre")) + "</span></a>");
-    s.push('<span class="detalle__act" data-act></span>');
-    return '<div class="detalle__pie">' + s.join("") + "</div>";
+    s.push('<button type="button" class="enlace" data-ampliar aria-haspopup="dialog">' + ICONO_AMPLIAR + t("Ampliar", "Expand") + '<span class="sr"> ' + escapar(campo(p, "nombre")) + "</span></button>");
+    return '<div class="detalle__pie"><div class="detalle__botones">' + s.join("") + '</div><span class="detalle__act" data-act></span></div>';
   }
 
   function htmlResumen(p) {
     var nota = campo(p, "nota");
     return (nota ? '<p class="detalle__nota">' + escapar(nota) + "</p>" : "") +
-      '<ul class="puntos">' + campo(p, "puntos").map(function (x) { return "<li>" + escapar(x) + "</li>"; }).join("") + "</ul>" + htmlFlujo(p);
+      '<ul class="puntos">' + campo(p, "puntos").map(function (x) { return "<li>" + escapar(x) + "</li>"; }).join("") + "</ul>" + (htmlCaptura(p) ? htmlFlujo(p) : "");
+  }
+
+  // Proyecto interno, sin demo: en vez de una captura se muestra el recorrido del proceso y la razón
+  function htmlSinDemo(p) {
+    var flujo = campo(p, "flujo") || [];
+    return '<div class="sin-demo"><p class="mini-titulo">' + t("Cómo funciona", "How it works") + '</p><ol class="sin-demo__pasos">' +
+      flujo.map(function (paso) { return "<li>" + escapar(paso) + "</li>"; }).join("") + "</ol>" +
+      (campo(p, "sinDemo") ? '<p class="sin-demo__nota">' + ICONO_CANDADO + "<span>" + escapar(campo(p, "sinDemo")) + "</span></p>" : "") + "</div>";
   }
 
   // Caso de estudio en formato de consultoría: contexto y desafío, enfoque e impacto con cifras verificables
@@ -416,7 +429,7 @@
       '<button type="button" role="tab" data-modo="resumen" aria-selected="' + (modoFicha === "resumen") + '" tabindex="' + (modoFicha === "resumen" ? 0 : -1) + '"' + (modoFicha === "resumen" ? ' class="activo"' : "") + ">" + t("Detalle técnico", "Technical detail") + "</button></div>" + htmlPie(p) + "</div></header>";
     var texto = '<div class="detalle__texto"><div class="detalle__modo" data-modo="caso"' + (modoFicha === "caso" ? "" : " hidden") + ">" + htmlCaso(p) + "</div>" +
       '<div class="detalle__modo" data-modo="resumen"' + (modoFicha === "resumen" ? "" : " hidden") + ">" + htmlResumen(p) + "</div></div>";
-    var visual = '<div class="detalle__visual">' + htmlCaptura(p) + htmlLenguajes(p) +
+    var visual = '<div class="detalle__visual">' + (htmlCaptura(p) || htmlSinDemo(p)) + htmlLenguajes(p) +
       '<div><p class="mini-titulo">' + t("Tecnologías", "Tech stack") + '</p><div class="chips chips--separado">' + p.tecnologias.map(function (x) { return "<span>" + escapar(x) + "</span>"; }).join("") + "</div></div></div>";
     return '<article class="tile detalle" data-modo="' + modoFicha + '">' + cab + '<div class="detalle__cuerpo">' + texto + visual + "</div></article>";
   }
@@ -444,7 +457,7 @@
     listaProyectos.innerHTML = PROYECTOS.map(function (p) {
       return '<button type="button" role="tab" class="item-proyecto" id="tab-' + p.id + '" data-id="' + p.id + '" data-categorias="' + p.categorias.join(" ") +
         '" aria-controls="detalle" aria-selected="false" tabindex="-1"><span class="item-proyecto__icono"><svg viewBox="0 0 24 24" aria-hidden="true">' + (ICONOS[p.icono] || ICONOS.paquete) +
-        "</svg></span><span><strong>" + escapar(campo(p, "nombre")) + "</strong><small>" + escapar(p.periodo) + (p.enlaces.demo ? t(" · demo en vivo", " · live demo") : "") + "</small></span>" + ICONO_FLECHA + "</button>";
+        "</svg></span><span><strong>" + escapar(campo(p, "nombre")) + "</strong><small>" + escapar(p.periodo) + (p.enlaces.demo ? t(" · demo en vivo", " · live demo") : p.estado === "interno" ? t(" · proyecto interno", " · internal project") : "") + "</small></span>" + ICONO_FLECHA + "</button>";
     }).join("");
     tabsProyecto = $$(".item-proyecto", listaProyectos);
     tabsProyecto.forEach(function (tab) { tab.addEventListener("click", function () { elegirProyecto(tab); }); });
@@ -461,7 +474,9 @@
       x.tabIndex = on ? 0 : -1;
     });
     cajaDetalle.setAttribute("aria-labelledby", tab.id);
+    if (window.Reel) window.Reel.detener(cajaDetalle);
     cajaDetalle.innerHTML = htmlDetalle(p);
+    if (window.Reel) window.Reel.montar(cajaDetalle);
     var art = $(".detalle", cajaDetalle);
     trasPintar(function () { art.classList.add("lleno"); });
     pintarActualizado();
@@ -483,7 +498,39 @@
   cajaDetalle.addEventListener("click", function (e) {
     var b = e.target.closest(".segmento--chico button");
     if (b) elegirModoFicha(b);
+    if (e.target.closest("[data-ampliar]") && proyectoActual) abrirVentana(proyectoActual);
   });
+
+  /* ---------- Vista ampliada del proyecto (ventana) ---------- */
+  // <dialog> nativo: contiene el foco, cierra con Escape, deja el fondo inerte y devuelve el foco al botón que la abrió
+  var ventana = $("#ventana-proyecto");
+  function abrirVentana(p) {
+    if (!ventana || typeof ventana.showModal !== "function") return;
+    $("#ventana-cab").innerHTML = '<h2 id="ventana-titulo">' + escapar(campo(p, "nombre")) + '</h2><p class="detalle__meta"><span>' + escapar(p.periodo) + "</span><span>" +
+      escapar(campo(p, "rol")) + "</span>" + htmlInsignias(p) + '</p><p class="detalle__lema">' + escapar(campo(p, "resumen")) + "</p>";
+    var demo = p.enlaces.demo ? '<a class="enlace enlace--demo" href="' + p.enlaces.demo + '" target="_blank" rel="noopener">' + ICONO_EXTERNO + t("Ver demo", "View demo") + "</a>" : "";
+    $("#ventana-cuerpo").innerHTML = '<div class="ventana__texto">' + htmlCaso(p) +
+      '<section class="ventana__tecnico"><h3 class="mini-titulo">' + t("Detalle técnico", "Technical detail") + "</h3>" + htmlResumen(p) + "</section></div>" +
+      '<div class="ventana__visual">' + (htmlCaptura(p) || htmlSinDemo(p)) + demo + htmlLenguajes(p) +
+      '<div><p class="mini-titulo">' + t("Tecnologías", "Tech stack") + '</p><div class="chips chips--separado">' + p.tecnologias.map(function (x) { return "<span>" + escapar(x) + "</span>"; }).join("") + "</div></div></div>";
+    if (window.Reel) { window.Reel.detener(cajaDetalle); window.Reel.montar(ventana); }
+    ventana.showModal();
+    $("#ventana-cuerpo").scrollTop = 0;
+    document.dispatchEvent(new CustomEvent("ventana:abierta"));
+    trasPintar(function () { ventana.classList.add("lleno"); });
+  }
+  function cerrarVentana() { if (ventana && ventana.open) ventana.close(); }
+  if (ventana) {
+    $("#ventana-cerrar").addEventListener("click", cerrarVentana);
+    // Clic fuera de la caja (sobre el telón) cierra
+    ventana.addEventListener("click", function (e) { if (e.target === ventana) cerrarVentana(); });
+    ventana.addEventListener("close", function () {
+      if (window.Reel) window.Reel.detener(ventana);
+      ventana.classList.remove("lleno");
+      $("#ventana-cuerpo").innerHTML = "";
+    });
+    alCambiarIdioma.push(cerrarVentana);
+  }
   cajaDetalle.addEventListener("keydown", function (e) {
     if (!e.target.closest(".segmento--chico")) return;
     if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;

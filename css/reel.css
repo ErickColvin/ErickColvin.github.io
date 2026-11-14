@@ -1,0 +1,121 @@
+/*
+  Reel: video breve de demostración con portada (js/reel.js).
+  Usa los tokens de css/styles.css. El marco es oscuro en ambos temas, igual que .captura.
+  --reel-alto-max limita el alto del video (útil en fichas que deben caber en la pantalla).
+*/
+.reel {
+  --reel-alto-max: min(62vh, 540px);
+  --reel-an: 16;
+  --reel-al: 9;
+  display: block;
+  border-radius: 14px;
+  border: 1px solid var(--borde-2);
+  background: #0b0d14;
+  overflow: hidden;
+}
+.reel--9x16 { --reel-an: 9; --reel-al: 16; }
+.reel--4x3 { --reel-an: 4; --reel-al: 3; }
+
+/* El espacio se reserva antes de que cargue nada. Si el alto máximo manda, el marco se angosta y se centra:
+   un reel vertical en una ficha ancha queda con franjas oscuras a los lados, sin recortar la interfaz. */
+.reel__marco {
+  position: relative;
+  width: min(100%, calc(var(--reel-alto-max) * var(--reel-an) / var(--reel-al)));
+  aspect-ratio: var(--reel-an) / var(--reel-al);
+  margin-inline: auto;
+  background: #07080c;
+  overflow: hidden;
+}
+.reel__portada,
+.reel__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #07080c;
+}
+
+/* El botón cubre toda la portada (objetivo amplio); la pastilla es lo que se ve */
+.reel__play {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  padding: 12px;
+  border: 0;
+  background: rgba(7, 8, 12, 0.28);
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.reel__play[hidden] { display: none; }
+.reel__play:focus-visible { outline: 2px solid var(--c1); outline-offset: -4px; border-radius: 12px; }
+.reel__pastilla {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 18px 0 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: #eef0f6;
+  color: #05060a;
+  font-size: 0.86rem;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+}
+.reel__icono { display: grid; place-items: center; }
+.reel__icono svg { display: block; }
+
+.reel__duracion {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  padding: 3px 8px;
+  border-radius: 7px;
+  background: rgba(7, 8, 12, 0.78);
+  color: #eef0f6;
+  font-size: 0.74rem;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+.reel__duracion[hidden] { display: none; }
+
+/* Con el video en marcha solo quedan el video y sus controles nativos */
+.reel[data-estado="video"] .reel__portada,
+.reel[data-estado="video"] .reel__play,
+.reel[data-estado="video"] .reel__duracion { display: none; }
+
+.reel__aviso {
+  margin: 0;
+  padding: 9px 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  background: #121521;
+  color: #adb2c4;
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+.reel__aviso:empty { display: none; }
+.reel__aviso:focus { outline: none; }
+
+/* Texto solo para lectores de pantalla (completa el nombre del botón) */
+.reel__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Movimiento: solo respuesta a la presión y al puntero, y solo con las animaciones completas */
+[data-motion="completo"] .reel__play { transition: background-color 0.16s ease; }
+[data-motion="completo"] .reel__pastilla { transition: transform 0.16s var(--suave, cubic-bezier(0.23, 1, 0.32, 1)); }
+[data-motion="completo"] .reel__play:active .reel__pastilla { transform: scale(0.97); }
+@media (hover: hover) and (pointer: fine) {
+  .reel__play:hover { background: rgba(7, 8, 12, 0.14); }
+}

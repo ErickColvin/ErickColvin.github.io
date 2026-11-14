@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="es-CL" data-idioma="es" data-motion="completo">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Prueba del componente Reel</title>
+  <link rel="stylesheet" href="../../../../css/styles.css">
+  <link rel="stylesheet" href="../../../../css/reel.css">
+  <style>
+    /* Página de prueba: no forma parte del sitio */
+    body { display: block; padding: 24px; overflow: auto; height: auto; }
+    main { display: grid; gap: 22px; max-width: 760px; margin: 0 auto; }
+    h1 { font-size: 1.3rem; }
+    h2 { font-size: 0.95rem; margin-bottom: 8px; }
+    .caso-prueba > p { color: var(--texto-3); font-size: 0.82rem; margin-bottom: 8px; }
+    .angosto { max-width: 420px; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Prueba del componente Reel</h1>
+    <p>Página de prueba, no enlazada desde el sitio. Agrega <code>?lang=en</code> para verla en inglés.</p>
+
+    <section class="caso-prueba"><h2>A · Proyecto sin video</h2><p>Debe quedar vacío: <code>Reel.html</code> devuelve <code>""</code>.</p><div id="caso-a"></div><p id="res-a"></p></section>
+    <section class="caso-prueba"><h2>B · 16:9 con un <code>src</code> que no existe</h2><p>Al pulsar, vuelve a la portada con el aviso y sin botón.</p><div id="caso-b" class="angosto"></div></section>
+    <section class="caso-prueba"><h2>C · 9:16 con WebM y MP4 que no existen, en una ficha ancha</h2><p>El marco vertical queda centrado y limitado en alto.</p><div id="caso-c"></div></section>
+    <section class="caso-prueba"><h2>D · 4:3 con un servidor que no responde</h2><p>Vuelve a la portada cuando se cumple <code>Reel.espera</code> (aquí, 1,5 s).</p><div id="caso-d" class="angosto"></div></section>
+    <section class="caso-prueba"><h2>E · Video real generado en memoria</h2><p>Un video de 1 s grabado desde un lienzo, solo para esta prueba (no es un archivo del sitio). Pulsa «Generar».</p><button type="button" class="btn" id="generar">Generar</button><div id="caso-e" class="angosto" style="margin-top:10px"></div></section>
+  </main>
+
+  <script src="../../../../js/reel.js"></script>
+  <script>
+    (function () {
+      var idioma = (location.search.match(/[?&]lang=(es|en)\b/) || [])[1];
+      if (idioma) document.documentElement.dataset.idioma = idioma;
+      if (/[?&]motion=reducido\b/.test(location.search)) document.documentElement.dataset.motion = "reducido";
+
+      var PORTADA = "../../../../assets/proyectos/tracelink.jpg";
+      var sinVideo = { id: "sin-video", nombre: "Proyecto sin video", captura: PORTADA };
+      var roto = { id: "roto", nombre: "Proyecto de ejemplo", en: { nombre: "Sample project" },
+        video: { src: "../../../../assets/videos/no-existe.mp4", poster: PORTADA, formato: "16:9", duracion: "0:38" } };
+      var vertical = { id: "vertical", nombre: "Ejemplo vertical",
+        video: { src: "../../../../assets/videos/no-existe-vertical.mp4", webm: "../../../../assets/videos/no-existe-vertical.webm", poster: PORTADA, formato: "9:16" } };
+      var lento = { id: "lento", nombre: "Ejemplo sin respuesta",
+        video: { src: "http://10.255.255.1/no-responde.mp4", poster: PORTADA, formato: "4:3" } };
+
+      var a = Reel.html(sinVideo);
+      document.getElementById("caso-a").innerHTML = a;
+      document.getElementById("res-a").textContent = "Reel.tiene → " + Reel.tiene(sinVideo) + " · Reel.html → " + JSON.stringify(a);
+      document.getElementById("caso-b").innerHTML = Reel.html(roto);
+      document.getElementById("caso-c").innerHTML = Reel.html(vertical);
+      document.getElementById("caso-d").innerHTML = Reel.html(lento);
+      Reel.montar(document.querySelector("main"));
+      Reel.montar(document.querySelector("main")); // dos veces a propósito: no debe duplicar el listener
+
+      // El caso D usa una espera corta; se ajusta justo antes de pulsarlo
+      document.getElementById("caso-d").addEventListener("click", function () { Reel.espera = 1500; }, true);
+
+      // Caso E: graba 1 s de un lienzo y lo usa como video real (URL en memoria)
+      window.generarVideoDePrueba = function () {
+        return new Promise(function (resolver, rechazar) {
+          var lienzo = document.createElement("canvas");
+          lienzo.width = 320; lienzo.height = 180;
+          var ctx = lienzo.getContext("2d"), n = 0;
+          var pintar = setInterval(function () {
+            ctx.fillStyle = "#0b0d14"; ctx.fillRect(0, 0, 320, 180);
+            ctx.fillStyle = "#7dd3fc"; ctx.fillRect(10 + (n++ * 6) % 280, 70, 30, 40);
+          }, 33);
+          var grabadora;
+          try { grabadora = new MediaRecorder(lienzo.captureStream(30), { mimeType: "video/webm" }); }
+          catch (e) { clearInterval(pintar); rechazar(e); return; }
+          var trozos = [];
+          grabadora.ondataavailable = function (e) { if (e.data.size) trozos.push(e.data); };
+          grabadora.onstop = function () {
+            clearInterval(pintar);
+            var url = URL.createObjectURL(new Blob(trozos, { type: "video/webm" }));
+            var real = { id: "real", nombre: "Video de prueba", video: { src: url, poster: PORTADA, formato: "16:9", duracion: "0:01" } };
+            document.getElementById("caso-e").innerHTML = Reel.html(real);
+            resolver(url);
+          };
+          grabadora.start();
+          setTimeout(function () { grabadora.stop(); }, 1100);
+        });
+      };
+      document.getElementById("generar").addEventListener("click", function () { window.generarVideoDePrueba(); });
+    })();
+  </script>
+</body>
+</html>

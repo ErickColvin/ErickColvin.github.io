@@ -107,7 +107,7 @@
       <aside class="lateral">
         <section>
           <h2 data-i18n="formacion">Formación</h2>
-          <p class="item"><strong data-i18n="titulo">Ingeniería en Computación e Informática</strong><time data-i18n="titulo.fecha">2022 – Dic. 2025</time></p>
+          <p class="item"><strong data-i18n="titulo">Ingeniería en Computación e Informática</strong><time data-i18n="titulo.fecha">2022 – 2026</time></p>
         </section>
 
         <section>
@@ -173,7 +173,7 @@
         "proyectos": "Projects with live demos",
         "formacion": "Education",
         "titulo": "B.Sc. Computer Engineering",
-        "titulo.fecha": "2022 – Dec. 2025",
+        "titulo.fecha": "2022 – 2026",
         "certificaciones": "Certifications",
         "c1": "38 badges and 6 trophies: Power Automate with multiple data sources, AI Builder, approval flows and Power Apps.",
         "c2.t": "CCNA: Switching, Routing and Wireless Essentials",
@@ -203,7 +203,7 @@
       var esc = function (x) { var d = document.createElement("div"); d.textContent = x; return d.innerHTML; };
 
       function pintarProyectos() {
-        var lista = (window.PROYECTOS || []).slice(0, 4);
+        var lista = (window.PROYECTOS || []).filter(function (p) { return p.enlaces && p.enlaces.demo; }).slice(0, 4);
         if (!lista.length) return;
         var campo = function (p, n) { return idioma === "en" && p.en && p.en[n] ? p.en[n] : p[n]; };
         document.getElementById("cv-proyectos").innerHTML = lista.map(function (p) {

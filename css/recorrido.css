@@ -1,0 +1,84 @@
+/* Recorrido automático por las experiencias (js/recorrido.js).
+   Usa los tokens de css/styles.css; el botón hereda .btn .btn--chico .btn--fantasma. */
+
+.recorrido {
+  position: relative;
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+  max-width: 100%;
+  padding-bottom: 8px; /* espacio de la barra */
+}
+.recorrido:empty { display: none; }
+
+.recorrido__btn { gap: 8px; flex: 0 0 auto; }
+.recorrido__btn svg { flex: 0 0 auto; }
+/* El desplazamiento del icono al pasar el cursor es para flechas, no para reproducir/pausar */
+.recorrido__btn:hover svg { transform: none; }
+.recorrido__btn:focus-visible { outline: 2px solid var(--c1); outline-offset: 3px; }
+@media (hover: hover) and (pointer: fine) {
+  .recorrido__btn:hover { border-color: var(--c1); }
+}
+@media (hover: none), (pointer: coarse) {
+  .recorrido__btn:hover { border-color: var(--borde-2); }
+  /* Objetivo cómodo para el dedo */
+  .recorrido__btn { min-height: 44px; padding-inline: 16px; }
+}
+
+.recorrido__estado {
+  color: var(--texto-2);
+  font-size: 0.8rem;
+  font-weight: 500;
+  line-height: 1.3;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Barra fina: el tiempo que queda antes de la siguiente experiencia */
+.recorrido__barra {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--borde-2);
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.2s var(--suave, cubic-bezier(0.23, 1, 0.32, 1));
+}
+.recorrido[data-fase="reproduciendo"] .recorrido__barra,
+.recorrido[data-fase="pausado"] .recorrido__barra,
+.recorrido[data-fase="terminado"] .recorrido__barra { opacity: 1; }
+
+.recorrido__relleno {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--c1), var(--c2));
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+/* Dos animaciones idénticas: al alternar data-ciclo la barra parte de cero en cada paso.
+   Es progreso de tiempo real (8 s), por eso es lineal. */
+.recorrido[data-ciclo="a"] .recorrido__relleno { animation: recorrido-progreso-a var(--recorrido-ms, 8000ms) linear both; }
+.recorrido[data-ciclo="b"] .recorrido__relleno { animation: recorrido-progreso-b var(--recorrido-ms, 8000ms) linear both; }
+.recorrido[data-fase="pausado"] .recorrido__relleno { animation-play-state: paused; }
+.recorrido[data-fase="pausado"] .recorrido__relleno { opacity: 0.55; }
+.recorrido[data-fase="terminado"] .recorrido__relleno { animation: none; transform: scaleX(1); }
+.recorrido[data-fase="inactivo"] .recorrido__relleno { animation: none; }
+
+@keyframes recorrido-progreso-a { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes recorrido-progreso-b { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+/* Movimiento reducido: mismos controles e intervalo; la barra no corre, avanza por pasos */
+[data-motion="reducido"] .recorrido .recorrido__relleno {
+  animation: none !important;
+  transform: scaleX(var(--recorrido-paso, 0));
+}
+[data-motion="reducido"] .recorrido__barra { transition: none; }
+
+/* Junto al título y no en el extremo derecho, donde pasan la luna y la estación */
+#trayectoria .cab--fila { justify-content: flex-start; align-items: center; gap: 12px 24px; }
+#trayectoria .cab--fila .recorrido { padding-top: 6px; }
+@media (max-width: 860px) { #trayectoria .cab--fila { align-items: flex-start; } }

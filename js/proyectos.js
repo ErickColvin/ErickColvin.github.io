@@ -2,8 +2,11 @@
   Proyectos del portafolio, en español y en inglés.
   Para agregar uno nuevo, copia un bloque y ajusta los campos:
   - repo: repositorio público de la demo en github.com/ErickColvin (se usa para "Demo actualizada hace…", en vivo).
-  - estado: "privado" (insignia "Código privado") o "sitio" (el código es el propio sitio publicado: insignia "Sitio publicado").
-  - categorias: "fullstack", "ia", "web" (deben coincidir con los filtros del HTML).
+  - estado: "privado" (insignia "Código privado"), "sitio" (el código es el propio sitio publicado: insignia "Sitio publicado")
+    o "interno" (trabajo hecho dentro de una empresa: sin repositorio, demo ni capturas públicas).
+  - sinDemo: frase que explica por qué no hay demo (solo en proyectos internos).
+  - video (opcional): { src, poster, formato: "9:16" | "16:9" | "4:3", duracion } para el reproductor tipo reel (js/reel.js).
+  - categorias: "automatizacion", "fullstack", "ia", "web" (deben coincidir con los filtros del HTML).
   - lenguajes: bytes por lenguaje, tal como los entrega la API de GitHub (/repos/:dueño/:repo/languages).
   - commits: commits propios en los repositorios del proyecto (los mismos que cuenta scripts/actividad.mjs).
   - rol: qué hizo Erick en el proyecto (se muestra junto al período, en ambos idiomas).
@@ -12,6 +15,64 @@
   - en: los mismos textos en inglés.
 */
 window.PROYECTOS = [
+  {
+    id: "automatizacion",
+    nombre: "Automatización RPA · Auditorías 5S+",
+    repo: null,
+    inicio: "2025-09",
+    periodo: "2025 – 2026",
+    rol: "Diseño e implementación de la automatización",
+    estado: "interno",
+    icono: "flujo",
+    categorias: ["automatizacion"],
+    resumen: "Auditorías 5S+ y gestión documental automatizadas con Power Apps y Power Automate, en mi cargo de Analista de Innovación.",
+    puntos: [
+      "Aplicación en Power Apps para registrar las auditorías 5S+ de las áreas productivas.",
+      "5 flujos de Power Automate que integran 6 fuentes de datos para gestionar hallazgos y verificables de cumplimiento.",
+      "Gestión documental bajo Standard Work: control de versiones y validación de responsables estandarizados.",
+      "Flujos de aprobación que reemplazan el seguimiento manual de cada documento."
+    ],
+    sinDemo: "Es una solución interna de la empresa: no tiene demo pública ni capturas.",
+    flujo: ["Auditoría en Power Apps", "6 fuentes de datos", "5 flujos de Power Automate", "Hallazgos y verificables", "Aprobación del responsable"],
+    caso: {
+      reto: "Las auditorías 5S+ de las áreas productivas y la aprobación de documentos dependían de pasos manuales, y el proceso tomaba demasiado tiempo.",
+      decisiones: [
+        "Un solo punto de registro: la auditoría se levanta en Power Apps en vez de planillas separadas.",
+        "Power Automate conecta 6 fuentes de datos con 5 flujos y gestiona los hallazgos y los verificables de cumplimiento.",
+        "Gestión documental bajo Standard Work: versiones controladas y validación de responsables con un mismo flujo."
+      ],
+      cifras: [["−70%", "tiempo del proceso de auditoría"], ["25 → 8", "días del ciclo de aprobación"], ["6 y 5", "fuentes de datos y flujos"]],
+      resultado: "En uso en las áreas productivas. El detalle de la empresa es confidencial."
+    },
+    tecnologias: ["Power Apps", "Power Automate", "Standard Work", "5S+"],
+    lenguajes: {},
+    commits: 0,
+    captura: null,
+    enlaces: {},
+    en: {
+      nombre: "RPA automation · 5S+ audits",
+      rol: "Automation design and implementation",
+      resumen: "5S+ audits and document management automated with Power Apps and Power Automate, in my role as Innovation Analyst.",
+      puntos: [
+        "Power Apps application to record 5S+ audits of production areas.",
+        "5 Power Automate flows integrating 6 data sources to manage findings and compliance evidence.",
+        "Document management under Standard Work: standardized version control and owner sign-off.",
+        "Approval workflows that replace manual follow-up of each document."
+      ],
+      sinDemo: "This is an internal company solution: there is no public demo or screenshots.",
+      flujo: ["Audit in Power Apps", "6 data sources", "5 Power Automate flows", "Findings and evidence", "Owner approval"],
+      caso: {
+        reto: "5S+ audits of production areas and document approvals relied on manual steps, and the process took too long.",
+        decisiones: [
+          "A single point of entry: audits are recorded in Power Apps instead of separate spreadsheets.",
+          "Power Automate connects 6 data sources through 5 flows and manages findings and compliance evidence.",
+          "Document management under Standard Work: controlled versions and owner sign-off through one workflow."
+        ],
+        cifras: [["−70%", "audit process time"], ["25 → 8", "days in the approval cycle"], ["6 and 5", "data sources and flows"]],
+        resultado: "In use in production areas. Company details are confidential."
+      }
+    }
+  },
   {
     id: "tracelink",
     nombre: "TraceLink V2 · CH Market",

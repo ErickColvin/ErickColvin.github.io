@@ -45,6 +45,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/recorrido.css">
+  <link rel="stylesheet" href="css/reel.css">
   <script>
     // Tema, animaciones e idioma antes de pintar, para evitar parpadeos.
     (function () {
@@ -290,7 +292,7 @@
               <div><dt data-i18n="res.rol">Rol actual</dt><dd><span data-i18n="res.rol.valor">Analista de Innovación</span> <small><span data-i18n="res.desde">desde sep. 2025</span><span class="js-antiguedad"></span></small></dd></div>
               <div><dt data-i18n="res.enfoque">Enfoque</dt><dd data-i18n="res.enfoque.valor">Transformación digital y automatización de procesos</dd></div>
               <div><dt data-i18n="res.sector">Experiencia en</dt><dd data-i18n="res.sector.valor">Operaciones industriales y áreas productivas</dd></div>
-              <div><dt data-i18n="res.formacion">Formación</dt><dd data-i18n="res.formacion.valor">Ing. en Computación e Informática · 2022⁠–⁠2025</dd></div>
+              <div><dt data-i18n="res.formacion">Formación</dt><dd data-i18n="res.formacion.valor">Ing. en Computación e Informática · 2022⁠–⁠2026</dd></div>
               <div><dt data-i18n="res.idiomas">Idiomas</dt><dd data-i18n="res.idiomas.valor">Español nativo · Inglés B2 · Portugués básico</dd></div>
               <div><dt data-i18n="res.credenciales">Credenciales</dt><dd data-i18n="res.credenciales.valor">Microsoft Power Platform · Cisco CCNA · IBM Machine Learning</dd></div>
             </dl>
@@ -320,8 +322,10 @@
     <!-- ============ 02 · TRAYECTORIA ============ -->
     <section class="vista" id="trayectoria" aria-labelledby="titulo-trayectoria">
       <div class="vista__marco">
-        <header class="cab revelar">
+        <header class="cab cab--fila revelar">
           <h2 id="titulo-trayectoria" tabindex="-1" data-i18n="nav.trayectoria">Experiencia</h2>
+          <!-- Recorrido automático por las experiencias: lo construye js/recorrido.js -->
+          <div class="recorrido" id="recorrido"></div>
         </header>
 
         <div class="trayectoria">
@@ -360,7 +364,7 @@
                 <time data-i18n="h3.corto.fecha">Ene. – Feb. 2024</time><strong data-i18n="h3.corto">Práctica profesional</strong>
               </button>
               <button class="hito hito--estudio" type="button" role="tab" id="tab-h4" aria-controls="panel-h4" aria-selected="false" tabindex="-1">
-                <time>2022 – 2025</time><strong data-i18n="h4.corto">Ingeniería</strong>
+                <time>2022 – 2026</time><strong data-i18n="h4.corto">Ingeniería</strong>
               </button>
               <button class="hito" type="button" role="tab" id="tab-h5" aria-controls="panel-h5" aria-selected="false" tabindex="-1">
                 <time data-i18n="h5.corto.fecha">Dic. 2022 – Sep. 2024</time><strong data-i18n="h5.corto">Técnico FLIR</strong>
@@ -395,7 +399,7 @@
                 <div class="chips"><span>JavaScript</span><span>Node.js</span></div>
               </div>
               <div class="hito-panel" role="tabpanel" id="panel-h4" aria-labelledby="tab-h4">
-                <p class="hito-panel__fecha" data-i18n="h4.fecha">2022 – Dic. 2025</p>
+                <p class="hito-panel__fecha" data-i18n="h4.fecha">2022 – 2026</p>
                 <h3 data-i18n="h4.titulo">Ingeniería en Computación e Informática</h3>
                 <ul>
                   <li data-i18n="h4.p1">Proyecto de título: plataforma logística con trazabilidad, importación desde Excel y alertas de stock, que después evolucionó en TraceLink.</li>
@@ -441,6 +445,7 @@
               </ul>
               <div class="filtros" role="group" data-i18n-attr="aria-label:proy.filtrar" aria-label="Filtrar proyectos">
                 <button type="button" class="filtro activo" data-filtro="todos" aria-pressed="true" data-i18n="proy.f.todos">Todos</button>
+                <button type="button" class="filtro" data-filtro="automatizacion" aria-pressed="false" data-i18n="proy.f.auto">Automatización</button>
                 <button type="button" class="filtro" data-filtro="fullstack" aria-pressed="false">Full-stack</button>
                 <button type="button" class="filtro" data-filtro="ia" aria-pressed="false" data-i18n="proy.f.ia">IA</button>
                 <button type="button" class="filtro" data-filtro="web" aria-pressed="false">Web</button>
@@ -619,6 +624,19 @@
     </div>
   </dialog>
 
+  <!-- Vista ampliada de un proyecto: el caso, el detalle técnico y la demostración en una ventana grande -->
+  <dialog class="ventana" id="ventana-proyecto" aria-labelledby="ventana-titulo">
+    <div class="ventana__caja">
+      <header class="ventana__cab">
+        <div class="ventana__titulo" id="ventana-cab"></div>
+        <button type="button" class="icono-btn ventana__cerrar" id="ventana-cerrar" data-i18n-attr="aria-label:ventana.cerrar" aria-label="Cerrar">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </header>
+      <div class="ventana__cuerpo" id="ventana-cuerpo" tabindex="-1"></div>
+    </div>
+  </dialog>
+
   <div class="aviso" id="aviso-movimiento" role="status" hidden>
     <p data-i18n-html="aviso.texto">Tu sistema pide <strong>animaciones reducidas</strong>, así que la página se muestra más quieta.</p>
     <div class="aviso__acciones">
@@ -632,6 +650,8 @@
   <script src="js/proyectos.js"></script>
   <script src="js/actividad.js"></script>
   <script src="js/i18n.js"></script>
+  <script src="js/reel.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/recorrido.js"></script>
 </body>
 </html>
