@@ -1137,6 +1137,9 @@ a { text-underline-offset: 0.2em; }
   background-clip: text;
   color: transparent;
 }
+/* En Space Grotesk el «¿» cuelga 0,21 em bajo la línea base: se sube para que su base quede en la línea y su punta a la altura de las mayúsculas.
+   Sin transform, para que el degradado recortado al texto siga pintándolo. */
+.signo-abre { position: relative; top: -0.2em; margin-right: 0.02em; }
 .contacto__texto { max-width: 32em; margin: 16px auto 28px; color: var(--texto-2); font-size: 1.05rem; }
 .contacto__acciones { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
 .contacto__acciones .btn--primario { max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
