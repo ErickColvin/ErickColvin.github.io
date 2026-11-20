@@ -58,7 +58,7 @@ window.TEXTOS_EN = {
   "h1.corto.fecha": "Sep. 2025 – now",
   "h1.titulo": "Innovation Analyst",
   "h1.fecha": "Sep. 2025 – Present",
-  "h1.sub": "Eaton · Previously intern · Production areas in an industrial setting",
+  "h1.sub": "Eaton · Intern in 2025 · Production areas in an industrial setting",
   "h1.p1": "Automated 5S+ audits for production areas with Power Apps and Power Automate, integrating 6 data sources and 5 flows to manage findings and compliance evidence: <strong>−70% process time</strong>.",
   "h1.p2": "Rolled out document management under Standard Work, standardizing version control and owner sign-off: the approval cycle went from <strong>25 to 8 days</strong>.",
   "h2.titulo": "Hospitality",
