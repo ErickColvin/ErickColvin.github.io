@@ -106,6 +106,10 @@
     });
     // El CV se abre en el mismo idioma
     $$("[data-cv]").forEach(function (a) { a.setAttribute("href", "cv.html?lang=" + idioma); });
+    // El asunto del correo también va en el idioma elegido
+    $$("[data-asunto]").forEach(function (a) {
+      a.setAttribute("href", "mailto:erick.a.colvincordova@gmail.com?subject=" + (idioma === "en" ? "Hi%20Erick%2C%20I%20saw%20your%20portfolio" : "Hola%20Erick%2C%20vi%20tu%20portafolio"));
+    });
   }
 
   function cambiarIdioma(nuevo) {
@@ -272,9 +276,13 @@
       desvio.y += (objetivoY - desvio.y) * 0.04;
     }
 
+    var ultimoDibujo = 0;
     function bucle(t) {
       cuadro = null;
       if (!movimientoCompleto() || document.hidden) return;
+      // 30 cuadros por segundo bastan para el titileo y cuestan la mitad
+      if (t - ultimoDibujo < 33) { cuadro = requestAnimationFrame(bucle); return; }
+      ultimoDibujo = t;
       mover();
       dibujar(t || 0);
       cuadro = requestAnimationFrame(bucle);
@@ -519,7 +527,12 @@
     document.dispatchEvent(new CustomEvent("ventana:abierta"));
     trasPintar(function () { ventana.classList.add("lleno"); });
   }
-  function cerrarVentana() { if (ventana && ventana.open) ventana.close(); }
+  function cerrarVentana() {
+    if (!ventana || !ventana.open) return;
+    if (!movimientoCompleto() || ventana.classList.contains("cerrando")) { ventana.close(); return; }
+    ventana.classList.add("cerrando");
+    setTimeout(function () { ventana.classList.remove("cerrando"); if (ventana.open) ventana.close(); }, 200);
+  }
   if (ventana) {
     $("#ventana-cerrar").addEventListener("click", cerrarVentana);
     // Clic fuera de la caja (sobre el telón) cierra
@@ -562,6 +575,7 @@
       return entra;
     });
     var actual = $(".item-proyecto.activo", listaProyectos);
+    if (!visibles.length) { cajaDetalle.innerHTML = "<p class=\"detalle__vacio\">" + t("Sin proyectos en esta categoría.", "No projects in this category.") + "</p>"; return; }
     if (visibles.length && (!actual || actual.hidden)) elegirProyecto(visibles[0]);
   }
   botonesFiltro.forEach(function (b) { b.addEventListener("click", function () { filtrar(b.dataset.filtro); }); });
@@ -761,7 +775,7 @@
 
   function revelar(vista) {
     var elementos = $$(".revelar", vista);
-    elementos.forEach(function (el, i) { el.style.setProperty("--retraso", Math.min(i * 40, 200) + "ms"); });
+    elementos.forEach(function (el, i) { el.style.setProperty("--retraso", Math.min(i * 30, 150) + "ms"); });
     // Forzar el cálculo de estilos fija el punto de partida; así la transición arranca ya, sin esperar al siguiente cuadro
     void vista.offsetWidth;
     elementos.forEach(function (el) {
@@ -778,7 +792,7 @@
     btnSiguiente.setAttribute("aria-label", ahora < VISTAS.length - 1 ? t("Siguiente sección: ", "Next section: ") + nombreVista(VISTAS[ahora + 1]) : t("Última sección", "Last section"));
     $("#paginador-pos").textContent = "0" + (ahora + 1) + " / 0" + VISTAS.length;
     document.title = vistaActual === "inicio"
-      ? t("Erick Colvin · Ingeniero en Computación e Informática", "Erick Colvin · Computer Engineer")
+      ? t("Erick Colvin · Analista de Innovación · Power Platform · Santiago", "Erick Colvin · Innovation Analyst · Power Platform · Santiago")
       : nombreVista(vistaActual) + " · Erick Colvin";
   }
 
@@ -803,6 +817,8 @@
       enlacesPestana.forEach(function (a) {
         if (a.dataset.ir === id) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
       });
+      // Con teclado la píldora salta sin deslizarse
+      marcaPestanas.classList.toggle("sin-viaje", !!opciones.teclado);
       moverMarcaPestanas();
       actualizarPaginador();
       if (opciones.foco) {
@@ -849,7 +865,7 @@
     var x = e.target;
     if (x.closest && x.closest('[role="tablist"], input, textarea, select, [contenteditable], dialog')) return;
     // Las acciones de teclado se repiten mucho: cambian de sección sin animación
-    irRelativo(e.key === "ArrowRight" ? 1 : -1, { teclado: true });
+    irRelativo(e.key === "ArrowRight" ? 1 : -1, { teclado: true, foco: true });
   });
 
   // Deslizar con el dedo cambia de sección, salvo en las filas que se desplazan de lado
@@ -857,7 +873,7 @@
     var inicio = null;
     var escenario = $(".escenario");
     escenario.addEventListener("touchstart", function (e) {
-      if (e.touches.length !== 1 || e.target.closest(".actividad__desliza, .lista-proyectos, .hitos")) { inicio = null; return; }
+      if (e.touches.length !== 1 || e.target.closest(".actividad__desliza, .lista-proyectos, .hitos, .detalle, .captura")) { inicio = null; return; }
       inicio = { x: e.touches[0].clientX, y: e.touches[0].clientY, t: Date.now() };
     }, { passive: true });
     escenario.addEventListener("touchend", function (e) {
@@ -867,6 +883,7 @@
       if (Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy) * 1.7 && Date.now() - inicio.t < 700) irRelativo(dx < 0 ? 1 : -1);
       inicio = null;
     }, { passive: true });
+    escenario.addEventListener("touchcancel", function () { inicio = null; }, { passive: true });
   })();
 
   var pendienteMedida = false;
