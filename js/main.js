@@ -948,8 +948,9 @@
   function textoResumen() {
     var tiempo = ($(".js-antiguedad") || {}).textContent || "";
     return [
-      "Erick Alejandro Colvin Córdova · " + t("Ingeniero en Computación e Informática", "Computer Engineer"),
-      t("Analista de Innovación desde sep. 2025", "Innovation Analyst since Sep. 2025") + tiempo + " · Santiago, Chile",
+      "Erick Alejandro Colvin Córdova · " + t("Ingeniero en Computación e Informática (titulado 2026)", "Computer Engineer (graduated 2026)"),
+      t("Analista de Innovación en Eaton desde sep. 2025", "Innovation Analyst at Eaton since Sep. 2025") + tiempo + " · Santiago, Chile",
+      t("Roles de interés: Ingeniero IA · automatización de procesos · digitalización (abierto a conversar, híbrido o remoto)", "Roles of interest: AI Engineer · process automation · digital transformation (open to talk, hybrid or remote)"),
       t("Enfoque: transformación digital y automatización de procesos (Power Platform) · desarrollo de software",
         "Focus: digital transformation and process automation (Power Platform) · software development"),
       t("Logros: −70% en el tiempo de las auditorías 5S+ · ciclo de aprobación documental de 25 a 8 días",

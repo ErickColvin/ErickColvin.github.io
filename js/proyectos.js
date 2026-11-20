@@ -32,7 +32,7 @@ window.PROYECTOS = [
       "Gestión documental bajo Standard Work: control de versiones y validación de responsables estandarizados.",
       "Flujos de aprobación que reemplazan el seguimiento manual de cada documento."
     ],
-    sinDemo: "Es una solución interna de la empresa: no tiene demo pública ni capturas.",
+    sinDemo: "Es una solución interna de Eaton: no tiene demo pública ni capturas.",
     flujo: ["Auditoría en Power Apps", "6 fuentes de datos", "5 flujos de Power Automate", "Hallazgos y evidencias", "Aprobación del responsable"],
     caso: {
       reto: "Las auditorías 5S+ de las áreas productivas y la aprobación de documentos dependían de pasos manuales, y el proceso tomaba demasiado tiempo.",
@@ -42,7 +42,7 @@ window.PROYECTOS = [
         "Gestión documental bajo Standard Work: versiones controladas y validación de responsables con un mismo flujo."
       ],
       cifras: [["−70%", "tiempo del proceso de auditoría"], ["25 → 8", "días del ciclo de aprobación"], ["6 y 5", "fuentes de datos y flujos"]],
-      resultado: "En uso en las áreas productivas. El detalle de la empresa es confidencial."
+      resultado: "En uso en las áreas productivas de Eaton."
     },
     tecnologias: ["Power Apps", "Power Automate", "Standard Work", "5S+"],
     lenguajes: {},
@@ -59,7 +59,7 @@ window.PROYECTOS = [
         "Document management under Standard Work: standardized version control and owner sign-off.",
         "Approval workflows that replace manual follow-up of each document."
       ],
-      sinDemo: "This is an internal company solution: there is no public demo or screenshots.",
+      sinDemo: "This is an internal Eaton solution: there is no public demo or screenshots.",
       flujo: ["Audit in Power Apps", "6 data sources", "5 Power Automate flows", "Findings and evidence", "Owner approval"],
       caso: {
         reto: "5S+ audits of production areas and document approvals relied on manual steps, and the process took too long.",
@@ -69,7 +69,7 @@ window.PROYECTOS = [
           "Document management under Standard Work: controlled versions and owner sign-off through one workflow."
         ],
         cifras: [["−70%", "audit process time"], ["25 → 8", "days in the approval cycle"], ["6 and 5", "data sources and flows"]],
-        resultado: "In use in production areas. Company details are confidential."
+        resultado: "In use in Eaton's production areas."
       }
     }
   },
