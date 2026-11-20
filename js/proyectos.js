@@ -28,17 +28,17 @@ window.PROYECTOS = [
     resumen: "Auditorías 5S+ y gestión documental automatizadas con Power Apps y Power Automate, en mi cargo de Analista de Innovación.",
     puntos: [
       "Aplicación en Power Apps para registrar las auditorías 5S+ de las áreas productivas.",
-      "5 flujos de Power Automate que integran 6 fuentes de datos para gestionar hallazgos y verificables de cumplimiento.",
+      "5 flujos de Power Automate que integran 6 fuentes de datos para gestionar hallazgos y evidencias de cumplimiento.",
       "Gestión documental bajo Standard Work: control de versiones y validación de responsables estandarizados.",
       "Flujos de aprobación que reemplazan el seguimiento manual de cada documento."
     ],
     sinDemo: "Es una solución interna de la empresa: no tiene demo pública ni capturas.",
-    flujo: ["Auditoría en Power Apps", "6 fuentes de datos", "5 flujos de Power Automate", "Hallazgos y verificables", "Aprobación del responsable"],
+    flujo: ["Auditoría en Power Apps", "6 fuentes de datos", "5 flujos de Power Automate", "Hallazgos y evidencias", "Aprobación del responsable"],
     caso: {
       reto: "Las auditorías 5S+ de las áreas productivas y la aprobación de documentos dependían de pasos manuales, y el proceso tomaba demasiado tiempo.",
       decisiones: [
         "Un solo punto de registro: la auditoría se levanta en Power Apps en vez de planillas separadas.",
-        "Power Automate conecta 6 fuentes de datos con 5 flujos y gestiona los hallazgos y los verificables de cumplimiento.",
+        "Power Automate conecta 6 fuentes de datos con 5 flujos y gestiona los hallazgos y las evidencias de cumplimiento.",
         "Gestión documental bajo Standard Work: versiones controladas y validación de responsables con un mismo flujo."
       ],
       cifras: [["−70%", "tiempo del proceso de auditoría"], ["25 → 8", "días del ciclo de aprobación"], ["6 y 5", "fuentes de datos y flujos"]],
